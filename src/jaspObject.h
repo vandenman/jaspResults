@@ -3,7 +3,7 @@
 #include <set>
 #include <sstream>
 #include <queue>
-#include "jaspColumnEncoder/enumutilities.h"
+#include "enumutilities.h"
 
 #ifdef JASP_R_INTERFACE_LIBRARY
 #include "jsonredirect.h"
