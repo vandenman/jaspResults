@@ -1,4 +1,0 @@
-[submodule "jaspColumnEncoder"]
-	path = jaspColumnEncoder
-	url = https://github.com/jasp-stats/jaspColumnEncoder
-	branch = master

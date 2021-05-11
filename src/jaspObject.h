@@ -3,12 +3,12 @@
 #include <set>
 #include <sstream>
 #include <queue>
-#include "enumutilities.h"
+#include "jaspColumnEncoder/enumutilities.h"
 
 #ifdef JASP_R_INTERFACE_LIBRARY
 #include "jsonredirect.h"
 #else
-#include "lib_json/json.h"
+#include <json/json.h>
 #endif
 
 void jaspPrint(std::string msg);
