@@ -72,6 +72,10 @@ jaspResults::jaspResults(std::string title, Rcpp::RObject oldState)
 {
 	_jaspResults = this;
 
+#ifdef INCLUDE_COLUMN_ENCODING_ETC
+	_extraEncodings	= new ColumnEncoder("JaspExtraOptions_.");
+#endif
+
 	if(_RStorageEnv != nullptr)
 		delete _RStorageEnv;
 
@@ -98,6 +102,15 @@ jaspResults::jaspResults(std::string title, Rcpp::RObject oldState)
 
 	if(imNotReincarnatedAfterBeingMurdered && _saveResultsHere != "")
 		loadResults();
+}
+
+void jaspResults::~jaspResults()
+{
+#ifdef INCLUDE_COLUMN_ENCODING_ETC
+	delete _extraEncodings;
+	_extraEncodings = nullptr;
+#endif
+
 }
 
 void jaspResults::setStatus(std::string status)
@@ -235,6 +248,10 @@ void jaspResults::setOptions(std::string opts)
 
 	if(_previousOptions != Json::nullValue)
 		pruneInvalidatedData();
+
+#ifdef INCLUDE_COLUMN_ENCODING_ETC
+	setCurrentNamesFromOptionsMeta(_currentOptions);
+#endif
 }
 
 void jaspResults::storeOldResults()

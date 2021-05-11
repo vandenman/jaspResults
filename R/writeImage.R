@@ -161,10 +161,7 @@ redrawPlotJaspResults <- function(rec_plot)
   suppressWarnings(grDevices::replayPlot(rec_plot))
 }
 
-decodeplot <- function(x, ...) {
-  if (!.automaticColumnEncDecoding)
-    return(x)
-  
+decodeplot <- function(x, ...) { 
   UseMethod("decodeplot", x)
 }
 

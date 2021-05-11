@@ -202,7 +202,13 @@ jaspResultsR <- R6Class(
 		getKeepList             = function()        private$jaspObject$getKeepList(),
 		complete                = function()        private$jaspObject$complete(),
 		getPlotObjectsForState  = function()        private$jaspObject$getPlotObjectsForState(),
-    getOtherObjectsForState = function()        private$jaspObject$getOtherObjectsForState()
+    	getOtherObjectsForState = function()        private$jaspObject$getOtherObjectsForState(),
+		#The following functions for column encoding will fail hard when you run them inside JASP, only for R in other words
+		setCurrentColumnNames	= function(names)	private$jaspObject$setCurrentColumnNames(names),
+		encodeColumnName		= function(input)	private$jaspObject$encodeColumnName(input),
+		decodeColumnName		= function(input)	private$jaspObject$decodeColumnName(input),
+		encodeAllColumnNames	= function(input)	private$jaspObject$encodeAllColumnNames(input),
+		decodeAllColumnNames	= function(input)	private$jaspObject$decodeAllColumnNames(input)
 	),
 	active = list(
 	  status = function(x) { if (missing(x)) private$jaspObject$status else private$jaspObject$status <- x },
@@ -623,7 +629,28 @@ jaspTableR <- R6Class(
         else                      private$jaspObject$addRow(rows, rowNames)
       }
       else
-      {
+      {jaspOutputObjR <- R6Class(
+	classname = "jaspOutputObjR",
+	inherit   = jaspObjR,
+	cloneable = FALSE,
+	public    = list(
+		initialize  = function()	stop("You should not create a new jaspOutputObject!", domain = NA),
+		printHtml   = function()	private$jaspObject$printHtml(),
+		setError    = function(x)	private$jaspObject$setError(x),
+		getError    = function()	private$jaspObject$getError(),
+		addCitation = function(x) {
+			if (!is.character(x)) 
+				stop("Citation must be a character (vector)", domain = NA)
+			for (i in seq_along(x))
+				private$jaspObject$addCitation(x[i])
+		}
+	),
+	active	= list(
+		position = function(x) { if (missing(x)) private$jaspObject$position else private$jaspObject$position <- as.numeric(x) },
+		title    = function(x) { if (missing(x)) private$jaspObject$title    else private$jaspObject$title    <- x },
+		info     = function(x) { if (missing(x)) private$jaspObject$info     else private$jaspObject$info     <- x }
+	)
+)
         if (is.null(rowNames))    private$jaspObject$addRows(rows)
         else                      private$jaspObject$addRows(rows, rowNames)
       }
