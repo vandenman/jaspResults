@@ -3,6 +3,8 @@
 
 #ifdef JASP_R_INTERFACE_LIBRARY
 #include "jasprcpp_interface.h"
+
+#define GUARD_ENCODE_FUNCS(...) throw std::runtime_error("Do not use column encoding from jaspResults when running in JASP!");
 #else
 typedef void (*sendFuncDef)(const char *);
 typedef bool (*pollMessagesFuncDef)();
@@ -10,14 +12,11 @@ typedef bool (*pollMessagesFuncDef)();
 
 #include "jaspColumnEncoder/columnencoder.h"
 #define INCLUDE_COLUMN_ENCODING_ETC
+#define GUARD_ENCODE_FUNCS(CODE) CODE
 #endif
 
-#define GUARD_ENCODE_FUNCS(CODE) 																		\
-#ifdef INCLUDE_COLUMN_ENCODING_ETC																		\
-		CODE																							\
-#else																									\
-		throw std::runtime_error("Do not use column encoding from jaspResults when running in JASP!");	\
-#endif																									\
+
+																									\
 
 class jaspResults : public jaspContainer
 {
@@ -136,7 +135,7 @@ private:
 			_sendingFeedbackInterval		= 1000;
 
 #ifdef INCLUDE_COLUMN_ENCODING_ETC
-	ColumnEncoder	_extraEncodings			= nullptr;
+	ColumnEncoder	* _extraEncodings		= nullptr;
 #endif
 
 
@@ -176,7 +175,7 @@ public:
 		std::vector<std::string> vec;
 
 		for(int row=0; row<names.size(); row++)
-			vec.push_back((std::string)(obj[row]));
+			vec.push_back((std::string)(names[row]));
 
 		((jaspResults*)myJaspObject)->setCurrentColumnNames(vec); 
 	}

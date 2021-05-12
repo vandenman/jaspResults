@@ -104,7 +104,7 @@ jaspResults::jaspResults(std::string title, Rcpp::RObject oldState)
 		loadResults();
 }
 
-void jaspResults::~jaspResults()
+jaspResults::~jaspResults()
 {
 #ifdef INCLUDE_COLUMN_ENCODING_ETC
 	delete _extraEncodings;

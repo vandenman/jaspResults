@@ -153,11 +153,17 @@ jaspResultsR <- R6Class(
 			for (i in seq_along(x))
 				private$jaspObject$addCitation(x[i])
 		},
-		print           = function()	private$jaspObject$print(),
-		printHtml       = function()	private$jaspObject$printHtml(),
-		setError        = function(x)	private$jaspObject$setError(x),
-		getError        = function()	private$jaspObject$getError(),
-		length          = function()    private$jaspObject$length
+		print           		= function()		private$jaspObject$print(),
+		printHtml       		= function()		private$jaspObject$printHtml(),
+		setError        		= function(x)		private$jaspObject$setError(x),
+		getError        		= function()		private$jaspObject$getError(),
+		length          		= function()    	private$jaspObject$length,
+		#The following functions for column encoding will fail hard when you run them inside JASP, only for R in other words
+		setCurrentColumnNames	= function(names)	private$jaspObject$setCurrentColumnNames(names),
+		encodeColumnName		= function(input)	private$jaspObject$encodeColumnName(input),
+		decodeColumnName		= function(input)	private$jaspObject$decodeColumnName(input),
+		encodeAllColumnNames	= function(input)	private$jaspObject$encodeAllColumnNames(input),
+		decodeAllColumnNames	= function(input)	private$jaspObject$decodeAllColumnNames(input)
 	),
 	private = list(
 		children    = list(),
@@ -202,13 +208,7 @@ jaspResultsR <- R6Class(
 		getKeepList             = function()        private$jaspObject$getKeepList(),
 		complete                = function()        private$jaspObject$complete(),
 		getPlotObjectsForState  = function()        private$jaspObject$getPlotObjectsForState(),
-    	getOtherObjectsForState = function()        private$jaspObject$getOtherObjectsForState(),
-		#The following functions for column encoding will fail hard when you run them inside JASP, only for R in other words
-		setCurrentColumnNames	= function(names)	private$jaspObject$setCurrentColumnNames(names),
-		encodeColumnName		= function(input)	private$jaspObject$encodeColumnName(input),
-		decodeColumnName		= function(input)	private$jaspObject$decodeColumnName(input),
-		encodeAllColumnNames	= function(input)	private$jaspObject$encodeAllColumnNames(input),
-		decodeAllColumnNames	= function(input)	private$jaspObject$decodeAllColumnNames(input)
+    	getOtherObjectsForState = function()        private$jaspObject$getOtherObjectsForState()
 	),
 	active = list(
 	  status = function(x) { if (missing(x)) private$jaspObject$status else private$jaspObject$status <- x },

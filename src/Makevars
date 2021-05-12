@@ -1,6 +1,4 @@
 CXX_STD 		= CXX11
-PKG_CPPFLAGS	= `pkg-config --cflags jsoncpp` -IjaspColumnEncoder/
+PKG_CPPFLAGS	= `pkg-config --cflags jsoncpp` -I./jaspColumnEncoder/
 PKG_LIBS		= `pkg-config --libs jsoncpp`
 CXX11STD		= -std=c++11
-SOURCES 		= $(wildcard jaspColumnEncoder/*.cpp)
-OBJECTS 		= RcppExports.o $(SOURCES:.cpp=.o)
