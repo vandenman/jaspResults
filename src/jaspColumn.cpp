@@ -3,7 +3,6 @@
 
 #ifdef JASP_R_INTERFACE_LIBRARY
 #include "jasprcpp.h"
-
 #else
 
 enum ColumnType { ColumnTypeUnknown = 0, ColumnTypeNominal = 1, ColumnTypeNominalText = 2, ColumnTypeOrdinal = 4, ColumnTypeScale = 8 };
