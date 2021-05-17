@@ -194,7 +194,8 @@ Rcpp::DataFrame jaspObject::convertFactorsToCharacters(Rcpp::DataFrame df)
 			Rcpp::CharacterVector	charCol(originalColumn.size());
 
 			for(int i=0; i<originalColumn.size(); i++)
-				charCol[i] = Rcpp::as<std::string>(factorLevels[originalColumn[i] - 1]);
+				if(originalColumn[i] > 0) //it can be INT_MIN at least, but if we are doing a -1 on it anyhow it should just be bigger than 0
+					charCol[i] = Rcpp::as<std::string>(factorLevels[originalColumn[i] - 1]);
 
 			df[col] = charCol;
 		}
