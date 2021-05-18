@@ -1,4 +1,4 @@
 CXX_STD 		= CXX11
-PKG_CPPFLAGS	= `pkg-config --cflags jsoncpp` -I./jaspColumnEncoder/
-PKG_LIBS		= `pkg-config --libs jsoncpp`
+PKG_CPPFLAGS	= -I./jaspColumnEncoder/
 CXX11STD		= -std=c++11
+
