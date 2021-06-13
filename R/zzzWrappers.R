@@ -8,7 +8,7 @@
 	}
 
 	env$jaspResults <- jaspResultsR$new(create_cpp_jaspResults("Analysis Test", NULL))
-	
+
 	return(invisible(TRUE))
 }
 
@@ -33,7 +33,7 @@ startProgressbar <- function(expectedTicks, label="") {
 		stop("`expectedTicks` must be numeric and `label` a character", domain = NA)
 	if (nchar(label) > 80) # if you update this value, also update it in the progressbar in jaspwidgets.js
 		warning("The progressbar label is more than 80 characters, label will be truncated", domain = NA)
-		
+
 	if (jaspResultsCalledFromJasp())
 		jaspResultsModule$cpp_startProgressbar(expectedTicks, label)
 	else
@@ -46,7 +46,7 @@ decodeName <- function(name) {
   else                               return(name)
 }
 
-progressbarTick <- function() { 
+progressbarTick <- function() {
 	if (jaspResultsCalledFromJasp())
 		jaspResultsModule$cpp_progressbarTick()
 	else
@@ -56,24 +56,24 @@ progressbarTick <- function() {
 checkForJaspResultsInit <- function() {if (!exists("jaspResults", .GlobalEnv)) .onAttach()}
 
 is.JaspResultsObj <- function(x) {
-	inherits(x, "R6") && 
+	inherits(x, "R6") &&
   inherits(x, c("jaspResultsR", "jaspContainerR", "jaspObjR", "jaspOutputObjR", "jaspPlotR", "jaspTableR", "jaspHtmlR", "jaspStateR", "jaspColumnR"))
 }
 
 destroyAllAllocatedRObjects <- function() {
 
-	# some attempt to clear out R objects with invalid pointers	
+	# some attempt to clear out R objects with invalid pointers
 	s <- search()
 	envs2Search <- s[!(startsWith(s, "package:") | startsWith(s, "tools:") | s == "Autoloads")]
-	
+
 	for (envName in envs2Search) {
-		
+
 		nms2rm <- character()
 		env <- as.environment(envName)
-		
+
 		for (n in names(env)) {
 			if (is.JaspResultsObj(env[[n]])) {
-				
+
 				# check if externalpoint of object is invalid
 				if (isTRUE(try(silent = TRUE, identical(
 					env[[n]]$.pointer,
@@ -92,8 +92,8 @@ destroyAllAllocatedRObjects <- function() {
 jaspResultsCalledFromJasp <- function() {
   # a variety of tests to check if a createJasp*() function is called from JASP
   return(
-    exists("jaspResultsModule", mode = "S4") && 
-      inherits(jaspResultsModule, "Module") && 
+    exists("jaspResultsModule", mode = "S4") &&
+      inherits(jaspResultsModule, "Module") &&
       identical(slotNames(jaspResultsModule), ".xData")
   )
 }
@@ -101,8 +101,18 @@ jaspResultsCalledFromJasp <- function() {
 createJaspPlot <- function( plot = NULL, title = "",    width = 320,   height = 320,    aspectRatio = 0,           error = NULL,  dependencies = NULL,         position = NULL)
   return(jaspPlotR$new(     plot = plot, title = title, width = width, height = height, aspectRatio = aspectRatio, error = error, dependencies = dependencies, position = position))
 
-createJaspContainer <- function(  title = "",     dependencies = NULL,          position = NULL,     initCollapsed = FALSE)
+#' jaspContainer
+#' @param title String, title of the jaspContainer
+#' @param dependencies see jaspObject
+#' @param position see jaspObject
+#' @param initCollapsed Logical, should the container be collapsed by default?
+#'
+#' @rdname jaspContainer
+#' @example inst/examples/ex-jaspContainer.R
+#' @export
+createJaspContainer <- function(  title = "",     dependencies = NULL,          position = NULL,     initCollapsed = FALSE) {
   return(jaspContainerR$new(      title = title,  dependencies = dependencies,  position = position, initCollapsed = initCollapsed))
+}
 
 createJaspTable <- function( title="",       data = NULL, colNames = NULL,     colTitles = NULL,       overtitles = NULL,       colFormats = NULL,       rowNames = NULL,     rowTitles = NULL,      dependencies = NULL,         position = NULL,     expectedRows = NULL,          expectedColumns = NULL)
   return(jaspTableR$new(      title = title,  data = data, colNames = colNames, colTitles = colTitles,  overtitles = overtitles, colFormats = colFormats, rowNames = rowNames, rowTitles = rowTitles, dependencies = dependencies, position = position, expectedRows = expectedRows,  expectedColumns = expectedColumns))
@@ -121,6 +131,7 @@ createJaspQmlSource <- function(sourceID="", value=NULL, dependencies=NULL)
   return(jaspQmlSourceR$new(     sourceID = sourceID,  value = value, dependencies = dependencies))
 
 # also imported but that doesn't work in JASP
+#' @importFrom R6 R6Class
 R6Class <- R6::R6Class
 
 # inheritance structure:
@@ -148,7 +159,7 @@ jaspResultsR <- R6Class(
 		},
 
 		addCitation = function(x) {
-			if (!is.character(x)) 
+			if (!is.character(x))
 				stop("Citation must be a character (vector)", domain = NA)
 			for (i in seq_along(x))
 				private$jaspObject$addCitation(x[i])
@@ -222,23 +233,37 @@ jaspResultsR <- R6Class(
 }
 `[[.jaspResultsR`   <- function(x, field)
 	x$.__enclos_env__$private$getField(field)
-	
+
 print.jaspResultsR <- function(x, ...) 	# TODO: make this a pretty summary print (But please do this in std::string jaspObject::toString() and the overrides)
 	x$print()
 
+#' jaspObject
+#' @aliases jaspObject jaspObj
+#' @description
+#' The parent class of all jaspObjects.
+#' @export
 jaspObjR <- R6Class(
-	classname = "jaspObjR", 
+	classname = "jaspObjR",
 	cloneable = FALSE,
 	public    = list(
+	  #' @description
+	  #' Do not create an instance of a jaspObject (it will throw an error).
 		initialize = function()	stop("You should not create a new jaspObject!", domain = NA),
+		#' @description
+		#' print a jaspObject. Note that `print(jaspObj)` calls `jaspObj$print()`
 		print      = function()	private$jaspObject$print(),
+		#' @description
+		#' Specify dependencies for a jaspObject
+		#' @param options string, the name of an option, e.g., `"variables"`.
+		#' @param optionsFromObject jaspObject, copy the dependencies from another jaspObject.
+		#' @param optionContainsValue named list, the name corresponds to an option and the value corresponds to whatever this options should contain, e.g., `list(variables = "contNormal")`
 		dependOn   = function(options=NULL, optionsFromObject=NULL, optionContainsValue=NULL) {
 			if (!is.null(options)) {
 				if (!is.character(options))
 					stop("please provide a character vector in `options`", domain = NA)
 				private$jaspObject$dependOnOptions(options)
 			}
-			
+
 			if (!is.null(optionsFromObject)) {
 				if (is.JaspResultsObj(optionsFromObject)) {
 					private$jaspObject$copyDependenciesFromJaspObject(private$getJaspObject(optionsFromObject))
@@ -250,7 +275,7 @@ jaspObjR <- R6Class(
 					stop("please provide a (list of) jasp object(s) in `optionsFromObject`", domain = NA)
 				}
 			}
-				
+
 			if (!is.null(optionContainsValue)) {
 				if (!is.list(optionContainsValue) || is.null(names(optionContainsValue)))
 					stop("please provide a named list in `optionContainsValue`", domain = NA)
@@ -290,7 +315,7 @@ jaspStateR <- R6Class(
 			}
 			if (!is.null(object))
 				stateObj$object <- object
-			
+
 			if (!is.null(dependencies))
 				stateObj$dependOnOptions(dependencies)
 
@@ -303,25 +328,41 @@ jaspStateR <- R6Class(
 	)
 )
 
+#' jaspOutputObjR
+#' @description Super object of jaspObjects that show output. Not to be used directly.
+#' @export
 jaspOutputObjR <- R6Class(
 	classname = "jaspOutputObjR",
 	inherit   = jaspObjR,
 	cloneable = FALSE,
 	public    = list(
+	  #' @description Do not use.
 		initialize  = function()	stop("You should not create a new jaspOutputObject!", domain = NA),
+		#' @description print jaspObject as html.
 		printHtml   = function()	private$jaspObject$printHtml(),
+		#' @description set an error on this jaspObject. If this is a container then the message `x` will be shown on the first child that is a  plot or table.
+		#' @param x, string, error message.
 		setError    = function(x)	private$jaspObject$setError(x),
+		#' @description check whether a jaspObject has an error or not, returns a boolean.
 		getError    = function()	private$jaspObject$getError(),
+		#' @description set an citation this jaspObject. If this is a container then the citation `x` will also be set on all children.
+		#' @param x, string, citation.
 		addCitation = function(x) {
-			if (!is.character(x)) 
+			if (!is.character(x))
 				stop("Citation must be a character (vector)", domain = NA)
 			for (i in seq_along(x))
 				private$jaspObject$addCitation(x[i])
 		}
 	),
 	active	= list(
+	  #' @field position
+	  #' the position of a jaspObject, accepts numeric input
 		position = function(x) { if (missing(x)) private$jaspObject$position else private$jaspObject$position <- as.numeric(x) },
+		#' @field title
+		#' the title of a jaspObject, accepts string input
 		title    = function(x) { if (missing(x)) private$jaspObject$title    else private$jaspObject$title    <- x },
+		#' @field info
+		#' the info of a jaspObject, accepts string input
 		info     = function(x) { if (missing(x)) private$jaspObject$info     else private$jaspObject$info     <- x }
 	)
 )
@@ -348,18 +389,18 @@ jaspHtmlR <- R6Class(
 				checkForJaspResultsInit()
 				htmlObj <- create_cpp_jaspHtml(text)
 			}
-			
+
 			htmlObj$elementType <- elementType
 			htmlObj$class       <- class
 			htmlObj$maxWidth    <- .jaspHtmlPixelizer(maxWidth)
 			htmlObj$title       <- title
-			
+
             if (!is.null(dependencies))
 			    htmlObj$dependOnOptions(dependencies)
 
             if (!is.null(info))
 			    htmlObj$info <- info
-			
+
 			if (is.numeric(position))
 				htmlObj$position = position
 
@@ -375,11 +416,23 @@ jaspHtmlR <- R6Class(
 	)
 )
 
+#' jaspContainer
+#' @description A jaspObject that can contain other jaspObjects
+#' @rdname jaspContainer
+#' @export
 jaspContainerR <- R6Class(
 	classname = "jaspContainerR",
 	inherit   = jaspOutputObjR,
 	cloneable = FALSE,
 	public    = list(
+	  #' @description
+	  #' Create a new jaspContainer, however, `createJaspContainer()` is preferred.
+	  #' @param title String, title of the jaspContainer
+    #' @param dependencies see jaspObject
+    #' @param position see [jaspObjR$position]
+    #' @param initCollapsed Logical, should the container be collapsed by default?
+    #' @param info string.
+    #' @param jaspObject Do not use.
 		initialize = function(title = "", dependencies = NULL, position = NULL, info=NULL, initCollapsed = FALSE, jaspObject = NULL) {
 			if (!is.null(jaspObject)) {
 				private$jaspObject <- jaspObject
@@ -406,9 +459,13 @@ jaspContainerR <- R6Class(
 			private$jaspObject <- container
 			return()
 		},
+		#' @description
+		#' The number of elements inside the container
 		length = function() private$jaspObject$length
 	),
   active = list(
+    #' @field initCollapsed
+    #' is the container collapsed?
     initCollapsed  = function(x) if (missing(x)) private$jaspObject$initCollapsed   else private$jaspObject$initCollapsed   <- x
   ),
 	private	= list(
@@ -453,13 +510,13 @@ jaspContainerR <- R6Class(
 }
 `[[.jaspContainerR`   <- function(x, field)
 	x$.__enclos_env__$private$getField(field)
-	
+
 jaspPlotR <- R6Class(
 	classname = "jaspPlotR",
 	inherit   = jaspOutputObjR,
 	cloneable = FALSE,
 	public    = list(
-		initialize = function(plot=NULL, title="", width=320, height=320, aspectRatio=0, error=NULL, 
+		initialize = function(plot=NULL, title="", width=320, height=320, aspectRatio=0, error=NULL,
 		                      dependencies=NULL, position=NULL , info=NULL, jaspObject = NULL) {
 			if (!is.null(jaspObject)) {
 			  private$jaspObject <- jaspObject
@@ -476,31 +533,31 @@ jaspPlotR <- R6Class(
 	  }
 
       jaspPlotObj <- private$jaspObject
-			
+
 			if (aspectRatio > 0 && !is.null(width) && width != 0)
 				height = aspectRatio * width
 			else if (aspectRatio > 0)
 				width = height / aspectRatio
-			
+
 			jaspPlotObj$width  <- width
 			jaspPlotObj$height <- height
 			jaspPlotObj$aspectRatio <- aspectRatio
-			
+
 			if (!is.null(error))
 				jaspPlotObj$setError(error)
-			
+
 			if (!is.null(plot))
 				jaspPlotObj$plotObject <- plot
-			
+
 			if(!is.null(dependencies))
 				jaspPlotObj$dependOnOptions(dependencies)
 
             if (!is.null(info))
 			    jaspPlotObj$info <- info
-			
+
 			if(is.numeric(position))
 				jaspPlotObj$position = position
-			
+
 			return()
 		}
 	),
@@ -545,41 +602,41 @@ jaspTableR <- R6Class(
 				checkForJaspResultsInit()
 				jaspObj <- create_cpp_jaspTable(title) # If we use R's constructor it will garbage collect our objects prematurely.. #new(jaspResultsModule$jaspTable, title)
 			}
-			
+
 			if (!is.null(data))
 				jaspObj$setData(data)
-			
+
 			if (!is.null(colNames))
 				jaspObj$setColNames(colNames)
-			
+
 			if (!is.null(colTitles))
 				jaspObj$setColTitles(colTitles)
-			
+
 			if (!is.null(overtitles))
 				jaspObj$setColOvertitles(overtitles)
-			
+
 			if (!is.null(colFormats))
 				jaspObj$setColFormats(colFormats)
-			
+
 			if (!is.null(rowNames))
 				jaspObj$setRowNames(rowNames)
-			
+
 			if (!is.null(rowTitles))
 				jaspObj$setRowTitles(rowTitles)
-			
+
 			if (!is.null(dependencies))
 				jaspObj$dependOnOptions(dependencies)
 
             if (!is.null(info))
 			    jaspObj$info <- info
-			
+
 			if (is.numeric(position))
 				jaspObj$position <- position
 
       if (!(is.null(expectedRows) & is.null(expectedColumns)))
         .jaspTableSetExpectedSize(jaspObj, rows=expectedRows, cols=expectedColumns);
 
-				
+
 			private$jaspObject <- jaspObj
 			return()
 		},
@@ -599,7 +656,7 @@ jaspTableR <- R6Class(
 		  # then we add this to ensure footnotes look consistent across analyses
       if (is.null(symbol)	&& is.null(colNames) && is.null(rowNames))
         symbol <- gettext("<em>Note.</em>", domain = "R-jaspBase")
-        
+
 			private$jaspObject$addFootnoteHelper(message, symbol, colNames, rowNames)
 		},
 
@@ -639,7 +696,7 @@ jaspTableR <- R6Class(
 		setError    = function(x)	private$jaspObject$setError(x),
 		getError    = function()	private$jaspObject$getError(),
 		addCitation = function(x) {
-			if (!is.character(x)) 
+			if (!is.character(x))
 				stop("Citation must be a character (vector)", domain = NA)
 			for (i in seq_along(x))
 				private$jaspObject$addCitation(x[i])

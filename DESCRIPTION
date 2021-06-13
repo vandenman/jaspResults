@@ -15,3 +15,5 @@ Suggests: jaspGraphs
 LinkingTo: Rcpp, BH
 RcppModules: jaspResults
 NeedsCompilation: yes
+RoxygenNote: 7.1.1
+Encoding: UTF-8
