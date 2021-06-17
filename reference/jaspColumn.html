@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>jaspHtml — createJaspHtml • jaspResults</title>
+<title>jaspColumn — createJaspColumn • jaspResults</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="jaspHtml — createJaspHtml" />
-<meta property="og:description" content="A jaspObject to display html." />
+<meta property="og:title" content="jaspColumn — createJaspColumn" />
+<meta property="og:description" content="A jaspObject that adds a column to the data set" />
 
 
 
@@ -103,35 +103,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>jaspHtml</h1>
+    <h1>jaspColumn</h1>
     
-    <div class="hidden name"><code>jaspHtml.Rd</code></div>
+    <div class="hidden name"><code>jaspColumn.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A jaspObject to display html.</p>
+    <p>A jaspObject that adds a column to the data set</p>
     </div>
 
-    <pre class="usage"><span class='fu'>createJaspHtml</span><span class='op'>(</span>
-  text <span class='op'>=</span> <span class='st'>""</span>,
-  elementType <span class='op'>=</span> <span class='st'>"p"</span>,
-  maxWidth <span class='op'>=</span> <span class='st'>"15cm"</span>,
-  class <span class='op'>=</span> <span class='st'>""</span>,
-  dependencies <span class='op'>=</span> <span class='cn'>NULL</span>,
-  title <span class='op'>=</span> <span class='st'>"hide me"</span>,
-  position <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>createJaspColumn</span><span class='op'>(</span>columnName <span class='op'>=</span> <span class='st'>""</span>, dependencies <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>dependencies</th>
-      <td><p>see jaspObject</p></td>
-    </tr>
-    <tr>
-      <th>title</th>
-      <td><p>String, title of the jaspContainer</p></td>
+      <th>columnName</th>
+      <td><p>String, title of the column</p></td>
     </tr>
     <tr>
       <th>position</th>
@@ -141,14 +129,18 @@
 
     <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
 
-    <p><code><a href='jaspObjR.html'>jaspResults::jaspObjR</a></code> -&gt; <code><a href='jaspOutputObjR.html'>jaspResults::jaspOutputObjR</a></code> -&gt; <code>jaspHtmlR</code></p>
+    <p><code><a href='jaspObjR.html'>jaspResults::jaspObjR</a></code> -&gt; <code><a href='jaspOutputObjR.html'>jaspResults::jaspOutputObjR</a></code> -&gt; <code>jaspColumnR</code></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Public methods</h3>
 
 <ul>
-<li><p><a href='#method-new'><code>jaspHtmlR$new()</code></a></p></li>
+<li><p><a href='#method-new'><code>jaspColumnR$new()</code></a></p></li>
+<li><p><a href='#method-setScale'><code>jaspColumnR$setScale()</code></a></p></li>
+<li><p><a href='#method-setOrdinal'><code>jaspColumnR$setOrdinal()</code></a></p></li>
+<li><p><a href='#method-setNominal'><code>jaspColumnR$setNominal()</code></a></p></li>
+<li><p><a href='#method-setNominalText'><code>jaspColumnR$setNominalText()</code></a></p></li>
 </ul>
 <p><details ><summary>Inherited methods</summary>
 <ul>
@@ -163,38 +155,43 @@
 
 <hr>
 <a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
-<p>create a new jaspHtml object, however, <code>createJaspHtml</code> is preferred.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>jaspHtmlR</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>
-  text <span class='op'>=</span> <span class='st'>""</span>,
-  elementType <span class='op'>=</span> <span class='st'>"p"</span>,
-  maxWidth <span class='op'>=</span> <span class='st'>"15cm"</span>,
-  class <span class='op'>=</span> <span class='st'>""</span>,
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspColumnR</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>
+  columnName <span class='op'>=</span> <span class='st'>""</span>,
   dependencies <span class='op'>=</span> <span class='cn'>NULL</span>,
-  title <span class='op'>=</span> <span class='st'>"hide me"</span>,
-  position <span class='op'>=</span> <span class='cn'>NULL</span>,
+  scalarData <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ordinalData <span class='op'>=</span> <span class='cn'>NULL</span>,
+  nominalData <span class='op'>=</span> <span class='cn'>NULL</span>,
+  nominalTextData <span class='op'>=</span> <span class='cn'>NULL</span>,
   info <span class='op'>=</span> <span class='cn'>NULL</span>,
   jaspObject <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre><p></div></p>
 
-<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
-<p><div class="arguments"></p><dl>
-<dt><code>text, </code></dt><dd><p>String, the text contained in the html element.</p></dd>
+<p><hr>
+<a id="method-setScale"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setScale()</code></h3>
 
-<dt><code>elementType, </code></dt><dd><p>String, the type of html element.</p></dd>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspColumnR</span><span class='op'>$</span><span class='fu'>setScale</span><span class='op'>(</span><span class='va'>scalarData</span><span class='op'>)</span></pre><p></div></p>
 
-<dt><code>maxWidth, </code></dt><dd><p>String the maximum width of the element</p></dd>
+<p><hr>
+<a id="method-setOrdinal"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setOrdinal()</code></h3>
 
-<dt><code>dependencies</code></dt><dd><p>see [`jaspOutputObjR$position()`][jaspOutputObjR]</p></dd>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspColumnR</span><span class='op'>$</span><span class='fu'>setOrdinal</span><span class='op'>(</span><span class='va'>ordinalData</span><span class='op'>)</span></pre><p></div></p>
 
-<dt><code>title</code></dt><dd><p>String, title of the element</p></dd>
+<p><hr>
+<a id="method-setNominal"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setNominal()</code></h3>
 
-<dt><code>position</code></dt><dd><p>see [`jaspOutputObjR$position()`][jaspOutputObjR]</p></dd>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspColumnR</span><span class='op'>$</span><span class='fu'>setNominal</span><span class='op'>(</span><span class='va'>nominalData</span><span class='op'>)</span></pre><p></div></p>
 
-<dt><code>info</code></dt><dd><p>TODO</p></dd>
+<p><hr>
+<a id="method-setNominalText"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setNominalText()</code></h3>
 
-<dt><code>jaspObject</code></dt><dd><p>do not use.</p></dd>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspColumnR</span><span class='op'>$</span><span class='fu'>setNominalText</span><span class='op'>(</span><span class='va'>nominalData</span><span class='op'>)</span></pre><p></div></p>
 
-</dl><p></div></p>
 
 
 

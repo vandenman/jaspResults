@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>jaspState — createJaspState • jaspResults</title>
+<title>jaspObject — jaspObjR • jaspResults</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="jaspState — createJaspState" />
-<meta property="og:description" content="A jasp object to store R objects between consecutive runs of an analysis." />
+<meta property="og:title" content="jaspObject — jaspObjR" />
+<meta property="og:description" content="The parent class of all jaspObjects." />
 
 
 
@@ -103,59 +103,55 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>jaspState</h1>
+    <h1>jaspObject</h1>
     
-    <div class="hidden name"><code>jaspState.Rd</code></div>
+    <div class="hidden name"><code>jaspObject.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A jasp object to store R objects between consecutive runs of an analysis.</p>
+    <p>The parent class of all jaspObjects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>createJaspState</span><span class='op'>(</span>object <span class='op'>=</span> <span class='cn'>NULL</span>, dependencies <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>title</th>
-      <td><p>String, title of the jaspContainer</p></td>
-    </tr>
-    <tr>
-      <th>position</th>
-      <td><p>see jaspObject</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="super-class"><a class="anchor" href="#super-class"></a>Super class</h2>
-
-    <p><code><a href='jaspObjR.html'>jaspResults::jaspObjR</a></code> -&gt; <code>jaspStateR</code></p>
-    <h2 class="hasAnchor" id="active-bindings"><a class="anchor" href="#active-bindings"></a>Active bindings</h2>
-
-    <p><div class="r6-active-bindings"></p><dl>
-<dt><code>object</code></dt><dd><p>an R object or NULL if the dependencies changed.</p></dd>
-
-</dl><p></div></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Public methods</h3>
 
 <ul>
-<li><p><a href='#method-new'><code>jaspStateR$new()</code></a></p></li>
+<li><p><a href='#method-new'><code>jaspObjR$new()</code></a></p></li>
+<li><p><a href='#method-print'><code>jaspObjR$print()</code></a></p></li>
+<li><p><a href='#method-dependOn'><code>jaspObjR$dependOn()</code></a></p></li>
 </ul>
-<p><details open ><summary>Inherited methods</summary>
-<ul>
-<li><p><span class="pkg-link" data-pkg="jaspResults" data-topic="jaspObjR" data-id="dependOn"><a href='../../jaspResults/html/jaspObjR.html#method-dependOn'><code>jaspResults::jaspObjR$dependOn()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="jaspResults" data-topic="jaspObjR" data-id="print"><a href='../../jaspResults/html/jaspObjR.html#method-print'><code>jaspResults::jaspObjR$print()</code></a></span></p></li>
-</ul>
-</details>
-
-<hr>
+<p><hr>
 <a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
-<p>create a new jaspState object, however, <code>createJaspState</code> is preferred.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>jaspStateR</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>object <span class='op'>=</span> <span class='cn'>NULL</span>, dependencies <span class='op'>=</span> <span class='cn'>NULL</span>, jaspObject <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre><p></div></p>
+<p>Do not create an instance of a jaspObject (it will throw an error).</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspObjR</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
 
+<p><hr>
+<a id="method-print"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code><a href='https://rdrr.io/r/base/print.html'>print()</a></code></h3>
+<p>print a jaspObject. Note that `print(jaspObj)` calls `jaspObj$print()`</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspObjR</span><span class='op'>$</span><span class='fu'>print</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-dependOn"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>dependOn()</code></h3>
+<p>Specify dependencies for a jaspObject</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspObjR</span><span class='op'>$</span><span class='fu'>dependOn</span><span class='op'>(</span>
+  options <span class='op'>=</span> <span class='cn'>NULL</span>,
+  optionsFromObject <span class='op'>=</span> <span class='cn'>NULL</span>,
+  optionContainsValue <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre><p></div></p>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
+<p><div class="arguments"></p><dl>
+<dt><code>options</code></dt><dd><p>string, the name of an option, e.g., `"variables"`.</p></dd>
+
+<dt><code>optionsFromObject</code></dt><dd><p>jaspObject, copy the dependencies from another jaspObject.</p></dd>
+
+<dt><code>optionContainsValue</code></dt><dd><p>named list, the name corresponds to an option and the value corresponds to whatever this options should contain, e.g., `list(variables = "contNormal")`</p></dd>
+
+</dl><p></div></p>
 
 
 

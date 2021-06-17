@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Class "jaspTable" — jaspTable • jaspResults</title>
+<title>jaspTable — createJaspTable • jaspResults</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Class "jaspTable" — jaspTable" />
-<meta property="og:description" content="This class represents a table in the results." />
+<meta property="og:title" content="jaspTable — createJaspTable" />
+<meta property="og:description" content="A jaspObject to show tables" />
 
 
 
@@ -103,167 +103,259 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Class "jaspTable"</h1>
+    <h1>jaspTable</h1>
     
     <div class="hidden name"><code>jaspTable.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This class represents a table in the results.</p>
+    <p>A jaspObject to show tables</p>
     </div>
 
+    <pre class="usage"><span class='fu'>createJaspTable</span><span class='op'>(</span>
+  title <span class='op'>=</span> <span class='st'>""</span>,
+  data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colNames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colTitles <span class='op'>=</span> <span class='cn'>NULL</span>,
+  overtitles <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colFormats <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rowNames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rowTitles <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dependencies <span class='op'>=</span> <span class='cn'>NULL</span>,
+  position <span class='op'>=</span> <span class='cn'>NULL</span>,
+  expectedRows <span class='op'>=</span> <span class='cn'>NULL</span>,
+  expectedColumns <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>title</th>
+      <td><p>String, title of the jaspContainer</p></td>
+    </tr>
+    <tr>
+      <th>dependencies</th>
+      <td><p>see jaspObject</p></td>
+    </tr>
+    <tr>
+      <th>position</th>
+      <td><p>see jaspObject</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="creation"><a class="anchor" href="#creation"></a>Creation</h2>
+    <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
 
-    <p></p><dl>
-    <dt><code>createJaspTable(title="", data=NULL, colNames=NULL, colTitles=NULL, overtitles=NULL, colFormats=NULL, rowNames=NULL, rowTitles=NULL, dependencies=NULL)</code>:</dt><dd><p>Creates a jaspTable with the set values. If the title is "" then, when it is placed in a container(/results), it will use it's fieldname.
-			It will only show up in your results if it or one of it's parents is jaspResults.
-			Any argument passed in data will be processed as if 'setData' was used, the rest will be passed through to the corresponding 'set'-functions (aka setColNames for colNames etc).</p></dd>
-	
-</dl>
-
+    <p><code><a href='jaspObjR.html'>jaspResults::jaspObjR</a></code> -&gt; <code><a href='jaspOutputObjR.html'>jaspResults::jaspOutputObjR</a></code> -&gt; <code>jaspTableR</code></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
-    <p></p><dl>
-      <dt><code>addColumnInfo(name=NULL, title=NULL, overtitle=NULL, type=NULL, format=NULL, combine=NULL)</code>:</dt><dd><p>Adds a column to the table with the specified properties, this is not strictly necessary but it gives you control on the order and look of your table in an easy way.
-		  All arguments are optional but it makes sense to give your columns a name and a title at the very least. It is easier to use this method then directly accessing colNames and the others.</p></dd>
+    
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Public methods</h3>
 
-		<dt><code>setData(data)</code>:</dt><dd><p>Set the data of the table, this methods accepts lists, dataframes, matrices and vectors. If any column- or rownames are specified they are set on the object, but only if they aren't set yet. Any one-dimensional data given will be assumed to be a row.</p></dd>
+<ul>
+<li><p><a href='#method-new'><code>jaspTableR$new()</code></a></p></li>
+<li><p><a href='#method-addColumns'><code>jaspTableR$addColumns()</code></a></p></li>
+<li><p><a href='#method-setData'><code>jaspTableR$setData()</code></a></p></li>
+<li><p><a href='#method-addFootnote'><code>jaspTableR$addFootnote()</code></a></p></li>
+<li><p><a href='#method-addColumnInfo'><code>jaspTableR$addColumnInfo()</code></a></p></li>
+<li><p><a href='#method-addRows'><code>jaspTableR$addRows()</code></a></p></li>
+<li><p><a href='#method-setExpectedSize'><code>jaspTableR$setExpectedSize()</code></a></p></li>
+<li><p><a href='#method-getColumnName'><code>jaspTableR$getColumnName()</code></a></p></li>
+<li><p><a href='#method-setColumnName'><code>jaspTableR$setColumnName()</code></a></p></li>
+<li><p><a href='#method-getColumnTitle'><code>jaspTableR$getColumnTitle()</code></a></p></li>
+<li><p><a href='#method-setColumnTitle'><code>jaspTableR$setColumnTitle()</code></a></p></li>
+<li><p><a href='#method-getColumnOvertitle'><code>jaspTableR$getColumnOvertitle()</code></a></p></li>
+<li><p><a href='#method-setColumnOvertitle'><code>jaspTableR$setColumnOvertitle()</code></a></p></li>
+<li><p><a href='#method-getColumnFormat'><code>jaspTableR$getColumnFormat()</code></a></p></li>
+<li><p><a href='#method-setColumnFormat'><code>jaspTableR$setColumnFormat()</code></a></p></li>
+<li><p><a href='#method-getColumnCombine'><code>jaspTableR$getColumnCombine()</code></a></p></li>
+<li><p><a href='#method-setColumnCombine'><code>jaspTableR$setColumnCombine()</code></a></p></li>
+<li><p><a href='#method-getColumnType'><code>jaspTableR$getColumnType()</code></a></p></li>
+<li><p><a href='#method-setColumnType'><code>jaspTableR$setColumnType()</code></a></p></li>
+<li><p><a href='#method-getRowName'><code>jaspTableR$getRowName()</code></a></p></li>
+<li><p><a href='#method-setRowName'><code>jaspTableR$setRowName()</code></a></p></li>
+<li><p><a href='#method-getRowTitle'><code>jaspTableR$getRowTitle()</code></a></p></li>
+<li><p><a href='#method-setRowTitle'><code>jaspTableR$setRowTitle()</code></a></p></li>
+</ul>
+<p><details ><summary>Inherited methods</summary>
+<ul>
+<li><p><span class="pkg-link" data-pkg="jaspResults" data-topic="jaspObjR" data-id="dependOn"><a href='jaspObjR.html#method-dependOn'><code>jaspResults::jaspObjR$dependOn()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="jaspResults" data-topic="jaspObjR" data-id="print"><a href='jaspObjR.html#method-print'><code>jaspResults::jaspObjR$print()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="jaspResults" data-topic="jaspOutputObjR" data-id="addCitation"><a href='jaspOutputObjR.html#method-addCitation'><code>jaspResults::jaspOutputObjR$addCitation()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="jaspResults" data-topic="jaspOutputObjR" data-id="getError"><a href='jaspOutputObjR.html#method-getError'><code>jaspResults::jaspOutputObjR$getError()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="jaspResults" data-topic="jaspOutputObjR" data-id="printHtml"><a href='jaspOutputObjR.html#method-printHtml'><code>jaspResults::jaspOutputObjR$printHtml()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="jaspResults" data-topic="jaspOutputObjR" data-id="setError"><a href='jaspOutputObjR.html#method-setError'><code>jaspResults::jaspOutputObjR$setError()</code></a></span></p></li>
+</ul>
+</details>
 
-    <dt><code>addRows(rows, rowNames=null</code>:</dt><dd><p>Add one or more rows to the table, where 'rows' is a list, dataframe, matrix or vector.
-      Before the data is added all existing columns will be made the same length by appending null-values.
-      If the new data contains more columns than currently present empty columns will be added.
-      Columnnames will be extracted and used to place the data in the correct column, they can be specified through the elementnames of a list, names of a data.frame and colnames of a matrix.
-      To also set the rownames you can fill pass a characterVector with the desired names in the second argument.</p></dd>
-    <dt><code>addColumns(cols)</code>:</dt><dd><p>Add one or more columns to the table, where 'cols' is a list, dataframe, matrix or vector.
-			A list is interpreted as being a single column where each elementname is a rowname. A dataframe already consists of columns so these are simply used as expected, the same goes for a matrix. A vector is of course also a column and the rownames are used.
-			To specifically set a vector or list with a desired name you can directly set it through: [['columnName']]&lt;-</p></dd>
-		<dt><code>[['columnName']]&lt;-'column'</code>:</dt><dd><p>Add or set a column in the table, where 'column' is a list or vector.
-			Each elementname in 'column' is a rowname that is set in the table if nothing was set yet.
-			If a column with 'columnName' exists it is overridden with 'column' else it is added to the end of the columnList.</p></dd>
-		
-		<dt><code>addFootnote(message="", symbol=NULL, col_names=NULL, row_names=NULL)</code>:</dt><dd><p>Add a footnote to your table with 'message'. If 'symbol' is specified it will be used. 
-		If col_names is specified then the footnote will point to that/those column(s). If row_names is specified the same for rows. If both col_names and row_names are specified the footnote will point to specific cells.</p></dd>
+<hr>
+<a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
 
-    <dt><code>setColName(columnIndex, newName)</code>:</dt><dd><p>Set new name on index.</p></dd>
-    <dt><code>setColType(columnName, newType)</code>:</dt><dd><p>Set new type for columnName.</p></dd>
-    <dt><code>setColTitle(columnName, newTitle)</code>:</dt><dd><p>Set new title for columnName.</p></dd>
-    <dt><code>setColOvertitle(columnName, newOvertitle)</code>:</dt><dd><p>Set new overtitle for columnName.</p></dd>
-    <dt><code>setColFormat(columnName, newFormat)</code>:</dt><dd><p>Set new format for columnName.</p></dd>
-    <dt><code>setColCombine(columnName, newCombine)</code>:</dt><dd><p>Set new combine for columnName.</p></dd>
-    <dt><code>setRowName(rowIndex, newName)</code>:</dt><dd><p>Set new name for row index.</p></dd>
-    <dt><code>setRowTitle(rowName, newTitle)</code>:</dt><dd><p>Set new title for rowName.</p></dd>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>
+  title <span class='op'>=</span> <span class='st'>""</span>,
+  data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colNames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colTitles <span class='op'>=</span> <span class='cn'>NULL</span>,
+  overtitles <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colFormats <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rowNames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rowTitles <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dependencies <span class='op'>=</span> <span class='cn'>NULL</span>,
+  position <span class='op'>=</span> <span class='cn'>NULL</span>,
+  info <span class='op'>=</span> <span class='cn'>NULL</span>,
+  expectedRows <span class='op'>=</span> <span class='cn'>NULL</span>,
+  expectedColumns <span class='op'>=</span> <span class='cn'>NULL</span>,
+  jaspObject <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre><p></div></p>
 
-    <dt><code>setColName(columnIndex)</code>:</dt><dd><p>Get name on index.</p></dd>
-    <dt><code>setColType(columnName)</code>:</dt><dd><p>Get type for columnName.</p></dd>
-    <dt><code>setColTitle(columnName)</code>:</dt><dd><p>Get title for columnName.</p></dd>
-    <dt><code>setColOvertitle(columnName)</code>:</dt><dd><p>Get overtitle for columnName.</p></dd>
-    <dt><code>setColFormat(columnName)</code>:</dt><dd><p>Get format for columnName.</p></dd>
-    <dt><code>setColCombine(columnName)</code>:</dt><dd><p>Get combine for columnName.</p></dd>
-    <dt><code>setRowName(rowIndex)</code>:</dt><dd><p>Get name for row index.</p></dd>
-    <dt><code>setRowTitle(rowName)</code>:</dt><dd><p>Get title for rowName.</p></dd>
+<p><hr>
+<a id="method-addColumns"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>addColumns()</code></h3>
 
-    <dt><code>setExpectedSize</code>:</dt><dd><p>Set the expected size of this table to the specified columnCount and rowCount. It will make your table show up, filled with dots, at this size and as you add data the dots will be replaced with it.</p></dd>
-    <dt><code>setExpectedColumns</code>:</dt><dd><p>Set the expected size of this table to the specified columnCount. It will make your table show up, filled with dots, at this size and as you add data the dots will be replaced with it.</p></dd>
-    <dt><code>setExpectedRows</code>:</dt><dd><p>Set the expected size of this table to the specified rowCount. It will make your table show up, filled with dots, at this size and as you add data the dots will be replaced with it.</p></dd>
-	 
-</dl>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>addColumns</span><span class='op'>(</span><span class='va'>cols</span><span class='op'>)</span></pre><p></div></p>
 
-    <h2 class="hasAnchor" id="properties"><a class="anchor" href="#properties"></a>Properties</h2>
+<p><hr>
+<a id="method-setData"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setData()</code></h3>
 
-    <p></p><dl>
-		<dt><code>transpose</code>:</dt><dd><p>The table will be diplayed transposed in the results.</p></dd>
-		<dt><code>transposeWithOvertitle</code>:</dt><dd><p>If transpose is TRUE the table will use the first column as an overtitle.</p></dd>
-		<dt><code>showSpecifiedColumnsOnly</code>:</dt><dd><p>If set to true will make only the specified columns (through addColumnInfo etc) show in the results.</p></dd>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setData</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span></pre><p></div></p>
 
-    <dt><code>status</code>:</dt><dd><p>The status of the table, by default and usually "running", will be set to "complete" automatically when the analysis ends. But if you know you are done already with it you can set it manually as well.</p></dd>
-	
-</dl>
+<p><hr>
+<a id="method-addFootnote"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>addFootnote()</code></h3>
 
-    <h2 class="hasAnchor" id="extends"><a class="anchor" href="#extends"></a>Extends</h2>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>addFootnote</span><span class='op'>(</span>
+  message <span class='op'>=</span> <span class='st'>""</span>,
+  symbol <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colNames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rowNames <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre><p></div></p>
 
-    <p>Class <code>"<a href='jaspObjR.html'>jaspObject</a>"</code></p>
+<p><hr>
+<a id="method-addColumnInfo"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>addColumnInfo()</code></h3>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># How setting up a table and modifying the data works, some examples: </span>
-<span class='va'>t</span> <span class='op'>&lt;-</span> <span class='fu'>createJaspTable</span><span class='op'>(</span><span class='op'>)</span>
-<span class='va'>t</span><span class='op'>$</span><span class='fu'>addColumnInfo</span><span class='op'>(</span>name<span class='op'>=</span><span class='st'>"str"</span>, title<span class='op'>=</span><span class='st'>"Strings"</span><span class='op'>)</span>
-<span class='va'>t</span><span class='op'>$</span><span class='fu'>addColumnInfo</span><span class='op'>(</span>name<span class='op'>=</span><span class='st'>"num"</span>, title<span class='op'>=</span><span class='st'>"Numbers"</span><span class='op'>)</span>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>addColumnInfo</span><span class='op'>(</span>
+  name <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  overtitle <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
+  format <span class='op'>=</span> <span class='cn'>NULL</span>,
+  combine <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre><p></div></p>
 
-<span class='va'>kolA</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span><span class='op'>)</span>
-<span class='va'>kolB</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>'b'</span>, <span class='st'>'c'</span>, <span class='st'>'d'</span><span class='op'>)</span>
-<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='va'>kolA</span>, <span class='va'>kolB</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"num"</span>, <span class='st'>"str"</span><span class='op'>)</span>
+<p><hr>
+<a id="method-addRows"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>addRows()</code></h3>
 
-<span class='co'># df:</span>
-<span class='co'>#  num str</span>
-<span class='co'>#   1   a</span>
-<span class='co'>#   2   b</span>
-<span class='co'>#   3   c</span>
-<span class='co'>#   4   d</span>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>addRows</span><span class='op'>(</span><span class='va'>rows</span>, rowNames <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setExpectedSize"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setExpectedSize()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setExpectedSize</span><span class='op'>(</span>rows <span class='op'>=</span> <span class='cn'>NULL</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-getColumnName"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getColumnName()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>getColumnName</span><span class='op'>(</span><span class='va'>columnIndex</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setColumnName"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setColumnName()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setColumnName</span><span class='op'>(</span><span class='va'>columnIndex</span>, <span class='va'>newName</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-getColumnTitle"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getColumnTitle()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>getColumnTitle</span><span class='op'>(</span><span class='va'>columnName</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setColumnTitle"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setColumnTitle()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setColumnTitle</span><span class='op'>(</span><span class='va'>columnName</span>, <span class='va'>newTitle</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-getColumnOvertitle"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getColumnOvertitle()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>getColumnOvertitle</span><span class='op'>(</span><span class='va'>columnName</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setColumnOvertitle"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setColumnOvertitle()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setColumnOvertitle</span><span class='op'>(</span><span class='va'>columnName</span>, <span class='va'>newOvertitle</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-getColumnFormat"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getColumnFormat()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>getColumnFormat</span><span class='op'>(</span><span class='va'>columnName</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setColumnFormat"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setColumnFormat()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setColumnFormat</span><span class='op'>(</span><span class='va'>columnName</span>, <span class='va'>newFormat</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-getColumnCombine"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getColumnCombine()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>getColumnCombine</span><span class='op'>(</span><span class='va'>columnName</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setColumnCombine"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setColumnCombine()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setColumnCombine</span><span class='op'>(</span><span class='va'>columnName</span>, <span class='va'>newCombine</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-getColumnType"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getColumnType()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>getColumnType</span><span class='op'>(</span><span class='va'>columnName</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setColumnType"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setColumnType()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setColumnType</span><span class='op'>(</span><span class='va'>columnName</span>, <span class='va'>newType</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-getRowName"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getRowName()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>getRowName</span><span class='op'>(</span><span class='va'>rowIndex</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setRowName"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setRowName()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setRowName</span><span class='op'>(</span><span class='va'>rowIndex</span>, <span class='va'>newName</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-getRowTitle"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getRowTitle()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>getRowTitle</span><span class='op'>(</span><span class='va'>rowName</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setRowTitle"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setRowTitle()</code></h3>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspTableR</span><span class='op'>$</span><span class='fu'>setRowTitle</span><span class='op'>(</span><span class='va'>rowName</span>, <span class='va'>newTitle</span><span class='op'>)</span></pre><p></div></p>
 
 
-<span class='va'>t</span><span class='op'>$</span><span class='fu'>setData</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
 
-<span class='co'># t:</span>
-<span class='co'># colnames:  str    num</span>
-<span class='co'># colTitles:  Strings    Numbers</span>
-<span class='co'>#    "a"    1</span>
-<span class='co'>#    "b"    2</span>
-<span class='co'>#    "c"    3</span>
-<span class='co'>#    "d"    4</span>
 
-<span class='va'>t</span><span class='op'>$</span><span class='fu'>addColumns</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>,<span class='fl'>4</span>,<span class='fl'>3</span>,<span class='fl'>2</span>,<span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># t:</span>
-<span class='co'># colnames:  str    num    col_2</span>
-<span class='co'># colTitles:  Strings    Numbers  </span>
-<span class='co'>#    "a"    1    5</span>
-<span class='co'>#    "b"    2    4</span>
-<span class='co'>#    "c"    3    3</span>
-<span class='co'>#    "d"    4    2</span>
-<span class='co'>#            1</span>
-
-<span class='va'>t</span><span class='op'>$</span><span class='fu'>addRows</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>num<span class='op'>=</span><span class='st'>"hallo"</span>, str<span class='op'>=</span><span class='fl'>2</span>, <span class='st'>"iets"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># t:</span>
-<span class='co'># colnames:  str    num    col_2</span>
-<span class='co'># colTitles:  Strings    Numbers  </span>
-<span class='co'>#    "a"    1    5</span>
-<span class='co'>#    "b"    2    4</span>
-<span class='co'>#    "c"    3    3</span>
-<span class='co'>#    "d"    4    2</span>
-<span class='co'>#    NULL    NULL    1</span>
-<span class='co'>#    2    "hallo"    "iets"</span>
-
-<span class='va'>t</span><span class='op'>[[</span><span class='st'>"col_2"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span><span class='op'>)</span>
-
-<span class='co'># t:</span>
-<span class='co'># colnames:  str    num    col_2</span>
-<span class='co'># colTitles:  Strings    Numbers  </span>
-<span class='co'>#    "a"    1    1</span>
-<span class='co'>#    "b"    2    2</span>
-<span class='co'>#    "c"    3    3</span>
-<span class='co'>#    "d"    4    </span>
-<span class='co'>#    NULL    NULL  </span>
-<span class='co'>#    2    "hallo"  </span>
-
-<span class='va'>t</span><span class='op'>$</span><span class='va'>colNames</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='st'>"thirdCol"</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in t$colNames[[3]] &lt;- "thirdCol": cannot add bindings to a locked environment</span></div><div class='input'><span class='va'>t</span><span class='op'>$</span><span class='fu'>addRows</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>thirdCol<span class='op'>=</span><span class='fl'>99</span>, num<span class='op'>=</span><span class='st'>"world"</span>, str<span class='op'>=</span><span class='st'>""</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># t:</span>
-<span class='co'># colnames:  str    num    thirdCol</span>
-<span class='co'># colTitles:  Strings    Numbers  </span>
-<span class='co'>#    "a"    1    1</span>
-<span class='co'>#    "b"    2    2</span>
-<span class='co'>#    "c"    3    3</span>
-<span class='co'>#    "d"    4    NULL</span>
-<span class='co'>#    NULL    NULL    NULL</span>
-<span class='co'>#    2    "hallo"    NULL</span>
-<span class='co'>#    ""    "world"    99</span>
-
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

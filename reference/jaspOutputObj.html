@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>jaspState — createJaspState • jaspResults</title>
+<title>jaspOutputObjR — jaspOutputObjR • jaspResults</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="jaspState — createJaspState" />
-<meta property="og:description" content="A jasp object to store R objects between consecutive runs of an analysis." />
+<meta property="og:title" content="jaspOutputObjR — jaspOutputObjR" />
+<meta property="og:description" content="Super object of jaspObjects that show output. Not to be used directly." />
 
 
 
@@ -103,37 +103,28 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>jaspState</h1>
+    <h1>jaspOutputObjR</h1>
     
-    <div class="hidden name"><code>jaspState.Rd</code></div>
+    <div class="hidden name"><code>jaspOutputObj.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A jasp object to store R objects between consecutive runs of an analysis.</p>
+    <p>Super object of jaspObjects that show output. Not to be used directly.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>createJaspState</span><span class='op'>(</span>object <span class='op'>=</span> <span class='cn'>NULL</span>, dependencies <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>title</th>
-      <td><p>String, title of the jaspContainer</p></td>
-    </tr>
-    <tr>
-      <th>position</th>
-      <td><p>see jaspObject</p></td>
-    </tr>
-    </table>
 
     <h2 class="hasAnchor" id="super-class"><a class="anchor" href="#super-class"></a>Super class</h2>
 
-    <p><code><a href='jaspObjR.html'>jaspResults::jaspObjR</a></code> -&gt; <code>jaspStateR</code></p>
+    <p><code><a href='jaspObjR.html'>jaspResults::jaspObjR</a></code> -&gt; <code>jaspOutputObjR</code></p>
     <h2 class="hasAnchor" id="active-bindings"><a class="anchor" href="#active-bindings"></a>Active bindings</h2>
 
     <p><div class="r6-active-bindings"></p><dl>
-<dt><code>object</code></dt><dd><p>an R object or NULL if the dependencies changed.</p></dd>
+<dt><code>position</code></dt><dd><p>the position of a jaspObject, accepts numeric input</p></dd>
+
+<dt><code>title</code></dt><dd><p>the title of a jaspObject, accepts string input</p></dd>
+
+<dt><code>info</code></dt><dd><p>the info of a jaspObject, accepts string input</p></dd>
 
 </dl><p></div></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
@@ -142,7 +133,11 @@
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Public methods</h3>
 
 <ul>
-<li><p><a href='#method-new'><code>jaspStateR$new()</code></a></p></li>
+<li><p><a href='#method-new'><code>jaspOutputObjR$new()</code></a></p></li>
+<li><p><a href='#method-printHtml'><code>jaspOutputObjR$printHtml()</code></a></p></li>
+<li><p><a href='#method-setError'><code>jaspOutputObjR$setError()</code></a></p></li>
+<li><p><a href='#method-getError'><code>jaspOutputObjR$getError()</code></a></p></li>
+<li><p><a href='#method-addCitation'><code>jaspOutputObjR$addCitation()</code></a></p></li>
 </ul>
 <p><details open ><summary>Inherited methods</summary>
 <ul>
@@ -153,9 +148,39 @@
 
 <hr>
 <a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
-<p>create a new jaspState object, however, <code>createJaspState</code> is preferred.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>jaspStateR</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>object <span class='op'>=</span> <span class='cn'>NULL</span>, dependencies <span class='op'>=</span> <span class='cn'>NULL</span>, jaspObject <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre><p></div></p>
+<p>Do not use.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspOutputObjR</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
 
+<p><hr>
+<a id="method-printHtml"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>printHtml()</code></h3>
+<p>print jaspObject as html.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspOutputObjR</span><span class='op'>$</span><span class='fu'>printHtml</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-setError"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>setError()</code></h3>
+<p>set an error on this jaspObject. If this is a container then the message `x` will be shown on the first child that is a  plot or table.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspOutputObjR</span><span class='op'>$</span><span class='fu'>setError</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre><p></div></p>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
+<p><div class="arguments"></p><dl>
+<dt><code>x, </code></dt><dd><p>string, error message.</p></dd>
+
+</dl><p></div></p>
+<p><hr>
+<a id="method-getError"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>getError()</code></h3>
+<p>check whether a jaspObject has an error or not, returns a boolean.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspOutputObjR</span><span class='op'>$</span><span class='fu'>getError</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
+
+<p><hr>
+<a id="method-addCitation"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>addCitation()</code></h3>
+<p>set an citation this jaspObject. If this is a container then the citation `x` will also be set on all children.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>jaspOutputObjR</span><span class='op'>$</span><span class='fu'>addCitation</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre><p></div></p>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
+<p><div class="arguments"></p><dl>
+<dt><code>x, </code></dt><dd><p>string, citation.</p></dd>
+
+</dl><p></div></p>
 
 
 
