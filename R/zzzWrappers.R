@@ -598,7 +598,7 @@ jaspTableR <- R6Class(
 		  # if the developer doesn't want a footnote pointing to a specific cell/col/row and doesn't specify "Note.",
 		  # then we add this to ensure footnotes look consistent across analyses
       if (is.null(symbol)	&& is.null(colNames) && is.null(rowNames))
-        symbol <- gettext("<em>Note.</em>", domain = "R-JASP")
+        symbol <- gettext("<em>Note.</em>", domain = "R-jaspBase")
         
 			private$jaspObject$addFootnoteHelper(message, symbol, colNames, rowNames)
 		},
