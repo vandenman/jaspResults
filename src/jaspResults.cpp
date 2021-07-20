@@ -74,7 +74,7 @@ jaspResults::jaspResults(std::string title, Rcpp::RObject oldState)
 	_jaspResults = this;
 
 #ifdef INCLUDE_COLUMN_ENCODING_ETC
-	_extraEncodings	= new ColumnEncoder("JaspExtraOptions_.");
+	_extraEncodings	= new ColumnEncoder("JaspExtraOptions_");
 #endif
 
 	if(_RStorageEnv != nullptr)
