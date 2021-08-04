@@ -70,6 +70,7 @@ RCPP_MODULE(jaspResults)
 		.property("plotObject",		&jaspPlot_Interface::getPlotObject,		&jaspPlot_Interface::setPlotObject,		"Stores the plotObj used to generate the graphic, will (should) be stored in a way that is later accesible to saveImage an editImage.")
 
 		.property("editing",		&jaspPlot_Interface::getEditing,		&jaspPlot_Interface::setEditing,		"If set to true will overwrite current png file when rendering a plot.")
+		.property("resizedByUser",	&jaspPlot_Interface::getResizedByUser,	&jaspPlot_Interface::setResizedByUser,	"If set to true, a user resized the plot and its width and height may be recycled in future runs of this analysis.")
 		.property("revision",		&jaspPlot_Interface::getRevision,												"return the current revision of the plot.")
 	;
 

@@ -12,7 +12,8 @@ public:
 	int			_width,
 				_height,
 				_revision = 0;
-	bool		_editing = false;
+	bool		_editing = false,
+				_resizedByUser = false;
 	std::string	_filePathPng,
 				_status = "waiting",
 				_envName;
@@ -65,6 +66,7 @@ public:
 	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspPlot, int,			_revision,		Revision)
 
 	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR_NO_NOTIFY(jaspPlot, bool,	_editing,		Editing)
+	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR_NO_NOTIFY(jaspPlot, bool,	_resizedByUser,	ResizedByUser)
 };
 
 RCPP_EXPOSED_CLASS_NODECL(jaspPlot_Interface)
