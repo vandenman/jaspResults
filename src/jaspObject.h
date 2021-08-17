@@ -7,6 +7,7 @@
 
 #ifdef JASP_R_INTERFACE_LIBRARY
 #include "jsonredirect.h"
+extern void	jaspRCPP_logString(		const std::string & code);
 #else
 #include "lib_json/json.h"
 #endif
