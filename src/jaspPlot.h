@@ -4,7 +4,7 @@
 class jaspPlot : public jaspObject
 {
 public:
-	jaspPlot(std::string title = "") : jaspObject(jaspObjectType::plot, title) { initEnvName(); }
+	jaspPlot(Rcpp::String title = "") : jaspObject(jaspObjectType::plot, title) { initEnvName(); }
 
 	~jaspPlot();
 

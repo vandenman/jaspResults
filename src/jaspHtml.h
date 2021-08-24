@@ -4,7 +4,7 @@
 class jaspHtml : public jaspObject
 {
 public:
-  jaspHtml(std::string text = "", std::string elementType = "p", std::string maxWidth="15cm", std::string Class = "") : jaspObject(jaspObjectType::html, ""), _rawText(text), _elementType(elementType), _class(Class), _maxWidth(maxWidth) {}
+  jaspHtml(Rcpp::String text = "", std::string elementType = "p", std::string maxWidth="15cm", std::string Class = "") : jaspObject(jaspObjectType::html, ""), _rawText(jaspNativeToUtf8(text)), _elementType(elementType), _class(Class), _maxWidth(maxWidth) {}
 
 	~jaspHtml() {}
 
@@ -33,9 +33,9 @@ class jaspHtml_Interface : public jaspObject_Interface
 public:
 	jaspHtml_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
 
-    void 		setText(std::string newRawText) { 			static_cast<jaspHtml *>(myJaspObject)->setText(newRawText); }
-    std::string getText() 						{ return 	static_cast<jaspHtml *>(myJaspObject)->getText(); }
-    std::string getHtml()						{ return	static_cast<jaspHtml *>(myJaspObject)->getHtml(); }
+    void			setText(Rcpp::String newRawText) { 			static_cast<jaspHtml *>(myJaspObject)->setText(jaspNativeToUtf8(newRawText)); }
+    Rcpp::String	getText() 						{ return 	static_cast<jaspHtml *>(myJaspObject)->getText(); }
+    std::string		getHtml()						{ return	static_cast<jaspHtml *>(myJaspObject)->getHtml(); }
 
 	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspHtml, std::string,	_elementType,	ElementType)
 	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspHtml, std::string,	_class,			Class)

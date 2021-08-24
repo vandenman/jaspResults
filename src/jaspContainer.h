@@ -14,7 +14,7 @@
 class jaspContainer : public jaspObject
 {
 public:
-	jaspContainer(std::string title = "", jaspObjectType type = jaspObjectType::container) : jaspObject(type, title)
+	jaspContainer(Rcpp::String title = "", jaspObjectType type = jaspObjectType::container) : jaspObject(type, title)
 	{
 #ifdef JASP_RESULTS_DEBUG_TRACES
 		std::cout << "JASPcontainer constructor for title: " << title << std::endl;
@@ -47,7 +47,7 @@ public:
 	void		completeChildren();
 	void		letChildrenRun();
 	void		setError()															override;
-	void		setError(std::string message)										override;
+	void		setError(Rcpp::String message)										override;
 	void		renderPlotsOfChildren();
 
 	bool		containsNonContainer();

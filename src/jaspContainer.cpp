@@ -59,7 +59,7 @@ jaspContainer * jaspContainer::jaspContainerFromRcppList(Rcpp::List convertThis)
 
 	for(int i=0; i<convertThis.size(); i++)
 		if(colNamesVec[i] == "title")
-			newContainer->_title = Rcpp::as<std::string>(convertThis[i]);
+			newContainer->_title = jaspNativeToUtf8(Rcpp::RObject(convertThis[i]));
 		else
 			newContainer->insert(colNamesVec[i], convertThis[i]);
 
@@ -281,7 +281,7 @@ Json::Value jaspContainer::dataEntry(jaspObject * oldResult, std::string & error
 	std::string cascadingMsg		= cascaded ? errorMsg : _errorMessage;	//cascading errorMessagues trumps local one
 	jaspContainer * oldContainer	= dynamic_cast<jaspContainer*>(oldResult);		//dynamic_cast returns nullptr if not right type
 
-	for(std::string field: getSortedDataFieldsWithOld(oldContainer))
+	for(const std::string & field: getSortedDataFieldsWithOld(oldContainer))
 	{
 		jaspObject *	obj			= getJaspObjectNewOrOld(field, oldContainer);
 		bool			objIsOld	= jaspObjectComesFromOldResults(field, oldContainer);
@@ -466,9 +466,9 @@ void jaspContainer::setError()
 		d.second->setError();
 }
 
-void jaspContainer::setError(std::string message)
+void jaspContainer::setError(Rcpp::String message)
 {
-	_errorMessage = message;
+	_errorMessage = jaspNativeToUtf8(message);
 	setError();
 }
 

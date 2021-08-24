@@ -55,6 +55,27 @@ void jaspPrint(std::string msg)
 #endif
 }
 
+std::string jaspNativeToUtf8(const Rcpp::RObject &in)
+{
+	if(in.isNULL())
+		return "";
+	
+	return jaspNativeToUtf8(Rcpp::as<Rcpp::String>(in));
+}
+
+
+std::string jaspNativeToUtf8(const Rcpp::String & in)
+{
+#ifdef _WIN32
+	#ifdef JASP_R_INTERFACE_LIBRARY
+		return jaspRCPP_nativeToUtf8(in);
+	#else
+		return in; //If running in R then it's the users problem really.
+	#endif	
+#else
+	return in;
+#endif
+}
 
 std::set<jaspObject*> * jaspObject::allocatedObjects = new std::set<jaspObject*>();
 
@@ -195,7 +216,7 @@ Rcpp::DataFrame jaspObject::convertFactorsToCharacters(Rcpp::DataFrame df)
 
 			for(int i=0; i<originalColumn.size(); i++)
 				if(originalColumn[i] > 0) //it can be INT_MIN at least, but if we are doing a -1 on it anyhow it should just be bigger than 0
-					charCol[i] = Rcpp::as<std::string>(factorLevels[originalColumn[i] - 1]);
+					charCol[i] = jaspNativeToUtf8(factorLevels[originalColumn[i] - 1]);
 
 			df[col] = charCol;
 		}

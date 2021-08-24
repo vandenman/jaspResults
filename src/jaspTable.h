@@ -79,7 +79,7 @@ using footnotesNamespace::footnotes;
 class jaspTable : public jaspObject
 {
 public:
-	jaspTable(std::string title = "") : jaspObject(jaspObjectType::table, title), _colNames("colNames"), _colTypes("colTypes"), _colTitles("colTitles"), _colOvertitles("colOvertitles"), _colFormats("colFormats"), _rowNames("rowNames"), _rowTitles("rowTitles") {}
+	jaspTable(Rcpp::String title = "") : jaspObject(jaspObjectType::table, title), _colNames("colNames"), _colTypes("colTypes"), _colTitles("colTitles"), _colOvertitles("colOvertitles"), _colFormats("colFormats"), _rowNames("rowNames"), _rowTitles("rowTitles") {}
 
 	void			setColNames(Rcpp::List newNames)		{ _colNames.setRows(newNames); }
 	jaspStringlist	_colNames;
@@ -427,11 +427,11 @@ public:
 	//void combineColumns(Rcpp::map_named_args named_args)			{ ((jaspTable*)myJaspObject)->combineColumns(named_args);	}
 	//void combineRows(Rcpp::map_named_args named_args)				{ ((jaspTable*)myJaspObject)->combineRows(named_args);		}
 
-	void addRows(Rcpp::RObject newRows, Rcpp::CharacterVector rowNames)	{ ((jaspTable*)myJaspObject)->addRows(newRows, rowNames);		}
-	void addRowsWithoutNames(Rcpp::RObject newRows)						{ ((jaspTable*)myJaspObject)->addRowsWithoutNames(newRows);		}
-	void addRow(Rcpp::RObject newRow, Rcpp::CharacterVector rowNames)	{ ((jaspTable*)myJaspObject)->addRow(newRow, rowNames);		}
-	void addRowWithoutNames(Rcpp::RObject newRow)						{ ((jaspTable*)myJaspObject)->addRowWithoutNames(newRow);		}
-	void setColumn(std::string columnName, Rcpp::RObject column)		{ ((jaspTable*)myJaspObject)->setColumn(columnName, column);	}
+	void addRows(				Rcpp::RObject newRows,	Rcpp::CharacterVector rowNames)	{ ((jaspTable*)myJaspObject)->addRows(newRows, rowNames);		}
+	void addRowsWithoutNames(	Rcpp::RObject newRows)									{ ((jaspTable*)myJaspObject)->addRowsWithoutNames(newRows);		}
+	void addRow(				Rcpp::RObject newRow,	Rcpp::CharacterVector rowNames)	{ ((jaspTable*)myJaspObject)->addRow(newRow, rowNames);			}
+	void addRowWithoutNames(	Rcpp::RObject newRow)									{ ((jaspTable*)myJaspObject)->addRowWithoutNames(newRow);		}
+	void setColumn(				std::string columnName, Rcpp::RObject column)			{ ((jaspTable*)myJaspObject)->setColumn(columnName, column);	}
 
 	void setExpectedSize(size_t columns, size_t rows)	{ ((jaspTable*)myJaspObject)->setExpectedSize(columns, rows);	}
 	void setExpectedRows(size_t rows)					{ ((jaspTable*)myJaspObject)->setExpectedRows(rows);			}

@@ -68,7 +68,7 @@ void jaspResults::setInsideJASP()
 	_insideJASP = true;
 }
 
-jaspResults::jaspResults(std::string title, Rcpp::RObject oldState)
+jaspResults::jaspResults(Rcpp::String title, Rcpp::RObject oldState)
 	: jaspContainer(title, jaspObjectType::results)
 {
 	_jaspResults = this;
@@ -389,9 +389,9 @@ Json::Value jaspResults::dataEntry(std::string &) const
 
 
 
-void jaspResults::setErrorMessage(std::string msg, std::string errorStatus)
+void jaspResults::setErrorMessage(Rcpp::String msg, std::string errorStatus)
 {
-	errorMessage = msg;
+	errorMessage = jaspNativeToUtf8(msg);
 	setStatus(errorStatus);
 }
 
@@ -534,7 +534,7 @@ void jaspResults::convertFromJSON_SetFields(Json::Value in)
 
 
 
-void jaspResults::startProgressbar(int expectedTicks, std::string label)
+void jaspResults::startProgressbar(int expectedTicks, Rcpp::String label)
 {
 	_progressbarExpectedTicks		= expectedTicks;
 	_progressbarLastUpdateTime		= getCurrentTimeMs();
@@ -542,7 +542,7 @@ void jaspResults::startProgressbar(int expectedTicks, std::string label)
 
 	Json::Value progress;
 	progress["value"]		= 0;
-	progress["label"]		= label;
+	progress["label"]		= jaspNativeToUtf8(label);
 	_response["progress"]	= progress;
 
 	send();

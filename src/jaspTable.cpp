@@ -1102,8 +1102,8 @@ void jaspTable::addFootnote(Rcpp::RObject message, Rcpp::RObject symbol, Rcpp::R
 	if (message.isNULL())
 		Rf_error("One would expect a footnote to at least contain a message..");
 		
-	std::string strMessage	= Rcpp::as<std::string>(message);
-	std::string strSymbol	= symbol.isNULL() ? "" : Rcpp::as<std::string>(symbol);
+	std::string strMessage	= jaspNativeToUtf8(message);
+	std::string strSymbol	= symbol.isNULL() ? "" : jaspNativeToUtf8(symbol);
 	
 	std::vector<Json::Value> colNames;
 	if (!col_names.isNULL())
@@ -1116,45 +1116,6 @@ void jaspTable::addFootnote(Rcpp::RObject message, Rcpp::RObject symbol, Rcpp::R
 	_footnotes.insert(strMessage, strSymbol, colNames, rowNames);
 }
 
-/*
-void jaspTable::combineCells(Rcpp::map_named_args & named_args)
-{
-	///we are going to pretend that the arguments in R would be: combineColums(colnames=c(""), title="", overwrite=FALSE, removeSeparator=FALSE) or combineRows(rownames=c(""), title="", overwrite=FALSE, removeSeparator=FALSE)
-	std::queue<Rcpp::RObject> unnamed_args = extract_unnamed_args(named_args);
-
-	Rcpp::RObject colNames			= extractFieldOrFirstUnnamed("colnames",			named_args, unnamed_args);
-	Rcpp::RObject colOvertitles		= extractFieldOrFirstUnnamed("colOvertitles",		named_args, unnamed_args);
-	Rcpp::RObject rowNames			= extractFieldOrFirstUnnamed("rownames",			named_args, unnamed_args);
-	Rcpp::RObject rowOvertitles		= extractFieldOrFirstUnnamed("rowOvertitles",		named_args, unnamed_args);
-	Rcpp::RObject title				= extractFieldOrFirstUnnamed("title",				named_args, unnamed_args);
-	Rcpp::RObject overwrite			= extractFieldOrFirstUnnamed("overwrite",			named_args, unnamed_args);
-	Rcpp::RObject removeSeparator	= extractFieldOrFirstUnnamed("removeSeparator",		named_args, unnamed_args);
-	Rcpp::RObject name				= extractFieldOrUseDefault("title",					named_args, title);
-
-	std::vector<Json::Value> vecJsonColNames		= jaspJson::RcppVector_to_VectorJson(colNames,		false);
-	std::vector<Json::Value> vecJsonRowNames		= jaspJson::RcppVector_to_VectorJson(rowNames,		false);
-	std::vector<Json::Value> vecJsonColOvertitles	= jaspJson::RcppVector_to_VectorJson(colOvertitles, false);
-	std::vector<Json::Value> vecJsonRowOvertitles	= jaspJson::RcppVector_to_VectorJson(rowOvertitles, false);
-
-
-	if(	vecJsonColNames.size() == 0 && vecJsonColNames.size() == 0 && vecJsonColOvertitles.size() == 0 && vecJsonRowOvertitles.size() == 0)
-		return; //It doesnt make a lot of sense to combine nothing right?
-
-	_colRowCombinations.push_back(
-		jaspColRowCombination(
-			name.isNULL()				? ""	: Rcpp::as<std::string>(name),
-			title.isNULL()				? ""	: Rcpp::as<std::string>(title),
-			overwrite.isNULL()			? false	: Rcpp::as<bool>(overwrite),
-			removeSeparator.isNULL()	? false	: Rcpp::as<bool>(removeSeparator),
-			jaspJson::VectorJson_to_ArrayJson(vecJsonColNames),
-			jaspJson::VectorJson_to_ArrayJson(vecJsonRowNames),
-			jaspJson::VectorJson_to_ArrayJson(vecJsonColOvertitles),
-			jaspJson::VectorJson_to_ArrayJson(vecJsonRowOvertitles)
-		)
-	);
-
-}
-*/
 Json::Value jaspTable::dataEntry(std::string & errorMessage) const
 {
 	Json::Value	tmpFootnotesFull,		//This should contain the full list of footnotes, aka per table/col/row/cell and in order of occurence left to right, top to bottom. This should also contain an index of the footnote in _tmpFootnotesMerged
@@ -1375,11 +1336,11 @@ void jaspTable::addColumnInfo(Rcpp::RObject name, Rcpp::RObject title, Rcpp::ROb
 
 	std::string lastAddedColName = getColName(_colNames.rowCount() - 1);
 
-	if(!title.isNULL())		_colTitles[lastAddedColName]		= Rcpp::as<std::string>(title);
-	if(!type.isNULL())		_colTypes[lastAddedColName]			= Rcpp::as<std::string>(type);
-	if(!format.isNULL())	_colFormats[lastAddedColName]		= Rcpp::as<std::string>(format);
-	if(!combine.isNULL())	_colCombines[lastAddedColName]		= Rcpp::as<bool>(combine);
-	if(!overtitle.isNULL())	_colOvertitles[lastAddedColName]	= Rcpp::as<std::string>(overtitle);
+	if(!title.isNULL())		_colTitles[		lastAddedColName ] = jaspNativeToUtf8(title);
+	if(!type.isNULL())		_colTypes[		lastAddedColName ] = jaspNativeToUtf8(type);
+	if(!format.isNULL())	_colFormats[	lastAddedColName ] = jaspNativeToUtf8(format);
+	if(!combine.isNULL())	_colCombines[	lastAddedColName ] = Rcpp::as<bool>(combine);
+	if(!overtitle.isNULL())	_colOvertitles[	lastAddedColName ] = jaspNativeToUtf8(overtitle);
 }
 
 
@@ -1392,17 +1353,17 @@ Json::Value jaspTable::convertToJSON() const
 	obj["transposeWithOvertitle"]	= _transposeWithOvertitle;
 	obj["showSpecifiedColumnsOnly"]	= _showSpecifiedColumnsOnly;
 	
-	obj["footnotes"]			= _footnotes.convertToJSON();
-	obj["colNames"]				= _colNames.convertToJSON();
-	obj["colTypes"]				= _colTypes.convertToJSON();
-	obj["rowNames"]				= _rowNames.convertToJSON();
-	obj["rowTitles"]			= _rowTitles.convertToJSON();
-	obj["colTitles"]			= _colTitles.convertToJSON();
-	obj["colOvertitles"]		= _colOvertitles.convertToJSON();
-	obj["colFormats"]			= _colFormats.convertToJSON();
-	obj["colCombines"]			= _colCombines.convertToJSON();
-	obj["expectedRowCount"]		= int(_expectedRowCount);
-	obj["expectedColumnCount"]	= int(_expectedColumnCount);
+	obj["footnotes"]				= _footnotes.convertToJSON();
+	obj["colNames"]					= _colNames.convertToJSON();
+	obj["colTypes"]					= _colTypes.convertToJSON();
+	obj["rowNames"]					= _rowNames.convertToJSON();
+	obj["rowTitles"]				= _rowTitles.convertToJSON();
+	obj["colTitles"]				= _colTitles.convertToJSON();
+	obj["colOvertitles"]			= _colOvertitles.convertToJSON();
+	obj["colFormats"]				= _colFormats.convertToJSON();
+	obj["colCombines"]				= _colCombines.convertToJSON();
+	obj["expectedRowCount"]			= int(_expectedRowCount);
+	obj["expectedColumnCount"]		= int(_expectedColumnCount);
 
 	Json::Value dataColumns(Json::arrayValue);
 

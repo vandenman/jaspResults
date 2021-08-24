@@ -121,17 +121,8 @@ template<> inline Json::Value jaspJson::RMatrixColumnEntry_to_JsonValue<INTSXP>(
 template<> inline Json::Value jaspJson::RVectorEntry_to_JsonValue<LGLSXP>(Rcpp::Vector<LGLSXP> obj, int row)					{ return obj[row] == NA_LOGICAL	? "" : Json::Value((bool)(obj[row]));			}
 template<> inline Json::Value jaspJson::RMatrixColumnEntry_to_JsonValue<LGLSXP>(Rcpp::MatrixColumn<LGLSXP> obj, int row)		{ return obj[row] == NA_LOGICAL	? "" : Json::Value((bool)(obj[row]));			}
 
-template<> inline Json::Value jaspJson::RVectorEntry_to_JsonValue<STRSXP>(Rcpp::Vector<STRSXP> obj, int row)					
-{ 
-	Rcpp::String input(obj[row]);	
-	
-	//jaspPrint("jaspJson from string got " + std::string(input.get_cstring()) + " and it has encoding " + (input.get_encoding() == CE_UTF8 ? "UTF8" : "something else") );
-	
-	return obj[row] == NA_STRING	? "" : Json::Value(stringUtils::escapeHtmlStuff((std::string)(obj[row])));
-
-
-}
-template<> inline Json::Value jaspJson::RMatrixColumnEntry_to_JsonValue<STRSXP>(Rcpp::MatrixColumn<STRSXP> obj, int row)		{ return obj[row] == NA_STRING	? "" : Json::Value(stringUtils::escapeHtmlStuff((std::string)(obj[row])));	}
+template<> inline Json::Value jaspJson::RVectorEntry_to_JsonValue<STRSXP>(Rcpp::Vector<STRSXP> obj, int row)					{ return obj[row] == NA_STRING	? "" : Json::Value(stringUtils::escapeHtmlStuff(jaspNativeToUtf8(obj[row])));	}
+template<> inline Json::Value jaspJson::RMatrixColumnEntry_to_JsonValue<STRSXP>(Rcpp::MatrixColumn<STRSXP> obj, int row)		{ return obj[row] == NA_STRING	? "" : Json::Value(stringUtils::escapeHtmlStuff(jaspNativeToUtf8(obj[row])));	}
 
 #define TO_INFINITY_AND_BEYOND																					\
 {																												\

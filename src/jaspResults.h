@@ -21,7 +21,7 @@ typedef bool (*pollMessagesFuncDef)();
 class jaspResults : public jaspContainer
 {
 public:
-	jaspResults(std::string title, Rcpp::RObject oldState);
+	jaspResults(Rcpp::String title, Rcpp::RObject oldState);
 	~jaspResults();
 
 	//static functions to allow the values to be set before the constructor is called from R. Would be nicer to just run the constructor in C++ maybe?
@@ -56,7 +56,7 @@ public:
 	void			saveResults();
 
 	void			loadResults();
-	void			setErrorMessage(std::string msg, std::string errorStatus);
+	void			setErrorMessage(Rcpp::String msg, std::string errorStatus);
 	void			changeOptions(std::string opts);
 	void			setOptions(std::string opts);
 	void			pruneInvalidatedData();
@@ -73,10 +73,10 @@ public:
 	void		convertFromJSON_SetFields(Json::Value in)			override;
 
 
-	void startProgressbar(int expectedTicks, std::string label);
+	void startProgressbar(int expectedTicks, Rcpp::String label);
 	void progressbarTick();
 
-	static void staticStartProgressbar(int expectedTicks, std::string label)			{ _jaspResults->startProgressbar(expectedTicks, label); }
+	static void staticStartProgressbar(int expectedTicks, Rcpp::String label)			{ _jaspResults->startProgressbar(expectedTicks, label); }
 	static void staticProgressbarTick()													{ _jaspResults->progressbarTick(); }
 
 	static Rcpp::RObject	getObjectFromEnv(std::string envName);
@@ -120,9 +120,9 @@ private:
 
 	jaspContainer					*	_oldResults	= nullptr;
 
-	void addSerializedPlotObjsForStateFromJaspObject(jaspObject * obj, Rcpp::List & pngImgObj);
-	void addPlotPathsForKeepFromJaspObject(jaspObject * obj, Rcpp::List & pngPathImgObj);
-	void addSerializedOtherObjsForStateFromJaspObject(jaspObject * obj, Rcpp::List & cumulativeList);
+	void addSerializedPlotObjsForStateFromJaspObject(	jaspObject * obj, Rcpp::List & pngImgObj);
+	void addPlotPathsForKeepFromJaspObject(				jaspObject * obj, Rcpp::List & pngPathImgObj);
+	void addSerializedOtherObjsForStateFromJaspObject(	jaspObject * obj, Rcpp::List & cumulativeList);
 	void fillEnvironmentWithStateObjects(Rcpp::List state);
 	void storeOldResults();
 
@@ -160,7 +160,7 @@ public:
 	Rcpp::List	getKeepList()						{ return ((jaspResults*)myJaspObject)->getKeepList();				}
 	std::string getResults()						{ return ((jaspResults*)myJaspObject)->getResults();				}
 	
-	void		setErrorMessage(std::string msg, std::string errorStatus)			{ ((jaspResults*)myJaspObject)->setErrorMessage(msg, errorStatus);							}
+	void		setErrorMessage(Rcpp::String msg, std::string errorStatus)			{ ((jaspResults*)myJaspObject)->setErrorMessage(msg, errorStatus);							}
 
 	void		setOptions(std::string opts)		{ ((jaspResults*)myJaspObject)->setOptions(opts); }
 	void		changeOptions(std::string opts)		{ ((jaspResults*)myJaspObject)->changeOptions(opts); }
