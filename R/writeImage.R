@@ -180,18 +180,18 @@ decodeplot.gg <- function(x, returnGrob = TRUE) {
     if (!is.null(labels[[i]]))
       labels[[i]] <- decodeColNames(labels[[i]])
     
-    x[["labels"]] <- labels
-    if (returnGrob) {
-      grDevices::png(f <- tempfile())
-      on.exit({
-        grDevices::dev.off()
-        if (file.exists(f))
-          file.remove(f)
-      })
-      return(decodeplot.gTree(ggplot2::ggplotGrob(x)))
-    } else {
-      return(x)
-    }
+  x[["labels"]] <- labels
+  if (returnGrob) {
+    grDevices::png(f <- tempfile())
+    on.exit({
+      grDevices::dev.off()
+      if (file.exists(f))
+        file.remove(f)
+    })
+    return(decodeplot.gTree(ggplot2::ggplotGrob(x)))
+  } else {
+    return(x)
+  }
 }
 
 decodeplot.recordedplot <- function(x) {
@@ -329,4 +329,46 @@ decodeColNames <- function(x, strict = FALSE, fun = NULL, ...) {
   return(x)
 }
 
+.applyEnDeCoder.call <- function(x, fun, ...) {
+  return(.modify_lang(x, fun, ...))
+}
 
+.modify_lang <- function(x, f, ...) {
+  # adapted from pryr::modify_lang
+  # changed modify_lang to .modify_lang and added an explicit is.character check before doing f
+
+  # @param x a call object
+  # @param f a function to apply to each leaf
+
+  recurse <- function(y) {
+    # if (!is.null(names(y))) names(y) <- f2(names(y))
+    lapply(y, .modify_lang, f = f, ...)
+  }
+
+  if (is.atomic(x) || is.name(x)) {
+    # Leaf
+    # modified bit:
+    if (is.character(x))
+      f(x, ...)
+    else
+      x
+    # end of modified bit
+  } else if (is.call(x)) {
+    as.call(recurse(x))
+  } else if (is.function(x)) {
+    formals(x) <- .modify_lang(formals(x), f, ...)
+    body(x) <- .modify_lang(body(x), f, ...)
+    x
+  } else if (is.pairlist(x)) {
+    # Formal argument lists (when creating functions)
+    as.pairlist(recurse(x))
+  } else if (is.expression(x)) {
+    # shouldn't occur inside tree, but might be useful top-level
+    as.expression(recurse(x))
+  } else if (is.list(x)) {
+    # shouldn't occur inside tree, but might be useful top-level
+    recurse(x)
+  } else {
+    stop(".modify_lang encountered an unknown language class: ", paste(class(x), collapse = "/"), call. = FALSE, domain = NA)
+  }
+}
