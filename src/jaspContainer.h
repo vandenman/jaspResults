@@ -55,6 +55,8 @@ public:
 
 	bool		_initiallyCollapsed = false;
 
+	Rcpp::List	toRObject()													const	override;
+
 	static std::vector<std::string>				convertSortedDataFieldsToStringVector(std::vector<std::pair<double, std::string>> sortvec, bool removeDuplicates = false);
 	std::vector<std::pair<double, std::string>> getSortedDataFieldsSortVector()														const;
 	std::vector<std::string>					getSortedDataFields()																const;

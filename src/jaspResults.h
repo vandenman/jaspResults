@@ -72,6 +72,7 @@ public:
 	Json::Value convertToJSON()								const	override;
 	void		convertFromJSON_SetFields(Json::Value in)			override;
 
+//	Rcpp::List toRObject() const override;
 
 	void startProgressbar(int expectedTicks, Rcpp::String label);
 	void progressbarTick();

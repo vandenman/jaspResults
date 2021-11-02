@@ -156,6 +156,8 @@ public:
 	void		setExpectedRows(size_t rows)					{ _expectedRowCount = rows;								}
 	void		setExpectedColumns(size_t columns)				{ _expectedColumnCount = columns;						}
 
+	Rcpp::List toRObject()								const	override;;
+
 protected:
 	std::vector<std::string>	getDisplayableColTitles(bool normalizeLengths = true, bool onlySpecifiedColumns = true)		const;
 	std::vector<std::string>	getDisplayableRowTitles(bool normalizeLengths = true)										const;
@@ -173,7 +175,7 @@ protected:
 
 	Json::Value	schemaJson(Json::Value tmpFootnotesFull)	const;
 	Json::Value	rowsJson(Json::Value tmpFootnotesFull)		const;
-	std::string deriveColumnType(int col)					const;
+	jaspTableColumnType deriveColumnType(int col)					const;
 
 	std::map<std::string, size_t> mapColNamesToIndices()	const;
 	std::map<std::string, size_t> mapRowNamesToIndices()	const;

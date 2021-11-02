@@ -532,8 +532,6 @@ void jaspResults::convertFromJSON_SetFields(Json::Value in)
 	_previousOptions	= _currentOptions;
 }
 
-
-
 void jaspResults::startProgressbar(int expectedTicks, Rcpp::String label)
 {
 	_progressbarExpectedTicks		= expectedTicks;

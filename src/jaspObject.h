@@ -22,6 +22,7 @@ std::string jaspNativeToUtf8(const Rcpp::RObject & in);
 
 DECLARE_ENUM(jaspObjectType, unknown, container, table, plot, json, list, results, html, state, column, qmlSource);
 DECLARE_ENUM(jaspColumnType, unknown, scale, ordinal, nominal, nominalText); //can be merged with columnType from CentralDatasetModel branch later on?
+DECLARE_ENUM(jaspTableColumnType, unknown, null, string, logical, integer, number, various, composite); //can be merged with columnType from CentralDatasetModel branch later on?
 
 jaspObjectType jaspObjectTypeStringToObjectType(std::string type);
 
@@ -94,16 +95,17 @@ public:
 	virtual	void			convertFromJSON_SetFields(Json::Value in);
 
 			///Gives nested name to avoid namingclashes
-			std::string getUniqueNestedName() const;
-			void		getUniqueNestedNameVector(std::vector<std::string> & names)	const;
-			void		setName(std::string name) { _name = name; }
+			std::string		getUniqueNestedName() const;
+			void			getUniqueNestedNameVector(std::vector<std::string> & names)	const;
+			void			setName(std::string name) { _name = name; }
 
-			void		childrenUpdatedCallback(bool ignoreSendTimer);
-	virtual void		childFinalizedHandler(jaspObject * child) {}
-			void		childFinalized(jaspObject * child);
-			void		finalized();
-	virtual void		finalizedHandler() {}
+			void			childrenUpdatedCallback(bool ignoreSendTimer);
+	virtual void			childFinalizedHandler(jaspObject * child) {}
+			void			childFinalized(jaspObject * child);
+			void			finalized();
+	virtual void			finalizedHandler() {}
 
+	virtual Rcpp::List		toRObject()				const {	return R_NilValue;	};
 
 	template <typename RCPP_CLASS> static std::vector<std::string> extractElementOrColumnNames(RCPP_CLASS rObj)
 	{
@@ -218,7 +220,7 @@ public:
 	void		setOptionMustContainDependency(std::string optionName, Rcpp::RObject mustContainThis)	{ myJaspObject->setOptionMustContainDependency(optionName, mustContainThis);	}
 	void		dependOnOptions(Rcpp::CharacterVector listOptions)										{ myJaspObject->dependOnOptions(listOptions);									}
 	void		copyDependenciesFromJaspObject(jaspObject_Interface * other)							{ myJaspObject->copyDependenciesFromJaspObject(other->myJaspObject);			}
-	void		addCitation(Rcpp::String fullCitation)													{ myJaspObject->addCitation(jaspNativeToUtf8(fullCitation));						}
+	void		addCitation(Rcpp::String fullCitation)													{ myJaspObject->addCitation(jaspNativeToUtf8(fullCitation));					}
 
 	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR_NATIVE_STRING(jaspObject, _title,		Title)
 	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR_NATIVE_STRING(jaspObject, _info,		Info)
@@ -228,6 +230,8 @@ public:
 	bool		getError()							{ return myJaspObject->getError(); }
 
 	jaspObject * returnMyJaspObject() { return myJaspObject; }
+
+	Rcpp::List	toRObject()							{ return myJaspObject->toRObject();	}
 
 protected:
 		jaspObject * myJaspObject = NULL;
