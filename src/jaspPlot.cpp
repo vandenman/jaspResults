@@ -139,7 +139,7 @@ void jaspPlot::renderPlot()
 	}
 }
 
-Rcpp::RObject jaspPlot::getPlotObject()
+Rcpp::RObject jaspPlot::getPlotObject()	const
 {
 	Rcpp::RObject plotInfo = jaspResults::getObjectFromEnv(_envName);
 	if (!plotInfo.isNULL() && Rcpp::is<Rcpp::List>(plotInfo))
@@ -239,6 +239,14 @@ void jaspPlot::convertFromJSON_SetFields(Json::Value in)
 	std::string jsonPlotObjStr = in.get("plotObjSerialized", "").asString();
 	_plotObjSerialized = Rcpp::Vector<RAWSXP>(jsonPlotObjStr.begin(), jsonPlotObjStr.end());
 	JASP_OBJECT_TIMEREND(converting from JSON)*/
+}
+
+Rcpp::List jaspPlot::toRObject() const
+{
+	Rcpp::List lst = Rcpp::List::create(Rcpp::Named(_title) = getPlotObject());
+	lst.attr("title") = _title;
+	lst.attr("class") = std::vector<std::string>({"jaspPlotWrapper", "jaspWrapper"});
+	return lst;
 }
 
 std::string jaspPlot::toHtml()
