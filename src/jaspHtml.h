@@ -22,6 +22,7 @@ public:
 	std::string convertTextToHtml(const std::string text)	const;
 
     void setText(std::string newRawText);
+	void setTextFromR(std::string newRawText)	{ setText(jaspNativeToUtf8(newRawText)); };
     std::string getText();
     std::string getHtml();
 };

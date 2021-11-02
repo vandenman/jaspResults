@@ -105,6 +105,17 @@ public:
 	void			setRowTitles(Rcpp::List newTitles)		{ _rowTitles.setRows(newTitles); }
 	jaspStringlist	_rowTitles;
 
+	// getters for R
+	jaspStringlist_Interface	getColNames()				{ return jaspStringlist_Interface	(&_colNames);				}
+	jaspStringlist_Interface	getColTypes()				{ return jaspStringlist_Interface	(&_colTypes);				}
+	jaspStringlist_Interface	getColTitles()				{ return jaspStringlist_Interface	(&_colTitles);				}
+	jaspStringlist_Interface	getColOverTitles()			{ return jaspStringlist_Interface	(&_colOvertitles);			}
+	jaspStringlist_Interface	getColFormats()				{ return jaspStringlist_Interface	(&_colFormats);				}
+	jaspBoollist_Interface		getColCombines()			{ return jaspBoollist_Interface		(&_colCombines);			}
+	jaspStringlist_Interface	getRowNames()				{ return jaspStringlist_Interface	(&_rowNames);				}
+	jaspStringlist_Interface	getRowTitles()				{ return jaspStringlist_Interface	(&_rowTitles);				}
+
+
 	///Going to assume it is called like addColumInfo(name=NULL, title=NULL, type=NULL, format=NULL, combine=NULL, overTitle=NULL)
 	void		addColumnInfo(Rcpp::RObject name, Rcpp::RObject title, Rcpp::RObject type, Rcpp::RObject format, Rcpp::RObject combine, Rcpp::RObject overTitle);
 

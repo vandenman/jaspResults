@@ -46,12 +46,14 @@ public:
 
 	virtual std::string toHtml() { return ""; }
 			std::string htmlTitle() { return "<h2>" + _title + "</h2>"; }
-
+			void		printHtml()							{ jaspPrint(toHtml()); }
 			std::string type() { return jaspObjectTypeToString(_type); }
 
 			bool		getError()								{ return _error; }
 	virtual void		setError()								{ _error = true; }
 	virtual void		setError(Rcpp::String message)			{ _errorMessage = jaspNativeToUtf8(message); _error = true; }
+			// Rcpp modules does not support function overloading
+			void		setErrorForR(Rcpp::String message)		{ setError(message); }
 	virtual bool		canShowErrorMessage()			const	{ return false; }
 
 			void		print()									{ try { jaspPrint(toString()); } catch(std::exception e) { jaspPrint(std::string("toString failed because of: ") + e.what()); } }
