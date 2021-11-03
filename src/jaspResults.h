@@ -90,6 +90,14 @@ public:
 
 	void	setCurrentNamesFromOptionsMeta(Json::Value & optionsMeta)		{ GUARD_ENCODE_FUNCS(_extraEncodings->setCurrentNamesFromOptionsMeta(optionsMeta);	) }
 	void	setCurrentColumnNames(const std::vector<std::string> & names) 	{ GUARD_ENCODE_FUNCS(ColumnEncoder::setCurrentColumnNames(names); 					) }
+	void	setCurrentColumnNamesForR(Rcpp::CharacterVector names)
+	{
+		std::vector<std::string> vec;
+		for(int row = 0; row < names.size(); row++)
+			vec.push_back((std::string)(names[row]));
+
+		setCurrentColumnNames(vec);
+	}
 
 	std::string encodeColumnName(const std::string & in)	{ GUARD_ENCODE_FUNCS(return _extraEncodings->shouldEncode(in) ? _extraEncodings->encode(in) : ColumnEncoder::columnEncoder()->encode(in); ) }
 	std::string decodeColumnName(const std::string & in)	{ GUARD_ENCODE_FUNCS(return _extraEncodings->shouldEncode(in) ? _extraEncodings->decode(in) : ColumnEncoder::columnEncoder()->decode(in); ) }
@@ -145,48 +153,49 @@ void JASPresultFinalizer(jaspResults * obj);
 
 Rcpp::RObject givejaspResultsModule();
 
+RCPP_EXPOSED_CLASS_NODECL(jaspResults)
 
-class  jaspResults_Interface : public jaspContainer_Interface
-{
-public:
-	jaspResults_Interface(jaspObject * dataObj) : jaspContainer_Interface(dataObj) {}
+//class  jaspResults_Interface : public jaspContainer_Interface
+//{
+//public:
+//	jaspResults_Interface(jaspObject * dataObj) : jaspContainer_Interface(dataObj) {}
 
-	void		send()								{ ((jaspResults*)myJaspObject)->send();								}
-	void		complete()							{ ((jaspResults*)myJaspObject)->complete();							}
-	void		saveResults()						{ ((jaspResults*)myJaspObject)->saveResults();						}
-	void		finishWriting()						{ ((jaspResults*)myJaspObject)->finishWriting();					}
-	Rcpp::List	getOtherObjectsForState()			{ return ((jaspResults*)myJaspObject)->getOtherObjectsForState();	}
-	Rcpp::List	getPlotObjectsForState()			{ return ((jaspResults*)myJaspObject)->getPlotObjectsForState();	}
-	Rcpp::List	getKeepList()						{ return ((jaspResults*)myJaspObject)->getKeepList();				}
-	std::string getResults()						{ return ((jaspResults*)myJaspObject)->getResults();				}
+//	void		send()								{ ((jaspResults*)myJaspObject)->send();								}
+//	void		complete()							{ ((jaspResults*)myJaspObject)->complete();							}
+//	void		saveResults()						{ ((jaspResults*)myJaspObject)->saveResults();						}
+//	void		finishWriting()						{ ((jaspResults*)myJaspObject)->finishWriting();					}
+//	Rcpp::List	getOtherObjectsForState()			{ return ((jaspResults*)myJaspObject)->getOtherObjectsForState();	}
+//	Rcpp::List	getPlotObjectsForState()			{ return ((jaspResults*)myJaspObject)->getPlotObjectsForState();	}
+//	Rcpp::List	getKeepList()						{ return ((jaspResults*)myJaspObject)->getKeepList();				}
+//	std::string getResults()						{ return ((jaspResults*)myJaspObject)->getResults();				}
 	
-	void		setErrorMessage(Rcpp::String msg, std::string errorStatus)			{ ((jaspResults*)myJaspObject)->setErrorMessage(msg, errorStatus);							}
+//	void		setErrorMessage(Rcpp::String msg, std::string errorStatus)			{ ((jaspResults*)myJaspObject)->setErrorMessage(msg, errorStatus);							}
 
-	void		setOptions(std::string opts)		{ ((jaspResults*)myJaspObject)->setOptions(opts); }
-	void		changeOptions(std::string opts)		{ ((jaspResults*)myJaspObject)->changeOptions(opts); }
+//	void		setOptions(std::string opts)		{ ((jaspResults*)myJaspObject)->setOptions(opts); }
+//	void		changeOptions(std::string opts)		{ ((jaspResults*)myJaspObject)->changeOptions(opts); }
 
-	void		setStatus(std::string status)		{ ((jaspResults*)myJaspObject)->setStatus(status); }
-	std::string getStatus()							{ return ((jaspResults*)myJaspObject)->getStatus(); }
+//	void		setStatus(std::string status)		{ ((jaspResults*)myJaspObject)->setStatus(status); }
+//	std::string getStatus()							{ return ((jaspResults*)myJaspObject)->getStatus(); }
 
-	void		prepareForWriting()					{ ((jaspResults*)myJaspObject)->prepareForWriting(); }
+//	void		prepareForWriting()					{ ((jaspResults*)myJaspObject)->prepareForWriting(); }
 
-	void	setCurrentColumnNames(Rcpp::CharacterVector names)
-	{ 
-		std::vector<std::string> vec;
+//	void	setCurrentColumnNames(Rcpp::CharacterVector names)
+//	{
+//		std::vector<std::string> vec;
 
-		for(int row=0; row<names.size(); row++)
-			vec.push_back((std::string)(names[row]));
+//		for(int row=0; row<names.size(); row++)
+//			vec.push_back((std::string)(names[row]));
 
-		((jaspResults*)myJaspObject)->setCurrentColumnNames(vec); 
-	}
+//		((jaspResults*)myJaspObject)->setCurrentColumnNames(vec);
+//	}
 
-	std::string encodeColumnName(	 const std::string & in) {return ((jaspResults*)myJaspObject)->encodeColumnName(in);	 }
-	std::string decodeColumnName(	 const std::string & in) {return ((jaspResults*)myJaspObject)->decodeColumnName(in);	 }
-	std::string encodeAllColumnNames(const std::string & in) {return ((jaspResults*)myJaspObject)->encodeAllColumnNames(in); }
-	std::string decodeAllColumnNames(const std::string & in) {return ((jaspResults*)myJaspObject)->decodeAllColumnNames(in); }
+//	std::string encodeColumnName(	 const std::string & in) {return ((jaspResults*)myJaspObject)->encodeColumnName(in);	 }
+//	std::string decodeColumnName(	 const std::string & in) {return ((jaspResults*)myJaspObject)->decodeColumnName(in);	 }
+//	std::string encodeAllColumnNames(const std::string & in) {return ((jaspResults*)myJaspObject)->encodeAllColumnNames(in); }
+//	std::string decodeAllColumnNames(const std::string & in) {return ((jaspResults*)myJaspObject)->decodeAllColumnNames(in); }
 
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspResults, std::string,	_relativePathKeep, RelativePathKeep)
-};
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspResults, std::string,	_relativePathKeep, RelativePathKeep)
+//};
 
 
-RCPP_EXPOSED_CLASS_NODECL(jaspResults_Interface)
+//RCPP_EXPOSED_CLASS_NODECL(jaspResults_Interface)

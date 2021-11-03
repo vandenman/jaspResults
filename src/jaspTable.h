@@ -106,14 +106,23 @@ public:
 	jaspStringlist	_rowTitles;
 
 	// getters for R
-	jaspStringlist_Interface	getColNames()				{ return jaspStringlist_Interface	(&_colNames);				}
-	jaspStringlist_Interface	getColTypes()				{ return jaspStringlist_Interface	(&_colTypes);				}
-	jaspStringlist_Interface	getColTitles()				{ return jaspStringlist_Interface	(&_colTitles);				}
-	jaspStringlist_Interface	getColOverTitles()			{ return jaspStringlist_Interface	(&_colOvertitles);			}
-	jaspStringlist_Interface	getColFormats()				{ return jaspStringlist_Interface	(&_colFormats);				}
-	jaspBoollist_Interface		getColCombines()			{ return jaspBoollist_Interface		(&_colCombines);			}
-	jaspStringlist_Interface	getRowNames()				{ return jaspStringlist_Interface	(&_rowNames);				}
-	jaspStringlist_Interface	getRowTitles()				{ return jaspStringlist_Interface	(&_rowTitles);				}
+//	jaspStringlist_Interface	getColNames()				{ return jaspStringlist_Interface	(&_colNames);				}
+//	jaspStringlist_Interface	getColTypes()				{ return jaspStringlist_Interface	(&_colTypes);				}
+//	jaspStringlist_Interface	getColTitles()				{ return jaspStringlist_Interface	(&_colTitles);				}
+//	jaspStringlist_Interface	getColOverTitles()			{ return jaspStringlist_Interface	(&_colOvertitles);			}
+//	jaspStringlist_Interface	getColFormats()				{ return jaspStringlist_Interface	(&_colFormats);				}
+//	jaspBoollist_Interface		getColCombines()			{ return jaspBoollist_Interface		(&_colCombines);			}
+//	jaspStringlist_Interface	getRowNames()				{ return jaspStringlist_Interface	(&_rowNames);				}
+//	jaspStringlist_Interface	getRowTitles()				{ return jaspStringlist_Interface	(&_rowTitles);				}
+
+	jaspStringlist	getColNames()				{ return _colNames;					}
+	jaspStringlist	getColTypes()				{ return _colTypes;					}
+	jaspStringlist	getColTitles()				{ return _colTitles;				}
+	jaspStringlist	getColOverTitles()			{ return _colOvertitles;			}
+	jaspStringlist	getColFormats()				{ return _colFormats;				}
+	jaspBoollist	getColCombines()			{ return _colCombines;				}
+	jaspStringlist	getRowNames()				{ return _rowNames;					}
+	jaspStringlist	getRowTitles()				{ return _rowTitles;				}
 
 
 	///Going to assume it is called like addColumInfo(name=NULL, title=NULL, type=NULL, format=NULL, combine=NULL, overTitle=NULL)
@@ -406,53 +415,55 @@ private:
 											_expectedRowCount		= 0;
 };
 
-class jaspTable_Interface : public jaspObject_Interface
-{
-public:
-	jaspTable_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
+RCPP_EXPOSED_CLASS_NODECL(jaspTable)
 
-	jaspStringlist_Interface	getColNames()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colNames)		); }
-	jaspStringlist_Interface	getColTypes()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colTypes)		); }
-	jaspStringlist_Interface	getColTitles()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colTitles)		); }
-	jaspStringlist_Interface	getColOvertitles()		{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colOvertitles)	); }
-	jaspStringlist_Interface	getColFormats()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colFormats)		); }
-	jaspBoollist_Interface		getColCombines()		{ return jaspBoollist_Interface(	&(((jaspTable*)myJaspObject)->_colCombines)		); }
-	jaspStringlist_Interface	getRowNames()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_rowNames)		); }
-	jaspStringlist_Interface	getRowTitles()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_rowTitles)		); }
+//class jaspTable_Interface : public jaspObject_Interface
+//{
+//public:
+//	jaspTable_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
 
-	void setColNames(		Rcpp::List newNames)		{ ((jaspTable*)myJaspObject)->setColNames(newNames);		}
-	void setColTypes(		Rcpp::List newTypes)		{ ((jaspTable*)myJaspObject)->setColTypes(newTypes);		}
-	void setColTitles(		Rcpp::List newTitles)		{ ((jaspTable*)myJaspObject)->setColTitles(newTitles);		}
-	void setColOvertitles(	Rcpp::List newTitles)		{ ((jaspTable*)myJaspObject)->setColOvertitles(newTitles);	}
-	void setColFormats(		Rcpp::List newFormats)		{ ((jaspTable*)myJaspObject)->setColFormats(newFormats);	}
-	void setColCombines(	Rcpp::List newCombines)		{ ((jaspTable*)myJaspObject)->setColCombines(newCombines);	}
-	void setRowNames(		Rcpp::List newNames)		{ ((jaspTable*)myJaspObject)->setRowNames(newNames);		}
-	void setRowTitles(		Rcpp::List newTitles)		{ ((jaspTable*)myJaspObject)->setRowTitles(newTitles);		}
+//	jaspStringlist_Interface	getColNames()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colNames)		); }
+//	jaspStringlist_Interface	getColTypes()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colTypes)		); }
+//	jaspStringlist_Interface	getColTitles()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colTitles)		); }
+//	jaspStringlist_Interface	getColOvertitles()		{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colOvertitles)	); }
+//	jaspStringlist_Interface	getColFormats()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_colFormats)		); }
+//	jaspBoollist_Interface		getColCombines()		{ return jaspBoollist_Interface(	&(((jaspTable*)myJaspObject)->_colCombines)		); }
+//	jaspStringlist_Interface	getRowNames()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_rowNames)		); }
+//	jaspStringlist_Interface	getRowTitles()			{ return jaspStringlist_Interface(	&(((jaspTable*)myJaspObject)->_rowTitles)		); }
 
-	void addColumnInfo(Rcpp::RObject name, Rcpp::RObject title, Rcpp::RObject type, Rcpp::RObject format, Rcpp::RObject combine, Rcpp::RObject overtitle)	{ ((jaspTable*)myJaspObject)->addColumnInfo(name, title, type, format, combine, overtitle); }
-	void addFootnote(Rcpp::RObject message, Rcpp::RObject symbol, Rcpp::RObject col_names, Rcpp::RObject row_names)											{ ((jaspTable*)myJaspObject)->addFootnote(message, symbol, col_names, row_names); }
+//	void setColNames(		Rcpp::List newNames)		{ ((jaspTable*)myJaspObject)->setColNames(newNames);		}
+//	void setColTypes(		Rcpp::List newTypes)		{ ((jaspTable*)myJaspObject)->setColTypes(newTypes);		}
+//	void setColTitles(		Rcpp::List newTitles)		{ ((jaspTable*)myJaspObject)->setColTitles(newTitles);		}
+//	void setColOvertitles(	Rcpp::List newTitles)		{ ((jaspTable*)myJaspObject)->setColOvertitles(newTitles);	}
+//	void setColFormats(		Rcpp::List newFormats)		{ ((jaspTable*)myJaspObject)->setColFormats(newFormats);	}
+//	void setColCombines(	Rcpp::List newCombines)		{ ((jaspTable*)myJaspObject)->setColCombines(newCombines);	}
+//	void setRowNames(		Rcpp::List newNames)		{ ((jaspTable*)myJaspObject)->setRowNames(newNames);		}
+//	void setRowTitles(		Rcpp::List newTitles)		{ ((jaspTable*)myJaspObject)->setRowTitles(newTitles);		}
 
-	void setData(Rcpp::RObject newData)							{ ((jaspTable*)myJaspObject)->setData(newData);			}
-	void addColumns(Rcpp::RObject newColumns)					{ ((jaspTable*)myJaspObject)->addColumns(newColumns);	}
+//	void addColumnInfo(Rcpp::RObject name, Rcpp::RObject title, Rcpp::RObject type, Rcpp::RObject format, Rcpp::RObject combine, Rcpp::RObject overtitle)	{ ((jaspTable*)myJaspObject)->addColumnInfo(name, title, type, format, combine, overtitle); }
+//	void addFootnote(Rcpp::RObject message, Rcpp::RObject symbol, Rcpp::RObject col_names, Rcpp::RObject row_names)											{ ((jaspTable*)myJaspObject)->addFootnote(message, symbol, col_names, row_names); }
 
-	//void combineColumns(Rcpp::map_named_args named_args)			{ ((jaspTable*)myJaspObject)->combineColumns(named_args);	}
-	//void combineRows(Rcpp::map_named_args named_args)				{ ((jaspTable*)myJaspObject)->combineRows(named_args);		}
+//	void setData(Rcpp::RObject newData)							{ ((jaspTable*)myJaspObject)->setData(newData);			}
+//	void addColumns(Rcpp::RObject newColumns)					{ ((jaspTable*)myJaspObject)->addColumns(newColumns);	}
 
-	void addRows(				Rcpp::RObject newRows,	Rcpp::CharacterVector rowNames)	{ ((jaspTable*)myJaspObject)->addRows(newRows, rowNames);		}
-	void addRowsWithoutNames(	Rcpp::RObject newRows)									{ ((jaspTable*)myJaspObject)->addRowsWithoutNames(newRows);		}
-	void addRow(				Rcpp::RObject newRow,	Rcpp::CharacterVector rowNames)	{ ((jaspTable*)myJaspObject)->addRow(newRow, rowNames);			}
-	void addRowWithoutNames(	Rcpp::RObject newRow)									{ ((jaspTable*)myJaspObject)->addRowWithoutNames(newRow);		}
-	void setColumn(				std::string columnName, Rcpp::RObject column)			{ ((jaspTable*)myJaspObject)->setColumn(columnName, column);	}
+//	//void combineColumns(Rcpp::map_named_args named_args)			{ ((jaspTable*)myJaspObject)->combineColumns(named_args);	}
+//	//void combineRows(Rcpp::map_named_args named_args)				{ ((jaspTable*)myJaspObject)->combineRows(named_args);		}
 
-	void setExpectedSize(size_t columns, size_t rows)	{ ((jaspTable*)myJaspObject)->setExpectedSize(columns, rows);	}
-	void setExpectedRows(size_t rows)					{ ((jaspTable*)myJaspObject)->setExpectedRows(rows);			}
-	void setExpectedColumns(size_t columns)				{ ((jaspTable*)myJaspObject)->setExpectedColumns(columns);		}
+//	void addRows(				Rcpp::RObject newRows,	Rcpp::CharacterVector rowNames)	{ ((jaspTable*)myJaspObject)->addRows(newRows, rowNames);		}
+//	void addRowsWithoutNames(	Rcpp::RObject newRows)									{ ((jaspTable*)myJaspObject)->addRowsWithoutNames(newRows);		}
+//	void addRow(				Rcpp::RObject newRow,	Rcpp::CharacterVector rowNames)	{ ((jaspTable*)myJaspObject)->addRow(newRow, rowNames);			}
+//	void addRowWithoutNames(	Rcpp::RObject newRow)									{ ((jaspTable*)myJaspObject)->addRowWithoutNames(newRow);		}
+//	void setColumn(				std::string columnName, Rcpp::RObject column)			{ ((jaspTable*)myJaspObject)->setColumn(columnName, column);	}
+
+//	void setExpectedSize(size_t columns, size_t rows)	{ ((jaspTable*)myJaspObject)->setExpectedSize(columns, rows);	}
+//	void setExpectedRows(size_t rows)					{ ((jaspTable*)myJaspObject)->setExpectedRows(rows);			}
+//	void setExpectedColumns(size_t columns)				{ ((jaspTable*)myJaspObject)->setExpectedColumns(columns);		}
 
 
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspTable, bool,			_transposeTable,				TransposeTable)
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspTable, bool,			_transposeWithOvertitle,		TransposeWithOvertitle)
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspTable, std::string,	_status,						Status)
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspTable, bool,			_showSpecifiedColumnsOnly,		ShowSpecifiedColumnsOnly)
-};
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspTable, bool,			_transposeTable,				TransposeTable)
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspTable, bool,			_transposeWithOvertitle,		TransposeWithOvertitle)
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspTable, std::string,	_status,						Status)
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspTable, bool,			_showSpecifiedColumnsOnly,		ShowSpecifiedColumnsOnly)
+//};
 
-RCPP_EXPOSED_CLASS_NODECL(jaspTable_Interface)
+//RCPP_EXPOSED_CLASS_NODECL(jaspTable_Interface)

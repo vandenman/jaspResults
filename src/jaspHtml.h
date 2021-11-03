@@ -29,20 +29,20 @@ public:
 
 
 
-class jaspHtml_Interface : public jaspObject_Interface
-{
-public:
-	jaspHtml_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
+//class jaspHtml_Interface : public jaspObject_Interface
+//{
+//public:
+//	jaspHtml_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
 
-    void			setText(Rcpp::String newRawText) { 			static_cast<jaspHtml *>(myJaspObject)->setText(jaspNativeToUtf8(newRawText)); }
-    Rcpp::String	getText() 						{ return 	static_cast<jaspHtml *>(myJaspObject)->getText(); }
-    std::string		getHtml()						{ return	static_cast<jaspHtml *>(myJaspObject)->getHtml(); }
+//    void			setText(Rcpp::String newRawText) { 			static_cast<jaspHtml *>(myJaspObject)->setText(jaspNativeToUtf8(newRawText)); }
+//    Rcpp::String	getText() 						{ return 	static_cast<jaspHtml *>(myJaspObject)->getText(); }
+//    std::string		getHtml()						{ return	static_cast<jaspHtml *>(myJaspObject)->getHtml(); }
 
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspHtml, std::string,	_elementType,	ElementType)
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspHtml, std::string,	_class,			Class)
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspHtml, std::string,	_maxWidth,		MaxWidth)
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspHtml, std::string,	_elementType,	ElementType)
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspHtml, std::string,	_class,			Class)
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspHtml, std::string,	_maxWidth,		MaxWidth)
 
-};
+//};
 
-RCPP_EXPOSED_CLASS_NODECL(jaspHtml_Interface)
+//RCPP_EXPOSED_CLASS_NODECL(jaspHtml_Interface)
 

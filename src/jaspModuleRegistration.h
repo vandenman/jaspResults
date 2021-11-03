@@ -1,14 +1,23 @@
 #include <Rcpp.h>
 #include "jaspResults.h"
 
-JASP_OBJECT_CREATOR(jaspHtml)
-JASP_OBJECT_CREATOR(jaspPlot)
-JASP_OBJECT_CREATOR(jaspTable)
-JASP_OBJECT_CREATOR(jaspState)
-JASP_OBJECT_CREATOR(jaspColumn)
-JASP_OBJECT_CREATOR(jaspContainer)
-JASP_OBJECT_CREATOR(jaspQmlSource)
-JASP_OBJECT_CREATOR_ARG(jaspResults, oldState)
+//JASP_OBJECT_CREATOR(jaspHtml)
+//JASP_OBJECT_CREATOR(jaspPlot)
+//JASP_OBJECT_CREATOR(jaspTable)
+//JASP_OBJECT_CREATOR(jaspState)
+//JASP_OBJECT_CREATOR(jaspColumn)
+//JASP_OBJECT_CREATOR(jaspContainer)
+//JASP_OBJECT_CREATOR(jaspQmlSource)
+//JASP_OBJECT_CREATOR_ARG(jaspResults, oldState)
+
+JASP_OBJECT_CREATOR2(jaspHtml)
+JASP_OBJECT_CREATOR2(jaspPlot)
+JASP_OBJECT_CREATOR2(jaspTable)
+JASP_OBJECT_CREATOR2(jaspState)
+JASP_OBJECT_CREATOR2(jaspColumn)
+JASP_OBJECT_CREATOR2(jaspContainer)
+JASP_OBJECT_CREATOR2(jaspQmlSource)
+JASP_OBJECT_CREATOR_ARG2(jaspResults, oldState)
 
 RCPP_MODULE(jaspResults)
 {
@@ -22,10 +31,12 @@ RCPP_MODULE(jaspResults)
 	JASP_OBJECT_CREATOR_FUNCTIONREGISTRATION(jaspQmlSource);
 
 
-	Rcpp::function("cpp_startProgressbar",	jaspResults::staticStartProgressbar);
-	Rcpp::function("cpp_progressbarTick",	jaspResults::staticProgressbarTick);
+//	Rcpp::function("cpp_startProgressbar",	jaspResults::staticStartProgressbar);
+//	Rcpp::function("cpp_progressbarTick",	jaspResults::staticProgressbarTick);
 
-	Rcpp::function("destroyAllAllocatedObjects", jaspObject::destroyAllAllocatedObjects);
+//	Rcpp::function("destroyAllAllocatedObjects", jaspObject::destroyAllAllocatedObjects);
+
+/*
 	Rcpp::class_<jaspObject_Interface>("jaspObject")
 
 		.method("print",							&jaspObject_Interface::print,											"Prints the contents of the jaspObject")
@@ -78,7 +89,7 @@ RCPP_MODULE(jaspResults)
 	JASPLIST_MODULE_EXPORT(jaspDoublelist_Interface,	"jaspDoublelist")
 	JASPLIST_MODULE_EXPORT(jaspIntlist_Interface,		"jaspIntlist")
 	JASPLIST_MODULE_EXPORT(jaspBoollist_Interface,		"jaspBoollist")
-
+*/
 	const std::string addRowsGeneralDoc =
 			"Before the data is added all existing columns will be made the same length by appending null-values. "
 			"If the new data contains more columns than currently present empty columns will be added. "
@@ -88,7 +99,7 @@ RCPP_MODULE(jaspResults)
 	const std::string addRowsDoc = "Add rows to the table, where 'rows' is a list (of rows), dataframe or matrix. " + addRowsGeneralDoc;
 	const std::string addRowDoc  = "Add a row to the table, where 'rows' is a list (of values) or vector. " + addRowsGeneralDoc;
 
-
+/*
 	Rcpp::class_<jaspTable_Interface>("jaspTable")
 		.derives<jaspObject_Interface>("jaspObject")
 
@@ -216,9 +227,14 @@ RCPP_MODULE(jaspResults)
 											&jaspQmlSource_Interface::setSourceID,							"The name of the qml object for which this r-source is meant.")
 		.method("getValue",					&jaspQmlSource_Interface::getValue,								"Get json string encoded value")
 		.method("setValue",					&jaspQmlSource_Interface::setValue,								"Set R object to value");
+*/
 
+//	JASPLIST_MODULE_EXPORT(jaspStringlist,	"jaspStringlist")
+//	JASPLIST_MODULE_EXPORT(jaspDoublelist,	"jaspDoublelist")
+//	JASPLIST_MODULE_EXPORT(jaspIntlist,		"jaspIntlist")
+//	JASPLIST_MODULE_EXPORT(jaspBoollist,	"jaspBoollist")
 
-	Rcpp::class_<jaspObject>("jaspObject2")
+	Rcpp::class_<jaspObject>("jaspObject")
 
 		.method("print",		&jaspObject::print,								"Prints the contents of the jaspObject")
 		.method("toHtml",		&jaspObject::toHtml,							"gives a string with the contents of the jaspObject nicely formatted as html")
@@ -236,17 +252,16 @@ RCPP_MODULE(jaspResults)
 		.method("setOptionMustBeDependency",		&jaspObject::setOptionMustBeDependency,						"Specifies an option and it's required value, if the analysis is restarted and this option is no longer defined (like that) it will automatically destroy the object. Otherwise it will keep it.")
 		.method("setOptionMustContainDependency",	&jaspObject::setOptionMustContainDependency,				"Specifies an option that should define an array and a required value that should be in it, if the analysis is restarted and this option is no longer defined or no longer contains the specified value it will automatically destroy the object. Otherwise it will keep it.")
 		.method("dependOnOptions",					&jaspObject::dependOnOptions,								"Will make the object depend on the current values of the options specified in the charactervector.")
-		//TODO: this doesn't work! maybe because jaspObject2 is not the same as jaspObject in the signature?
+		//TODO: this doesn't work!
 //		.method("copyDependenciesFromJaspObject",	&jaspObject::copyDependenciesFromJaspObject,				"Will make the object depend on whatever the other jaspObject depends.")
 		.method("getError",							&jaspObject::getError, 										"Get the error status of this object.")
 		.method("setError",							&jaspObject::setErrorForR, 									"Set an error message on this object that which be shown in JASP. Errors set on jaspContainers or jaspResults are propagated to children, such that the first child shows the error and the others are greyed out.")
 	;
 
-	Rcpp::class_<jaspPlot>("jaspPlot2")
-//		.constructor<Rcpp::String>()
-		.derives<jaspObject>("jaspObject2")
+	Rcpp::class_<jaspPlot>("jaspPlot")
+		.derives<jaspObject>("jaspObject")
 
-			.field("aspectratio",		&jaspPlot::_aspectRatio,											"Stores the aspect ratio used to make the plot, will not redraw the plot on change.")
+			.field("aspectRatio",		&jaspPlot::_aspectRatio,											"Stores the aspect ratio used to make the plot, will not redraw the plot on change.")
 			.field("width",				&jaspPlot::_width,													"Stores the width used to make the plot, will not redraw the plot on change.")
 			.field("height",			&jaspPlot::_height,													"Stores the height used to make the plot, will not redraw the plot on change.")
 			.field("status",			&jaspPlot::_status,													"Stores the status of the plot, default is complete, set to 'running' if it takes a long time to calculate it.")
@@ -260,8 +275,8 @@ RCPP_MODULE(jaspResults)
 
 	;
 
-	Rcpp::class_<jaspContainer>("jaspContainer2")
-		.derives<jaspObject>("jaspObject2")
+	Rcpp::class_<jaspContainer>("jaspContainer")
+		.derives<jaspObject>("jaspObject")
 
 		.property("length",							&jaspContainer::length,									"Returns how many objects are stored in this container.")
 		.field("initCollapsed",						&jaspContainer::_initiallyCollapsed,					"If this is set true the container will be collapsed initially.")
@@ -270,8 +285,8 @@ RCPP_MODULE(jaspResults)
 		.method( "findObjectWithUniqueNestedName",	&jaspContainer::findObjectWithUniqueNestedName,			"Find a jasp object from its unique name")
 	;
 
-	Rcpp::class_<jaspTable>("jaspTable2")
-		.derives<jaspObject>("jaspObject2")
+	Rcpp::class_<jaspTable>("jaspTable")
+		.derives<jaspObject>("jaspObject")
 
 		// TODO: Ask Joris why this was implemented as "property with getter + method" instead of "property with getter and setter"
 		.property("colNames",					&jaspTable::getColNames,					"List of columnnames, single elements can be get and set here directly through [['']] notation but setting all columnnames at once should be done through setColNames")
@@ -298,7 +313,7 @@ RCPP_MODULE(jaspResults)
 		.property("rowTitles",					&jaspTable::getRowTitles,					"List of rowtitles, single elements can be get and set here directly through [['']] notation but setting all rowtitles at once should be done through setRowTitles. This will respond in a similar manner to conflicts between an indexed title and a fieldnamed title. See documentation of colTitles.")
 		.method("setRowTitles",					&jaspTable::setRowTitles,					"Accepts a list of strings to be used as rowtitles, if the elements are named they will be accessible later through fieldname.")
 
-		.method("addColumnInfoHelper",			&jaspTable::addColumnInfo,				"addColumnInfoHelper(name=NULL, title=NULL, type=NULL, format=NULL, combine=NULL) -> Adds column info, an entry to columName wether you specify it or not and if the others are not NULL then they are set for the column")
+		.method("addColumnInfoHelper",			&jaspTable::addColumnInfo,					"addColumnInfoHelper(name=NULL, title=NULL, type=NULL, format=NULL, combine=NULL) -> Adds column info, an entry to columName wether you specify it or not and if the others are not NULL then they are set for the column")
 
 		.method("addFootnoteHelper",			&jaspTable::addFootnote,					"addFootnoteHelper(message="", symbol=NULL, column=NULL, row=NULL) === Add a footnote to the table, if column or row is not -1 it will be added to the specified column or row, if both are changed then it will be a footnote on a cell and otherwise it will just be a footnote of the entire table. A symbol may also be specified.")
 
@@ -308,31 +323,31 @@ RCPP_MODULE(jaspResults)
 		.method("addRows",						&jaspTable::addRows,						addRowsDoc.c_str())
 		.method("addRows",						&jaspTable::addRowsWithoutNames,			addRowsDoc.c_str())
 
-		.method("addRow",						&jaspTable::addRow,						addRowDoc.c_str())
-		.method("addRow",						&jaspTable::addRowWithoutNames,			addRowDoc.c_str())
+		.method("addRow",						&jaspTable::addRow,							addRowDoc.c_str())
+		.method("addRow",						&jaspTable::addRowWithoutNames,				addRowDoc.c_str())
 
-		//.method("addColumn",					&jaspTable::addColumns,					"Add one or more columns to the object, this class accepts the same datatypes as setdata.  Column- and rownames will be extracted as well but used only if the corresponding names aren't set yet.")
-		.method("addColumns",					&jaspTable::addColumns,					"Add one or more columns to the object, this class accepts the same datatypes as setdata.  Column- and rownames will be extracted as well but used only if the corresponding names aren't set yet.")
+		//.method("addColumn",					&jaspTable::addColumns,						"Add one or more columns to the object, this class accepts the same datatypes as setdata.  Column- and rownames will be extracted as well but used only if the corresponding names aren't set yet.")
+		.method("addColumns",					&jaspTable::addColumns,						"Add one or more columns to the object, this class accepts the same datatypes as setdata.  Column- and rownames will be extracted as well but used only if the corresponding names aren't set yet.")
 		// is [[<- === .method("setColumn",					&jaspTable::setColumn,					"setColumn(columnName, columnData): set a vector or a list as a column for columnName.")
 
-		.field("showSpecifiedColumnsOnly",		&jaspTable::_showSpecifiedColumnsOnly,	"If set to true will make only the specified columns (through addColumnInfo etc) show in the results.")
+		.field("showSpecifiedColumnsOnly",		&jaspTable::_showSpecifiedColumnsOnly,		"If set to true will make only the specified columns (through addColumnInfo etc) show in the results.")
 
-		.field("transposeWithOvertitle",		&jaspTable::_transposeWithOvertitle,	"If set to true in combination with transpose == true it will use the first column of the data as overtitle.")
+		.field("transposeWithOvertitle",		&jaspTable::_transposeWithOvertitle,		"If set to true in combination with transpose == true it will use the first column of the data as overtitle.")
 
-		.field("transpose",						&jaspTable::_transposeTable,			"If set to true will swap rows and columns in the results.")
+		.field("transpose",						&jaspTable::_transposeTable,				"If set to true will swap rows and columns in the results.")
 
-		.field("status",						&jaspTable::_status,					"The status of the table, usually (and by default) 'complete'")
+		.field("status",						&jaspTable::_status,						"The status of the table, usually (and by default) 'complete'")
 
-		.method( "[[<-",						&jaspTable::setColumn,					"Insert a single column into the table, if a string is used then it will look for an existing column name and set that column with the new data and otherwise will just add it at the end. If it is indexed by integer it will simply set it there.")
+		.method( "[[<-",						&jaspTable::setColumn,						"Insert a single column into the table, if a string is used then it will look for an existing column name and set that column with the new data and otherwise will just add it at the end. If it is indexed by integer it will simply set it there.")
 
 		.method("setExpectedSize",				&jaspTable::setExpectedSize,				"Set the expected size of this table to the specified columnCount and rowCount. It will make your table show up, filled with dots, at this size and as you add data the dots will be replaced with it.")
 		.method("setExpectedColumns",			&jaspTable::setExpectedColumns,				"Set the expected size of this table to the specified columnCount. It will make your table show up, filled with dots, at this size and as you add data the dots will be replaced with it.")
 		.method("setExpectedRows",				&jaspTable::setExpectedRows,				"Set the expected size of this table to the specified rowCount. It will make your table show up, filled with dots, at this size and as you add data the dots will be replaced with it.")
 	;
 
-	Rcpp::class_<jaspHtml>("jaspHtml2")
-		.derives<jaspObject>("jaspObject2")
-		.property("text",			&jaspHtml::getText,			&jaspHtml::setTextFromR,	"The text of this element")
+	Rcpp::class_<jaspHtml>("jaspHtml")
+		.derives<jaspObject>("jaspObject")
+		.property("text",			&jaspHtml::getText,			&jaspHtml::setText,			"The text of this element")
 		.property("html",			&jaspHtml::getHtml,										"The text of this element")
 		.field("elementType",		&jaspHtml::_elementType,								"The type of this html element, default is 'p' but other useful values include 'H1', 'h2' etc. If you want to write your own html element completely set this to \"\"")
 		.field("class",				&jaspHtml::_class,										"The Css-class of this element, for monospace one could use jasp-code or simply leave it empty.")
@@ -340,21 +355,21 @@ RCPP_MODULE(jaspResults)
 	;
 
 
-	Rcpp::class_<jaspState>("jaspState2")
-		.derives<jaspObject>("jaspObject2")
+	Rcpp::class_<jaspState>("jaspState")
+		.derives<jaspObject>("jaspObject")
 		.property("object", &jaspState::getObject, &jaspState::setObject, "The object that you might want to keep for the next revision of your analysis.")
 	;
 
-	Rcpp::class_<jaspColumn>("jaspColumn2")
-		.derives<jaspObject>("jaspObject2")
+	Rcpp::class_<jaspColumn>("jaspColumn")
+		.derives<jaspObject>("jaspObject")
 		.method("setScale",				&jaspColumn::setScale,			"Overwrite the contents of the specified column with scalar data.")
 		.method("setOrdinal",			&jaspColumn::setOrdinal,		"Overwrite the contents of the specified column with ordinal data.")
 		.method("setNominal",			&jaspColumn::setNominal,		"Overwrite the contents of the specified column with nominal data.")
 		.method("setNominalText",		&jaspColumn::setNominalText,	"Overwrite the contents of the specified column with nominal text data.")
 	;
 
-	Rcpp::class_<jaspResults>("jaspResultsClass2")
-		.derives<jaspContainer>("jaspContainer2")
+	Rcpp::class_<jaspResults>("jaspResultsClass")
+		.derives<jaspContainer>("jaspContainer")
 
 		.method("send",						&jaspResults::send,									"Constructs the results/response-json and sends it to Desktop, but only if jaspResults::setSendFunc was called with an appropriate sendFuncDef first.")
 		.method("complete",					&jaspResults::complete,								"Constructs the results/response-json and sends it to Desktop but sets status to complete first.")
@@ -379,26 +394,23 @@ RCPP_MODULE(jaspResults)
 		.method("finishWriting",			&jaspResults::finishWriting,						"Set seal for writing")
 		.method("saveResults",				&jaspResults::saveResults,							"save results")
 
-		.method("setCurrentColumnNames",	&jaspResults::setCurrentColumnNames,				"setCurrentColumnNames")
+		.method("setCurrentColumnNames",	&jaspResults::setCurrentColumnNamesForR,			"setCurrentColumnNames")
 		.method("encodeColumnName",			&jaspResults::encodeColumnName,						"encodeColumnName")
 		.method("decodeColumnName",			&jaspResults::decodeColumnName,						"decodeColumnName")
 		.method("encodeAllColumnNames",		&jaspResults::encodeAllColumnNames,					"encodeAllColumnNames")
 		.method("decodeAllColumnNames",		&jaspResults::decodeAllColumnNames,					"decodeAllColumnNames")
 	;
 
-//	Rcpp::class_<jaspQmlSource>("jaspQmlSource2")
-//		.derives<jaspJson>("jaspJson2")
+	Rcpp::class_<jaspJson>("jaspJson")
+		.derives<jaspJson>("jaspObject")
+		.method("getValue",					&jaspJson::getValue,								"Get json string encoded value")
+		.method("setValue",					&jaspJson::setValue,								"Set R object to value")
+	;
 
-//		.field_readonly("sourceID",		&jaspQmlSource::sourceID)
-//		.method("setSourceID",			&jaspQmlSource::setSourceID)
-
-//		.method("getValue",					&jaspJson::getValue,								"Get json string encoded value")
-
-//		.property("sourceID",				&jaspQmlSource::sourceID,
-//											&jaspQmlSource::setSourceID,							"The name of the qml object for which this r-source is meant.")
-//		.method("getValue",					&jaspQmlSource::getValue,								"Get json string encoded value")
-//		.method("setValue",					&jaspQmlSource::setValue,								"Set R object to value")
-//	;
+	Rcpp::class_<jaspQmlSource>("jaspQmlSource")
+		.derives<jaspJson>("jaspJson")
+		.property("sourceID",				&jaspQmlSource::sourceID,				&jaspQmlSource::setSourceIDForR)
+	;
 
 
 }

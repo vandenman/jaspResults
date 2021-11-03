@@ -21,7 +21,7 @@ public:
 #endif
 	}
 
-	jaspContainer(const jaspContainer& that) = delete;
+//	jaspContainer(const jaspContainer& that) = delete;
 
 	std::string dataToString(std::string prefix = "")						const	override;
 	std::string toHtml()															override;
@@ -74,17 +74,19 @@ protected:
 
 };
 
-class jaspContainer_Interface : public jaspObject_Interface
-{
-public:
-	jaspContainer_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
+RCPP_EXPOSED_CLASS_NODECL(jaspContainer)
 
-	int length()																	{ return ((jaspContainer*)myJaspObject)->length(); }
-	Rcpp::RObject	at(std::string field)											{ return ((jaspContainer*)myJaspObject)->at(field); }
-	void			insert(std::string field, Rcpp::RObject value)					{ ((jaspContainer*)myJaspObject)->insert(field, value); }
-	Rcpp::RObject	findObjectWithUniqueNestedName(std::string uniqueNestedName);
+//class jaspContainer_Interface : public jaspObject_Interface
+//{
+//public:
+//	jaspContainer_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
 
-	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspContainer, bool,	_initiallyCollapsed,	InitiallyCollapsed)
-};
+//	int length()																	{ return ((jaspContainer*)myJaspObject)->length(); }
+//	Rcpp::RObject	at(std::string field)											{ return ((jaspContainer*)myJaspObject)->at(field); }
+//	void			insert(std::string field, Rcpp::RObject value)					{ ((jaspContainer*)myJaspObject)->insert(field, value); }
+//	Rcpp::RObject	findObjectWithUniqueNestedName(std::string uniqueNestedName);
 
-RCPP_EXPOSED_CLASS_NODECL(jaspContainer_Interface)
+//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspContainer, bool,	_initiallyCollapsed,	InitiallyCollapsed)
+//};
+
+//RCPP_EXPOSED_CLASS_NODECL(jaspContainer_Interface)

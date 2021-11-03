@@ -138,13 +138,13 @@ template<> inline Json::Value jaspJson::RVectorEntry_to_JsonValue<REALSXP>(Rcpp:
 template<> inline Json::Value jaspJson::RMatrixColumnEntry_to_JsonValue<REALSXP>(Rcpp::MatrixColumn<REALSXP> obj, int row)	TO_INFINITY_AND_BEYOND
 
 
-class jaspJson_Interface : public jaspObject_Interface
-{
-public:
-	jaspJson_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
+//class jaspJson_Interface : public jaspObject_Interface
+//{
+//public:
+//	jaspJson_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
 
-	void 		setValue(Rcpp::RObject Robj)	{ 			static_cast<jaspJson *>(myJaspObject)->setValue(Robj); }
-	std::string geValue()						{ return 	static_cast<jaspJson *>(myJaspObject)->getValue(); }
-};
+//	void 		setValue(Rcpp::RObject Robj)	{ 			static_cast<jaspJson *>(myJaspObject)->setValue(Robj); }
+//	std::string geValue()						{ return 	static_cast<jaspJson *>(myJaspObject)->getValue(); }
+//};
 
 RCPP_EXPOSED_CLASS_NODECL(jaspJson)

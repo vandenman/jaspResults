@@ -12,17 +12,27 @@ void jaspContainer::insert(std::string field, Rcpp::RObject value)
 
 	jaspObject * obj = nullptr;
 
+//		 if(Rcpp::is<jaspObject*>(value))				obj = Rcpp::as<jaspObject*>(value);
+//	else if(Rcpp::is<jaspContainer>(value))				obj = Rcpp::as<jaspContainer*>(value);
+//	else if(Rcpp::is<jaspQmlSource>(value))				obj = Rcpp::as<jaspQmlSource*>(value);
+//	else if(Rcpp::is<jaspColumn>(value))				obj = Rcpp::as<jaspColumn*>(value);
+//	else if(Rcpp::is<jaspTable>(value))					obj = Rcpp::as<jaspTable*>(value);
+//	else if(Rcpp::is<jaspState>(value))					obj = Rcpp::as<jaspState*>(value);
+//	else if(Rcpp::is<jaspPlot>(value))					obj = Rcpp::as<jaspPlot*>(value);
+//	else if(Rcpp::is<jaspHtml>(value))					obj = Rcpp::as<jaspHtml*>(value);
+//	else if(Rcpp::is<Rcpp::List>(value))				obj = (jaspObject*)(jaspContainerFromRcppList(Rcpp::as<Rcpp::List>(value)));
+//	else												obj = new jaspJson(value);
 
-	if(Rcpp::is<jaspObject_Interface>(value))			obj = Rcpp::as<jaspObject_Interface>(value).returnMyJaspObject();
-	else if(Rcpp::is<jaspContainer_Interface>(value))	obj = Rcpp::as<jaspContainer_Interface>(value).returnMyJaspObject();
-	else if(Rcpp::is<jaspQmlSource_Interface>(value))	obj = Rcpp::as<jaspQmlSource_Interface>(value).returnMyJaspObject();
-	else if(Rcpp::is<jaspColumn_Interface>(value))		obj = Rcpp::as<jaspColumn_Interface>(value).returnMyJaspObject();
-	else if(Rcpp::is<jaspTable_Interface>(value))		obj = Rcpp::as<jaspTable_Interface>(value).returnMyJaspObject();
-	else if(Rcpp::is<jaspState_Interface>(value))		obj = Rcpp::as<jaspState_Interface>(value).returnMyJaspObject();
-	else if(Rcpp::is<jaspPlot_Interface>(value))		obj = Rcpp::as<jaspPlot_Interface>(value).returnMyJaspObject();
-	else if(Rcpp::is<jaspHtml_Interface>(value))		obj = Rcpp::as<jaspHtml_Interface>(value).returnMyJaspObject();
-	else if(Rcpp::is<Rcpp::List>(value))				obj = (jaspObject*)(jaspContainerFromRcppList(Rcpp::as<Rcpp::List>(value)));
-	else												obj = new jaspJson(value);
+//	if(Rcpp::is<jaspObject_Interface>(value))			obj = Rcpp::as<jaspObject_Interface>(value).returnMyJaspObject();
+//	else if(Rcpp::is<jaspContainer_Interface>(value))	obj = Rcpp::as<jaspContainer_Interface>(value).returnMyJaspObject();
+//	else if(Rcpp::is<jaspQmlSource_Interface>(value))	obj = Rcpp::as<jaspQmlSource_Interface>(value).returnMyJaspObject();
+//	else if(Rcpp::is<jaspColumn_Interface>(value))		obj = Rcpp::as<jaspColumn_Interface>(value).returnMyJaspObject();
+//	else if(Rcpp::is<jaspTable_Interface>(value))		obj = Rcpp::as<jaspTable_Interface>(value).returnMyJaspObject();
+//	else if(Rcpp::is<jaspState_Interface>(value))		obj = Rcpp::as<jaspState_Interface>(value).returnMyJaspObject();
+//	else if(Rcpp::is<jaspPlot_Interface>(value))		obj = Rcpp::as<jaspPlot_Interface>(value).returnMyJaspObject();
+//	else if(Rcpp::is<jaspHtml_Interface>(value))		obj = Rcpp::as<jaspHtml_Interface>(value).returnMyJaspObject();
+//	else if(Rcpp::is<Rcpp::List>(value))				obj = (jaspObject*)(jaspContainerFromRcppList(Rcpp::as<Rcpp::List>(value)));
+//	else												obj = new jaspJson(value);
 
 #ifdef JASP_RESULTS_DEBUG_TRACES
 	std::cout << "something {"<<obj->objectTitleString()<<"} added to jaspContainer "<<objectTitleString()<<" on field "<<field<<std::endl<<std::flush;
@@ -77,16 +87,28 @@ Rcpp::RObject jaspContainer::at(std::string field)
 
 Rcpp::RObject jaspContainer::wrapJaspObject(jaspObject * ref)
 {
+//	switch(ref->getType())
+//	{
+//	case jaspObjectType::container:	return Rcpp::wrap(jaspContainer_Interface(ref));
+//	case jaspObjectType::qmlSource:	return Rcpp::wrap(jaspQmlSource_Interface(ref));
+//	case jaspObjectType::column:	return Rcpp::wrap(jaspColumn_Interface(ref));
+//	case jaspObjectType::table:		return Rcpp::wrap(jaspTable_Interface(ref));
+//	case jaspObjectType::state:		return Rcpp::wrap(jaspState_Interface(ref));
+//	case jaspObjectType::html:		return Rcpp::wrap(jaspHtml_Interface(ref));
+//	case jaspObjectType::plot:		return Rcpp::wrap(jaspPlot_Interface(ref));
+//	case jaspObjectType::json:		return Rcpp::wrap(((jaspJson*)ref)->jsonToPrefixedStrings());
+//	default:						return R_NilValue;
+//	}
 	switch(ref->getType())
 	{
-	case jaspObjectType::container:	return Rcpp::wrap(jaspContainer_Interface(ref));
-	case jaspObjectType::qmlSource:	return Rcpp::wrap(jaspQmlSource_Interface(ref));
-	case jaspObjectType::column:	return Rcpp::wrap(jaspColumn_Interface(ref));
-	case jaspObjectType::table:		return Rcpp::wrap(jaspTable_Interface(ref));
-	case jaspObjectType::state:		return Rcpp::wrap(jaspState_Interface(ref));
-	case jaspObjectType::html:		return Rcpp::wrap(jaspHtml_Interface(ref));
-	case jaspObjectType::plot:		return Rcpp::wrap(jaspPlot_Interface(ref));
-	case jaspObjectType::json:		return Rcpp::wrap(((jaspJson*)ref)->jsonToPrefixedStrings());
+//	case jaspObjectType::container:	return Rcpp::wrap(jaspContainer(ref));
+//	case jaspObjectType::qmlSource:	return Rcpp::wrap(*(jaspQmlSource *)(ref));
+//	case jaspObjectType::column:	return Rcpp::wrap(*(jaspColumn *)(ref));
+//	case jaspObjectType::table:		return Rcpp::wrap(jaspTable(ref));
+//	case jaspObjectType::state:		return Rcpp::wrap(*(jaspState *)(ref));
+//	case jaspObjectType::html:		return Rcpp::wrap(jaspHtml(ref));
+//	case jaspObjectType::plot:		return Rcpp::wrap(jaspPlot(ref));
+//	case jaspObjectType::json:		return Rcpp::wrap(((jaspJson*)ref)->jsonToPrefixedStrings());
 	default:						return R_NilValue;
 	}
 }
@@ -491,7 +513,7 @@ void jaspContainer::renderPlotsOfChildren()
 		}
 }
 
-Rcpp::RObject jaspContainer_Interface::findObjectWithUniqueNestedName(std::string uniqueNestedName)
-{
-	return jaspContainer::wrapJaspObject(((jaspContainer*)myJaspObject)->findObjectWithUniqueNestedName(uniqueNestedName));
-}
+//Rcpp::RObject jaspContainer_Interface::findObjectWithUniqueNestedName(std::string uniqueNestedName)
+//{
+//	return jaspContainer::wrapJaspObject(((jaspContainer*)myJaspObject)->findObjectWithUniqueNestedName(uniqueNestedName));
+//}

@@ -224,33 +224,38 @@ typedef jaspList<double>		jaspDoublelist;
 typedef jaspList<int>			jaspIntlist;
 typedef jaspList<bool>			jaspBoollist;
 
-template<typename T>
-class jaspList_Interface : public jaspObject_Interface
-{
-public:
-	jaspList_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
+RCPP_EXPOSED_CLASS_NODECL(jaspStringlist)
+RCPP_EXPOSED_CLASS_NODECL(jaspDoublelist)
+RCPP_EXPOSED_CLASS_NODECL(jaspIntlist)
+RCPP_EXPOSED_CLASS_NODECL(jaspBoollist)
 
-	void insert(Rcpp::RObject field, T value)	{			static_cast<jaspList<T>*>(myJaspObject)->insert(field, value);	}
-	T at(Rcpp::RObject field)					{ return	static_cast<jaspList<T>*>(myJaspObject)->at(field);				}
-	void add(T value)							{			static_cast<jaspList<T>*>(myJaspObject)->add(value);			}
-};
+//template<typename T>
+//class jaspList_Interface : public jaspObject_Interface
+//{
+//public:
+//	jaspList_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
 
-typedef jaspList_Interface<std::string>	jaspStringlist_Interface;
-typedef jaspList_Interface<double>		jaspDoublelist_Interface;
-typedef jaspList_Interface<int>			jaspIntlist_Interface;
-typedef jaspList_Interface<bool>		jaspBoollist_Interface;
+//	void insert(Rcpp::RObject field, T value)	{			static_cast<jaspList<T>*>(myJaspObject)->insert(field, value);	}
+//	T at(Rcpp::RObject field)					{ return	static_cast<jaspList<T>*>(myJaspObject)->at(field);				}
+//	void add(T value)							{			static_cast<jaspList<T>*>(myJaspObject)->add(value);			}
+//};
 
-RCPP_EXPOSED_CLASS_NODECL(jaspStringlist_Interface)
-RCPP_EXPOSED_CLASS_NODECL(jaspDoublelist_Interface)
-RCPP_EXPOSED_CLASS_NODECL(jaspIntlist_Interface)
-RCPP_EXPOSED_CLASS_NODECL(jaspBoollist_Interface)
+//typedef jaspList_Interface<std::string>	jaspStringlist_Interface;
+//typedef jaspList_Interface<double>		jaspDoublelist_Interface;
+//typedef jaspList_Interface<int>			jaspIntlist_Interface;
+//typedef jaspList_Interface<bool>		jaspBoollist_Interface;
+
+//RCPP_EXPOSED_CLASS_NODECL(jaspStringlist_Interface)
+//RCPP_EXPOSED_CLASS_NODECL(jaspDoublelist_Interface)
+//RCPP_EXPOSED_CLASS_NODECL(jaspIntlist_Interface)
+//RCPP_EXPOSED_CLASS_NODECL(jaspBoollist_Interface)
 
 //.constructor(									"Default constructor without setting the title explicitly")
 //.constructor<std::string>(						"Constructor that sets the title explicitly")
 
 #define JASPLIST_MODULE_EXPORT(CLASS_NAME_CPP, CLASS_NAME_R)														\
 Rcpp::class_<CLASS_NAME_CPP>(CLASS_NAME_R)																			\
-	.derives<jaspObject_Interface>("jaspObject")																	\
+	.derives<jaspObject>("jaspObject")																	\
 	.method( "[[",		&CLASS_NAME_CPP::at,		"Access element by fieldname (string) or index (int) ")			\
 	.method( "[[<-",	&CLASS_NAME_CPP::insert,	"Insert an element under index (int) or fieldname (string)")	\
 	.method( "insert",	&CLASS_NAME_CPP::insert,	"Insert an element under index (int) or fieldname (string)")	\
