@@ -19,16 +19,3 @@ private:
 };
 
 RCPP_EXPOSED_CLASS_NODECL(jaspState)
-
-
-//class jaspState_Interface : public jaspObject_Interface
-//{
-//public:
-//	jaspState_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
-
-//	void setObject(Rcpp::RObject obj)	{			((jaspState*)(myJaspObject))->setObject(obj);	}
-//	Rcpp::RObject getObject()			{ return	((jaspState*)(myJaspObject))->getObject();		}
-//};
-
-//RCPP_EXPOSED_CLASS_NODECL(jaspState_Interface)
-

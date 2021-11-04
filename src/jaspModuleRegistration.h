@@ -1,14 +1,14 @@
 #include <Rcpp.h>
 #include "jaspResults.h"
 
-JASP_OBJECT_CREATOR2(jaspHtml)
-JASP_OBJECT_CREATOR2(jaspPlot)
-JASP_OBJECT_CREATOR2(jaspTable)
-JASP_OBJECT_CREATOR2(jaspState)
-JASP_OBJECT_CREATOR2(jaspColumn)
-JASP_OBJECT_CREATOR2(jaspContainer)
-JASP_OBJECT_CREATOR2(jaspQmlSource)
-JASP_OBJECT_CREATOR_ARG2(jaspResults, oldState)
+JASP_OBJECT_CREATOR(jaspHtml)
+JASP_OBJECT_CREATOR(jaspPlot)
+JASP_OBJECT_CREATOR(jaspTable)
+JASP_OBJECT_CREATOR(jaspState)
+JASP_OBJECT_CREATOR(jaspColumn)
+JASP_OBJECT_CREATOR(jaspContainer)
+JASP_OBJECT_CREATOR(jaspQmlSource)
+JASP_OBJECT_CREATOR_ARG(jaspResults, oldState)
 
 // we should do something better with these.
 template <typename T>
@@ -41,17 +41,6 @@ RCPP_MODULE(jaspResults)
 	Rcpp::function("cpp_progressbarTick",	jaspResults::staticProgressbarTick);
 
 	Rcpp::function("destroyAllAllocatedObjects", jaspObject::destroyAllAllocatedObjects);
-
-
-	const std::string addRowsGeneralDoc =
-			"Before the data is added all existing columns will be made the same length by appending null-values. "
-			"If the new data contains more columns than currently present empty columns will be added. "
-			"Columnnames will be extracted and used to place the data in the correct column, they can be specified through the elementnames of a list, names of a data.frame and colnames of a matrix. "
-			"To also set the rownames you can fill pass a characterVector with the desired names in the second argument.";
-
-	const std::string addRowsDoc = "Add rows to the table, where 'rows' is a list (of rows), dataframe or matrix. " + addRowsGeneralDoc;
-	const std::string addRowDoc  = "Add a row to the table, where 'rows' is a list (of values) or vector. " + addRowsGeneralDoc;
-
 	Rcpp::class_<jaspObject>("jaspObject")
 
 		.finalizer(&finalizerForR)
@@ -72,10 +61,21 @@ RCPP_MODULE(jaspResults)
 		.method("setOptionMustBeDependency",		&jaspObject::setOptionMustBeDependency,						"Specifies an option and it's required value, if the analysis is restarted and this option is no longer defined (like that) it will automatically destroy the object. Otherwise it will keep it.")
 		.method("setOptionMustContainDependency",	&jaspObject::setOptionMustContainDependency,				"Specifies an option that should define an array and a required value that should be in it, if the analysis is restarted and this option is no longer defined or no longer contains the specified value it will automatically destroy the object. Otherwise it will keep it.")
 		.method("dependOnOptions",					&jaspObject::dependOnOptions,								"Will make the object depend on the current values of the options specified in the charactervector.")
-		//TODO: this doesn't work!
-//		.method("copyDependenciesFromJaspObject",	&jaspObject::copyDependenciesFromJaspObject,				"Will make the object depend on whatever the other jaspObject depends.")
+		.method("copyDependenciesFromJaspObject",	&jaspObject::copyDependenciesFromJaspObject,				"Will make the object depend on whatever the other jaspObject depends.")
 		.method("getError",							&jaspObject::getError, 										"Get the error status of this object.")
 		.method("setError",							&jaspObject::setErrorForR, 									"Set an error message on this object that which be shown in JASP. Errors set on jaspContainers or jaspResults are propagated to children, such that the first child shows the error and the others are greyed out.")
+	;
+
+	Rcpp::class_<jaspContainer>("jaspContainer")
+		.derives<jaspObject>("jaspObject")
+
+		.finalizer(&finalizerForR)
+
+		.property("length",							&jaspContainer::length,									"Returns how many objects are stored in this container.")
+		.field("initCollapsed",						&jaspContainer::_initiallyCollapsed,					"If this is set true the container will be collapsed initially.")
+		.method( "[[",								&jaspContainer::at,										"Retrieve an object from this container as specified under the fieldname.")
+		.method( "[[<-",							&jaspContainer::insert,									"Insert an object into this container under a fieldname, if this object is a jaspObject and without a title it will get the fieldname as title.")
+		.method( "findObjectWithUniqueNestedName",	&jaspContainer::findObjectWithUniqueNestedName,			"Find a jasp object from its unique name")
 	;
 
 	Rcpp::class_<jaspPlot>("jaspPlot")
@@ -97,17 +97,19 @@ RCPP_MODULE(jaspResults)
 
 	;
 
-	Rcpp::class_<jaspContainer>("jaspContainer")
-		.derives<jaspObject>("jaspObject")
+	JASPLIST_MODULE_EXPORT(jaspBoollist,		"jaspBoollist")
+	JASPLIST_MODULE_EXPORT(jaspDoublelist,		"jaspDoublelist")
+	JASPLIST_MODULE_EXPORT(jaspIntlist,			"jaspIntlist")
+	JASPLIST_MODULE_EXPORT(jaspBoollist,		"jaspBoollist")
 
-		.finalizer(&finalizerForR)
+	const std::string addRowsGeneralDoc =
+			"Before the data is added all existing columns will be made the same length by appending null-values. "
+			"If the new data contains more columns than currently present empty columns will be added. "
+			"Columnnames will be extracted and used to place the data in the correct column, they can be specified through the elementnames of a list, names of a data.frame and colnames of a matrix. "
+			"To also set the rownames you can fill pass a characterVector with the desired names in the second argument.";
 
-		.property("length",							&jaspContainer::length,									"Returns how many objects are stored in this container.")
-		.field("initCollapsed",						&jaspContainer::_initiallyCollapsed,					"If this is set true the container will be collapsed initially.")
-		.method( "[[",								&jaspContainer::at,										"Retrieve an object from this container as specified under the fieldname.")
-		.method( "[[<-",							&jaspContainer::insert,									"Insert an object into this container under a fieldname, if this object is a jaspObject and without a title it will get the fieldname as title.")
-		.method( "findObjectWithUniqueNestedName",	&jaspContainer::findObjectWithUniqueNestedName,			"Find a jasp object from its unique name")
-	;
+	const std::string addRowsDoc = "Add rows to the table, where 'rows' is a list (of rows), dataframe or matrix. " + addRowsGeneralDoc;
+	const std::string addRowDoc  = "Add a row to the table, where 'rows' is a list (of values) or vector. " + addRowsGeneralDoc;
 
 	Rcpp::class_<jaspTable>("jaspTable")
 		.derives<jaspObject>("jaspObject")

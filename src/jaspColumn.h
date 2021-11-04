@@ -32,16 +32,4 @@ private:
 
 RCPP_EXPOSED_CLASS_NODECL(jaspColumn)
 
-//class jaspColumn_Interface : public jaspObject_Interface
-//{
-//public:
-//	jaspColumn_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
-
-//	void setScale(		Rcpp::RObject scalarData)	{ static_cast<jaspColumn*>(myJaspObject)->setScale(scalarData);			}
-//	void setOrdinal(	Rcpp::RObject ordinalData)	{ static_cast<jaspColumn*>(myJaspObject)->setOrdinal(ordinalData);		}
-//	void setNominal(	Rcpp::RObject nominalData)	{ static_cast<jaspColumn*>(myJaspObject)->setNominal(nominalData);		}
-//	void setNominalText(Rcpp::RObject nominalData)	{ static_cast<jaspColumn*>(myJaspObject)->setNominalText(nominalData);	}
-//};
-
-//RCPP_EXPOSED_CLASS_NODECL(jaspColumn_Interface)
 #endif

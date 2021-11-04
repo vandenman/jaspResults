@@ -75,18 +75,3 @@ protected:
 };
 
 RCPP_EXPOSED_CLASS_NODECL(jaspContainer)
-
-//class jaspContainer_Interface : public jaspObject_Interface
-//{
-//public:
-//	jaspContainer_Interface(jaspObject * dataObj) : jaspObject_Interface(dataObj) {}
-
-//	int length()																	{ return ((jaspContainer*)myJaspObject)->length(); }
-//	Rcpp::RObject	at(std::string field)											{ return ((jaspContainer*)myJaspObject)->at(field); }
-//	void			insert(std::string field, Rcpp::RObject value)					{ ((jaspContainer*)myJaspObject)->insert(field, value); }
-//	Rcpp::RObject	findObjectWithUniqueNestedName(std::string uniqueNestedName);
-
-//	JASPOBJECT_INTERFACE_PROPERTY_FUNCTIONS_GENERATOR(jaspContainer, bool,	_initiallyCollapsed,	InitiallyCollapsed)
-//};
-
-//RCPP_EXPOSED_CLASS_NODECL(jaspContainer_Interface)
