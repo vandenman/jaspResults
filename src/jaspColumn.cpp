@@ -18,8 +18,8 @@ columnType jaspRCPP_getColumnType(std::string columnName) { return columnType::u
 
 #endif
 
-jaspColumn::jaspColumn(std::string columnName)
-	: jaspObject(jaspObjectType::column, "jaspColumn for " + columnName)
+jaspColumn::jaspColumn(Rcpp::String columnName)
+	: jaspObject(jaspObjectType::column, "jaspColumn for " + std::string(columnName))
 	, _columnName(columnName)
 {
 	switch(jaspRCPP_getColumnType(columnName))

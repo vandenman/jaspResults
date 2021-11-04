@@ -1,6 +1,6 @@
 #include "jaspQmlSource.h"
 
-jaspQmlSource::jaspQmlSource(const std::string & sourceID) : jaspJson(), _sourceID(sourceID)
+jaspQmlSource::jaspQmlSource(const Rcpp::String & sourceID) : jaspJson(), _sourceID(sourceID)
 {
 	_type = jaspObjectType::qmlSource;
 }

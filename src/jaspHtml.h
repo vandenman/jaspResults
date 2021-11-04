@@ -27,6 +27,7 @@ public:
     std::string getHtml();
 };
 
+RCPP_EXPOSED_CLASS_NODECL(jaspHtml)
 
 
 //class jaspHtml_Interface : public jaspObject_Interface

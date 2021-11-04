@@ -6,7 +6,7 @@
 class jaspColumn : public jaspObject
 {
 public:
-	jaspColumn(std::string columnName="");
+	jaspColumn(Rcpp::String columnName="");
 
 
 	Json::Value		convertToJSON()								const	override;

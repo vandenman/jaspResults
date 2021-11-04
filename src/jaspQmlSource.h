@@ -6,7 +6,7 @@
 class jaspQmlSource : public jaspJson
 {
 public:
-					jaspQmlSource(const std::string & sourceID = "");
+					jaspQmlSource(const Rcpp::String & sourceID = "");
 
 	void			setSourceID(const std::string & sourceID)			{ _sourceID = sourceID; }
 	std::string		sourceID()									const	{ return _sourceID; }
