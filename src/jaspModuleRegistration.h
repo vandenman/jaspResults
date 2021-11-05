@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include <Rcpp/XPtr.h>
 #include "jaspResults.h"
 
 JASP_OBJECT_CREATOR(jaspHtml)
@@ -10,17 +11,32 @@ JASP_OBJECT_CREATOR(jaspContainer)
 JASP_OBJECT_CREATOR(jaspQmlSource)
 JASP_OBJECT_CREATOR_ARG(jaspResults, oldState)
 
-// we should do something better with these.
+// we could do more with these, but they may interfere with jaspRCPP_runModuleCall which also calls jaspObject::destroyAllAllocatedObjects();
 template <typename T>
 void finalizerForR( T* obj)
 {
-	jaspPrint("R called finalizerForR for jasp object with type: " + obj->type());
+	jaspPrint("Rcpp called finalizerForR for jasp object with type: " + obj->type());
 };
 
-void finalizerForR( jaspResults* obj)
+void finalizerForR( jaspResults* )
 {
-	jaspPrint("R called finalizerForR for jaspResults, now running destroy allocated objects");
-//	obj->destroyAllAllocatedObjects();
+	jaspPrint("Rcpp called finalizerForR for jaspResults. Should we run destroyAllAllocatedObjects?");
+}
+
+namespace Rcpp
+{
+	template <typename T, typename std::enable_if<std::is_base_of<jaspObject, T>::value>::type>
+	void standard_delete_finalizer(T* obj)
+	{
+		jaspPrint("Rcpp called standard_delete_finalizer for jasp object with type: " + obj->type());
+	}
+
+	template <>
+	void standard_delete_finalizer(jaspResults* )
+	{
+		jaspPrint("Rcpp called standard_delete_finalizer for jaspResults. Should we run destroyAllAllocatedObjects?");
+	}
+
 }
 
 
