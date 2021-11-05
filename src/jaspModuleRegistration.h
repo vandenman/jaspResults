@@ -11,31 +11,59 @@ JASP_OBJECT_CREATOR(jaspContainer)
 JASP_OBJECT_CREATOR(jaspQmlSource)
 JASP_OBJECT_CREATOR_ARG(jaspResults, oldState)
 
+// there should be a way to do this with template specializations...
+#define JASP_OBJECT_CREATOR_DELETE_FINALIZER(TYPE)					\
+template<>															\
+void standard_delete_finalizer(TYPE* )								\
+{																	\
+	jaspPrint("Rcpp called standard_delete_finalizer for " #TYPE);	\
+}																	\
+;
+
 // we could do more with these, but they may interfere with jaspRCPP_runModuleCall which also calls jaspObject::destroyAllAllocatedObjects();
-template <typename T>
-void finalizerForR( T* obj)
-{
-	jaspPrint("Rcpp called finalizerForR for jasp object with type: " + obj->type());
-};
-
-void finalizerForR( jaspResults* )
-{
-	jaspPrint("Rcpp called finalizerForR for jaspResults. Should we run destroyAllAllocatedObjects?");
-}
-
 namespace Rcpp
 {
-	template <typename T, typename std::enable_if<std::is_base_of<jaspObject, T>::value>::type>
-	void standard_delete_finalizer(T* obj)
-	{
-		jaspPrint("Rcpp called standard_delete_finalizer for jasp object with type: " + obj->type());
-	}
+	// these only work if we actually pass them to .finalizer(&Rcpp::finalizerForR), they don't need to be in the namespace Rcpp
+//	template <typename T>
+//	void finalizerForR(T* obj)
+//	{
+//		jaspPrint("Rcpp called finalizerForR for jasp object with type: " + obj->type());
+//	};
+
+//	template <>
+//	void finalizerForR(jaspResults*)
+//	{
+//		jaspPrint("Rcpp called finalizerForR for jaspResults. Should we run destroyAllAllocatedObjects?");
+//	}
+
 
 	template <>
 	void standard_delete_finalizer(jaspResults* )
 	{
 		jaspPrint("Rcpp called standard_delete_finalizer for jaspResults. Should we run destroyAllAllocatedObjects?");
 	}
+
+
+//	Unfortunately, this  does not work, but it would be much cleaner than the macro
+
+//	needed until C++ 14 support
+//	template <bool B, typename T=void>
+//	using enable_if_t = typename std::enable_if<B, T>::type;
+
+//	template <typename T>
+//	enable_if_t<std::is_base_of<jaspObject, T>::value, void> standard_delete_finalizer(T* obj) {
+//	   jaspPrint("Rcpp called standard_delete_finalizer for jasp object with type: " + obj->type());
+//	}
+
+
+	JASP_OBJECT_CREATOR_DELETE_FINALIZER(jaspPlot);
+	JASP_OBJECT_CREATOR_DELETE_FINALIZER(jaspHtml);
+	JASP_OBJECT_CREATOR_DELETE_FINALIZER(jaspTable);
+	JASP_OBJECT_CREATOR_DELETE_FINALIZER(jaspState);
+	JASP_OBJECT_CREATOR_DELETE_FINALIZER(jaspColumn);
+//	JASP_OBJECT_CREATOR_DELETE_FINALIZER(jaspResults);
+	JASP_OBJECT_CREATOR_DELETE_FINALIZER(jaspContainer);
+	JASP_OBJECT_CREATOR_DELETE_FINALIZER(jaspQmlSource);
 
 }
 
@@ -59,7 +87,7 @@ RCPP_MODULE(jaspResults)
 	Rcpp::function("destroyAllAllocatedObjects", jaspObject::destroyAllAllocatedObjects);
 	Rcpp::class_<jaspObject>("jaspObject")
 
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 
 		.method("print",		&jaspObject::print,								"Prints the contents of the jaspObject")
 		.method("toHtml",		&jaspObject::toHtml,							"gives a string with the contents of the jaspObject nicely formatted as html")
@@ -85,7 +113,7 @@ RCPP_MODULE(jaspResults)
 	Rcpp::class_<jaspContainer>("jaspContainer")
 		.derives<jaspObject>("jaspObject")
 
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 
 		.property("length",							&jaspContainer::length,									"Returns how many objects are stored in this container.")
 		.field("initCollapsed",						&jaspContainer::_initiallyCollapsed,					"If this is set true the container will be collapsed initially.")
@@ -97,7 +125,7 @@ RCPP_MODULE(jaspResults)
 	Rcpp::class_<jaspPlot>("jaspPlot")
 		.derives<jaspObject>("jaspObject")
 
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 
 		.field("aspectRatio",		&jaspPlot::_aspectRatio,											"Stores the aspect ratio used to make the plot, will not redraw the plot on change.")
 		.field("width",				&jaspPlot::_width,													"Stores the width used to make the plot, will not redraw the plot on change.")
@@ -130,7 +158,7 @@ RCPP_MODULE(jaspResults)
 	Rcpp::class_<jaspTable>("jaspTable")
 		.derives<jaspObject>("jaspObject")
 
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 
 		// TODO: Ask Joris why this was implemented as "property with getter + method" instead of "property with getter and setter"
 		.property("colNames",					&jaspTable::getColNames,					"List of columnnames, single elements can be get and set here directly through [['']] notation but setting all columnnames at once should be done through setColNames")
@@ -191,7 +219,7 @@ RCPP_MODULE(jaspResults)
 
 	Rcpp::class_<jaspHtml>("jaspHtml")
 		.derives<jaspObject>("jaspObject")
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 		.property("text",			&jaspHtml::getText,			&jaspHtml::setText,			"The text of this element")
 		.property("html",			&jaspHtml::getHtml,										"The text of this element")
 		.field("elementType",		&jaspHtml::_elementType,								"The type of this html element, default is 'p' but other useful values include 'H1', 'h2' etc. If you want to write your own html element completely set this to \"\"")
@@ -202,13 +230,13 @@ RCPP_MODULE(jaspResults)
 
 	Rcpp::class_<jaspState>("jaspState")
 		.derives<jaspObject>("jaspObject")
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 		.property("object", &jaspState::getObject, &jaspState::setObject, "The object that you might want to keep for the next revision of your analysis.")
 	;
 
 	Rcpp::class_<jaspColumn>("jaspColumn")
 		.derives<jaspObject>("jaspObject")
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 		.method("setScale",				&jaspColumn::setScale,			"Overwrite the contents of the specified column with scalar data.")
 		.method("setOrdinal",			&jaspColumn::setOrdinal,		"Overwrite the contents of the specified column with ordinal data.")
 		.method("setNominal",			&jaspColumn::setNominal,		"Overwrite the contents of the specified column with nominal data.")
@@ -217,8 +245,8 @@ RCPP_MODULE(jaspResults)
 
 	Rcpp::class_<jaspResults>("jaspResultsClass")
 		.derives<jaspContainer>("jaspContainer")
-		.finalizer(&finalizerForR)
-		.method("send",						&jaspResults::send,									"Constructs the results/response-json and sends it to Desktop, but only if jaspResults::setSendFunc was called with an appropriate sendFuncDef first.")
+//		.finalizer(&finalizerForR)
+		.method("send",						&jaspResults::sendForR,								"Constructs the results/response-json and sends it to Desktop, but only if jaspResults::setSendFunc was called with an appropriate sendFuncDef first.")
 		.method("complete",					&jaspResults::complete,								"Constructs the results/response-json and sends it to Desktop but sets status to complete first.")
 		.method("setErrorMessage",			&jaspResults::setErrorMessage,						"Sets an errormessage on the results.")
 		.method("getPlotObjectsForState",	&jaspResults::getPlotObjectsForState,				"Retrieves all plot objects and stores them in a list with the filePath of the plot as name of the element.")
@@ -250,14 +278,14 @@ RCPP_MODULE(jaspResults)
 
 	Rcpp::class_<jaspJson>("jaspJson")
 		.derives<jaspJson>("jaspObject")
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 		.method("getValue",					&jaspJson::getValue,								"Get json string encoded value")
 		.method("setValue",					&jaspJson::setValue,								"Set R object to value")
 	;
 
 	Rcpp::class_<jaspQmlSource>("jaspQmlSource")
 		.derives<jaspJson>("jaspJson")
-		.finalizer(&finalizerForR)
+//		.finalizer(&finalizerForR)
 		.property("sourceID",				&jaspQmlSource::sourceID,				&jaspQmlSource::setSourceIDForR)
 	;
 

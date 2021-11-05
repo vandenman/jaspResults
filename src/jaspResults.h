@@ -36,6 +36,7 @@ public:
 	static const char *	writeSealFilename() { return "jaspResultsFinishedWriting.txt"; }
 
 	void			send(std::string otherMsg = "");
+	void			sendForR() { send(); }
 	void			checkForAnalysisChanged();
 	void			setStatus(std::string status);
 	std::string		getStatus();
