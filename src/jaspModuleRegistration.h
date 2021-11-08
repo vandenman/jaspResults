@@ -87,20 +87,17 @@ RCPP_MODULE(jaspResults)
 	Rcpp::function("destroyAllAllocatedObjects", jaspObject::destroyAllAllocatedObjects);
 	Rcpp::class_<jaspObject>("jaspObject")
 
-//		.finalizer(&finalizerForR)
+		.method("print",							&jaspObject::print,											"Prints the contents of the jaspObject")
+		.method("toHtml",							&jaspObject::toHtml,										"gives a string with the contents of the jaspObject nicely formatted as html")
+		.method("printHtml",						&jaspObject::printHtml,										"Prints the contents of the jaspObject nicely formatted as html")
 
-		.method("print",		&jaspObject::print,								"Prints the contents of the jaspObject")
-		.method("toHtml",		&jaspObject::toHtml,							"gives a string with the contents of the jaspObject nicely formatted as html")
-		.method("printHtml",	&jaspObject::printHtml,							"Prints the contents of the jaspObject nicely formatted as html")
+		.method("addMessage",						&jaspObject::addMessage,									"Add a message to this object")
+		.method("addCitation",						&jaspObject::addCitation,									"Add a citation to this object")
 
-		.method("addMessage",	&jaspObject::addMessage,						"Add a message to this object")
-		.method("addCitation",	&jaspObject::addCitation,						"Add a citation to this object")
-
-		.field("title",			&jaspObject::_title,							"Set the title of this object")
-		.field("info",			&jaspObject::_info,								"Set info aka help MD for this object")
-		.field("position",		&jaspObject::_position,							"Set the position of this object in it's container. By default this is at the end in the order of adding. You can specify any other value, they do not need to be next to each other or unique. The rule is: lower values (including negative) are higher in the container and when multiple objects in a container have the same position-value order is derived from adding-order.")
-
-		.property("type",		&jaspObject::type,								"The type of this jaspObject as a string, something like: container, table, plot, json, list, results, html, state")
+		.field("title",								&jaspObject::_title,										"Set the title of this object")
+		.field("info",								&jaspObject::_info,											"Set info aka help MD for this object")
+		.field("position",							&jaspObject::_position,										"Set the position of this object in it's container. By default this is at the end in the order of adding. You can specify any other value, they do not need to be next to each other or unique. The rule is: lower values (including negative) are higher in the container and when multiple objects in a container have the same position-value order is derived from adding-order.")
+		.property("type",							&jaspObject::type,											"The type of this jaspObject as a string, something like: container, table, plot, json, list, results, html, state")
 
 		.method("setOptionMustBeDependency",		&jaspObject::setOptionMustBeDependency,						"Specifies an option and it's required value, if the analysis is restarted and this option is no longer defined (like that) it will automatically destroy the object. Otherwise it will keep it.")
 		.method("setOptionMustContainDependency",	&jaspObject::setOptionMustContainDependency,				"Specifies an option that should define an array and a required value that should be in it, if the analysis is restarted and this option is no longer defined or no longer contains the specified value it will automatically destroy the object. Otherwise it will keep it.")
