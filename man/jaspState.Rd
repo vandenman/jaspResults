@@ -30,7 +30,6 @@ Class \code{"\link{jaspObject}"}
 jaspResults[["someTitle"]] <- createJaspState(list(data=c(1,2,3), "A list", c("optionA", "optionB")) #the list is serialized and stored in jaspResults
 					      
 previouslyStoredTitle <- jaspResults[["someTitle"]]$object #the stored list is unserialized again!					      
-}
 }}
 
 

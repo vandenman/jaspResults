@@ -28,7 +28,6 @@ Class \code{"\link{jaspObject}"}
 # Adding a title
 table$colNames[[0]] <- "niceName"
 table$colTitles[["niceName"]] <- "Gorgeous Title"
-}
 }}
 
 
