@@ -116,7 +116,7 @@ RCPP_MODULE(jaspResults)
 		.field("initCollapsed",						&jaspContainer::_initiallyCollapsed,					"If this is set true the container will be collapsed initially.")
 		.method( "[[",								&jaspContainer::at,										"Retrieve an object from this container as specified under the fieldname.")
 		.method( "[[<-",							&jaspContainer::insert,									"Insert an object into this container under a fieldname, if this object is a jaspObject and without a title it will get the fieldname as title.")
-		.method( "findObjectWithUniqueNestedName",	&jaspContainer::findObjectWithUniqueNestedName,			"Find a jasp object from its unique name")
+		.method( "findObjectWithUniqueNestedName",	&jaspContainer::findObjectWithUniqueNestedNameForR,		"Find a jasp object from its unique name")
 	;
 
 	Rcpp::class_<jaspPlot>("jaspPlot")

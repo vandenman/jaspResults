@@ -206,6 +206,14 @@ jaspObject * jaspContainer::findObjectWithUniqueNestedName(const std::string &un
 
 }
 
+Rcpp::RObject jaspContainer::findObjectWithUniqueNestedNameForR(const std::string &uniqueNestedName)
+{
+	jaspObject* obj = findObjectWithUniqueNestedName(uniqueNestedName);
+	if (obj == nullptr)
+		return R_NilValue;
+	return wrapJaspObject(obj);
+}
+
 jaspObject * jaspContainer::getJaspObjectNewOrOld(std::string fieldName, jaspContainer * oldResult) const
 {
 	return jaspObjectComesFromOldResults(fieldName, oldResult) ? oldResult->getJaspObjectFromData(fieldName) :  _data.at(fieldName);

@@ -64,7 +64,8 @@ public:
 	bool										jaspObjectComesFromOldResults(std::string fieldName, jaspContainer * oldResult)		const;
 
 	jaspObject *								findObjectWithNestedNameVector(const std::vector<std::string> &uniqueName, const size_t position = 0);
-	jaspObject *								findObjectWithUniqueNestedName(const std::string & uniqueNestedName);
+	jaspObject * 								findObjectWithUniqueNestedName(const std::string & uniqueNestedName);
+	Rcpp::RObject 								findObjectWithUniqueNestedNameForR(const std::string & uniqueNestedName);
 	static	Rcpp::RObject						wrapJaspObject(jaspObject * ref);
 
 protected:
