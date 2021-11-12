@@ -50,7 +50,7 @@
 	In addition, setting an error message automatically sets an error on the object.}
   }
 }
-\examples{
+\examples{\dontrun{
 
 plotA <- createJaspPlot(plot=SomeFunc())
 
@@ -67,7 +67,7 @@ plotA$dependOnTheseOptions("drawPlotA", "makeAPrettyPlot", "color")
 # A header that depends on the same things that plotA depends on:
 headerA <- createJaspHtml(text="A Nice Plot", elementType="h2")
 headerA$copyDependenciesFromJaspObject(plotA)
-}
+}}
 
 
 \keyword{classes}

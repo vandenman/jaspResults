@@ -70,14 +70,14 @@ writeImageJaspResults <- function(plot, width = 320, height = 320, obj = TRUE, r
     #   plot <- newPlot
 
   }
-  
+
   # IN CASE WE SWITCH TO SVG:
   # # convert width & height from pixels to inches. ppi = pixels per inch. 72 is a magic number inherited from the past.
   # # originally, this number was 96 but svglite scales this by (72/96 = 0.75). 0.75 * 96 = 72.
   # # for reference see https://cran.r-project.org/web/packages/svglite/vignettes/scaling.html
   # width  <- width / 72
   # height <- height / 72
-  
+
   width  <- width  * (ppi / 96)
   height <- height * (ppi / 96)
 
@@ -113,7 +113,7 @@ writeImageJaspResults <- function(plot, width = 320, height = 320, obj = TRUE, r
     }
 
   }
-  
+
   # Save path & plot object to output
   image[["png"]] <- relativePathpng
 
@@ -161,17 +161,17 @@ redrawPlotJaspResults <- function(rec_plot)
   suppressWarnings(grDevices::replayPlot(rec_plot))
 }
 
-decodeplot <- function(x, ...) { 
+decodeplot <- function(x, ...) {
   UseMethod("decodeplot", x)
 }
 
-decodeplot.jaspGraphsPlot <- function(x) {
+decodeplot.jaspGraphsPlot <- function(x, ...) {
   for (i in seq_along(x$subplots))
     x$subplots[[i]] <- decodeplot(x$subplots[[i]], returnGrob = FALSE)
   return(x)
 }
 
-decodeplot.gg <- function(x, returnGrob = TRUE) {
+decodeplot.gg <- function(x, returnGrob = TRUE, ...) {
   # TODO: do not return a grid object!
   # we can do this by automatically replacing the scales and geoms, although this is quite a lot of work.
   # alternatively, those edge cases will need to be handled by the developer.
@@ -179,7 +179,7 @@ decodeplot.gg <- function(x, returnGrob = TRUE) {
   for (i in seq_along(labels))
     if (!is.null(labels[[i]]))
       labels[[i]] <- decodeColNames(labels[[i]])
-    
+
   x[["labels"]] <- labels
   if (returnGrob) {
     grDevices::png(f <- tempfile())
@@ -194,16 +194,16 @@ decodeplot.gg <- function(x, returnGrob = TRUE) {
   }
 }
 
-decodeplot.recordedplot <- function(x) {
+decodeplot.recordedplot <- function(x, ...) {
   decodeplot.gTree(grid::grid.grabExpr(gridGraphics::grid.echo(x)))
 }
 
-decodeplot.gtable <- function(x) rapply(x, f = decodeColNames, classes = "character", how = "replace")
-decodeplot.grob   <- function(x) rapply(x, f = decodeColNames, classes = "character", how = "replace")
-decodeplot.gTree  <- function(x) rapply(x, f = decodeColNames, classes = "character", how = "replace")
-decodeplot.gDesc  <- function(x) rapply(x, f = decodeColNames, classes = "character", how = "replace")
+decodeplot.gtable <- function(x, ...) rapply(x, f = decodeColNames, classes = "character", how = "replace")
+decodeplot.grob   <- function(x, ...) rapply(x, f = decodeColNames, classes = "character", how = "replace")
+decodeplot.gTree  <- function(x, ...) rapply(x, f = decodeColNames, classes = "character", how = "replace")
+decodeplot.gDesc  <- function(x, ...) rapply(x, f = decodeColNames, classes = "character", how = "replace")
 
-decodeplot.qgraph <- function(x) {
+decodeplot.qgraph <- function(x, ...) {
   labels <- x[["graphAttributes"]][["Nodes"]][["labels"]]
   names  <- x[["graphAttributes"]][["Nodes"]][["names"]]
   labels <- decodeColNames(labels)
@@ -213,7 +213,7 @@ decodeplot.qgraph <- function(x) {
   return(x)
 }
 
-decodeplot.function <- function(x) {
+decodeplot.function <- function(x, ...) {
 
   f <- tempfile()
   on.exit({
@@ -221,10 +221,10 @@ decodeplot.function <- function(x) {
     if (file.exists(f))
       file.remove(f)
   })
-  
+
   grDevices::png(f)
   grDevices::dev.control('enable') # enable plot recording
-  
+
   eval(x())
   out <- grDevices::recordPlot()
 
@@ -249,17 +249,17 @@ decodeColNames <- function(x, strict = FALSE, fun = NULL, ...) {
 .getDefaultEnDeCoderFun <- function(type, strict) {
   defaults <- list(encode = list(strict = ".encodeColNamesStrict", lax = ".encodeColNamesLax"),
                    decode = list(strict = ".decodeColNamesStrict", lax = ".decodeColNamesLax"))
-  
+
   if (strict)
     method <- "strict"
   else
     method <- "lax"
-  
+
   fun <- .findFun(defaults[[type]][[method]])
-  
+
   if (!is.function(fun))
     stop(paste("Could not locate", type, "function; an analysis won't work correctly unless run inside JASP or jasptools"), domain = NA)
-  
+
   return(fun)
 }
 
@@ -268,17 +268,17 @@ decodeColNames <- function(x, strict = FALSE, fun = NULL, ...) {
   obj <- NULL
   if (exists(name))
     obj <- eval(parse(text = name))
-  
+
   if (!exists(name) || !is.function(obj)) {
-    
+
     if ("jasptools" %in% loadedNamespaces())
       return(getFromNamespace(name, asNamespace("jasptools")))
     return(get(name, .GlobalEnv)) # works for both JASP and jaspTools
   }
-  
+
   if (!is.function(obj))
     return(NULL)
-  
+
   return(obj)
 }
 

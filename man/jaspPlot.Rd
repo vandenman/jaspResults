@@ -41,10 +41,10 @@
 Class \code{"\link{jaspObject}"}
 }
 
-\examples{
+\examples{\dontrun{
 # a generic plot example that depends on two options:
 p <- createJaspPlot(plot=somePlottingFunc(), dependencies=c("plotSomething", "plotColours"))
-}
+}}
 
 
 \keyword{classes}
