@@ -78,13 +78,13 @@ Rcpp::RObject jaspContainer::wrapJaspObject(jaspObject * ref)
 {
 	switch(ref->getType())
 	{
-	case jaspObjectType::container:	return Rcpp::wrap(jaspContainer(ref));
-	case jaspObjectType::table:		return Rcpp::wrap(jaspTable(ref));
-	case jaspObjectType::html:		return Rcpp::wrap(jaspHtml(ref));
-	case jaspObjectType::plot:		return Rcpp::wrap(jaspPlot(ref));
-	case jaspObjectType::state:		return Rcpp::wrap(jaspState(ref));
-	case jaspObjectType::qmlSource:	return Rcpp::wrap(jaspQmlSource(ref));
-	case jaspObjectType::column:	return Rcpp::wrap(jaspColumn(ref));
+	case jaspObjectType::container:	return Rcpp::wrap(*static_cast<jaspContainer*>(ref));
+	case jaspObjectType::table:		return Rcpp::wrap(*static_cast<jaspTable*>(ref));
+	case jaspObjectType::html:		return Rcpp::wrap(*static_cast<jaspHtml*>(ref));
+	case jaspObjectType::plot:		return Rcpp::wrap(*static_cast<jaspPlot*>(ref));
+	case jaspObjectType::state:		return Rcpp::wrap(*static_cast<jaspState*>(ref));
+	case jaspObjectType::qmlSource:	return Rcpp::wrap(*static_cast<jaspQmlSource*>(ref));
+	case jaspObjectType::column:	return Rcpp::wrap(*static_cast<jaspColumn*>(ref));
 	case jaspObjectType::json:		return Rcpp::wrap(((jaspJson*)ref)->jsonToPrefixedStrings());
 	default:						return R_NilValue;
 	}
