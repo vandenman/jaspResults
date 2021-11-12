@@ -25,12 +25,12 @@
 Class \code{"\link{jaspObject}"}
 }
 
-\examples{
+\examples{\dontrun{
 # Storing something in the state.
 jaspResults[["someTitle"]] <- createJaspState(list(data=c(1,2,3), "A list", c("optionA", "optionB")) #the list is serialized and stored in jaspResults
 					      
 previouslyStoredTitle <- jaspResults[["someTitle"]]$object #the stored list is unserialized again!					      
-}
+}}
 
 
 \keyword{classes}

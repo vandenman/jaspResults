@@ -27,7 +27,7 @@
 Class \code{"\link{jaspObject}"}
 }
 
-\examples{
+\examples{\dontrun{
 #creating a container for plots and addin some plots:
 cont <- jaspContainer("plots")
 cont[["plotA"]] <- createJaspPlot(plot=SomeFunc())
@@ -35,7 +35,7 @@ cont[["plotB"]] <- createJaspPlot(plot=SomeOtherFunc())
 
 cont[["plotA"]]$print() # prints the plot object that was stored earlier under fieldname 'plotA'
 
-}
+}}
 
 
 \keyword{classes}

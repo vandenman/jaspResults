@@ -77,8 +77,8 @@
 Class \code{"\link{jaspObject}"}
 }
 
-\examples{
 # How setting up a table and modifying the data works, some examples: 
+\examples{\dontrun{
 t <- createJaspTable()
 t$addColumnInfo(name="str", title="Strings")
 t$addColumnInfo(name="num", title="Numbers")
@@ -155,7 +155,7 @@ t$addRows(list(thirdCol=99, num="world", str=""))
 #		2		"hallo"		NULL
 #		""		"world"		99
 
-}
+}}
 
 
 \keyword{classes}

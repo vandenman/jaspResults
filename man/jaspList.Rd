@@ -24,11 +24,11 @@
 Class \code{"\link{jaspObject}"}
 }
 
-\examples{
+\examples{\dontrun{
 # Adding a title
 table$colNames[[0]] <- "niceName"
 table$colTitles[["niceName"]] <- "Gorgeous Title"
-}
+}}
 
 
 \keyword{classes}
