@@ -26,6 +26,12 @@ RCPP_MODULE(jaspResults)
 	Rcpp::function("cpp_progressbarTick",	jaspResults::staticProgressbarTick);
 
 	Rcpp::function("destroyAllAllocatedObjects", jaspObject::destroyAllAllocatedObjects);
+
+	Rcpp::function("printDevInfo",		jaspObject::setPrintDevInfo);
+	Rcpp::function("setIndentSize",		jaspObject::setIndentSize);
+	Rcpp::function("useUnicode",		jaspObject::setUseUnicode);
+	Rcpp::function("indentWithTabs",	jaspObject::setIndentWithTabs);
+
 	Rcpp::class_<jaspObject_Interface>("jaspObject")
 
 		.method("print",							&jaspObject_Interface::print,											"Prints the contents of the jaspObject")
