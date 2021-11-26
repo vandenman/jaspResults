@@ -96,7 +96,7 @@ std::string jaspContainer::dataToString(std::string prefix) const
 	std::stringstream out;
 
 	for(auto key : getSortedDataFields())
-		out << prefix << "\"" << key << "\":\n" << _data.at(key)->toString(prefix + "\t") << "\n";
+		out << prefix << "\"" << key << "\":\n" << _data.at(key)->toString(prefix + getIndent()) << "\n";
 
 	return out.str();
 }

@@ -191,7 +191,7 @@ void jaspObject::childrenUpdatedCallback(bool ignoreSendTimer)
 
 std::string jaspObject::toString(std::string prefix) const
 {
-	std::string dataString = dataToString(prefix + "\t");
+	std::string dataString = dataToString(prefix + getIndent());
 	return objectTitleString(prefix) + (dataString == "" ? "\n" : ":\n" + dataString);
 }
 
@@ -448,6 +448,18 @@ void jaspObject::setDeveloperMode(bool developerMode)
 {
 	_developerMode = developerMode;
 }
+
+bool	jaspObject::_printDevInfo		= true;
+bool	jaspObject::_useUnicode			= true;
+
+void	jaspObject::setPrintDevInfo		(bool developerMode)		{ 	_printDevInfo		= developerMode;	}
+void	jaspObject::setUseUnicode		(bool useUnicode)			{ 	_useUnicode			= useUnicode;		}
+
+size_t		jaspObject::_indentSize			= 2;
+bool		jaspObject::_indentWithTabs		= false;
+std::string jaspObject::_indent				= "  ";
+void		jaspObject::setIndentSize		(size_t indentSize)			{ 	_indentSize			= indentSize;		updateIndent();	}
+void		jaspObject::setIndentWithTabs	(bool indentWithTabs)		{	_indentWithTabs		= indentWithTabs;	updateIndent();	}
 
 bool jaspObject::connectedToJaspResults()
 {

@@ -6,7 +6,7 @@ std::string jaspColRowCombination::toString()
 
 	std::stringstream out;
 	out << "{ " << (ColumnsNotRows ? "col-" : "row-") << "combination with title(" << title << "), name("<<name<<") and " << (ColumnsNotRows ? "cols" : "rows") << ": [";
-	
+
 	out << "[" << (ColumnsNotRows ? colNames.toStyledString() : rowNames.toStyledString());
 	out << "], does " << (overwrite? "" : "not ") << "overwrite and does " << (removeSeparator? "" : "not ") << "remove separator.";
 	return out.str();
@@ -121,6 +121,22 @@ int jaspTable::pushbackToColumnInData(std::vector<Json::Value> column, std::stri
 		_colNames[desiredColumnIndex] = colName;
 
 	return previouslyAddedUnnamed;
+}
+
+std::stringstream jaspTable::makeLineofSize(const std::string& lineChar, const std::vector<std::vector<std::string>>& vierkant, const std::string& prefix, const int extraSpaceSide) const
+{
+	std::stringstream line;
+
+	line << prefix << std::string(extraSpaceSide, ' ') << "   " << lineChar;
+	for (size_t row=0; row<vierkant[0].size(); row++)
+	{
+		if (row > 0)
+			line << lineChar << lineChar << lineChar;
+		for (size_t i=0; i<vierkant[0][row].size(); i++)
+			line << lineChar;
+	}
+	line << lineChar << " \n";
+	return line;
 }
 
 int jaspTable::getDesiredColumnIndexFromNameForRowAdding(std::string colName, int previouslyAddedUnnamed)
@@ -725,35 +741,36 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 		out << "  \n";
 	}
 
+	// add the first horizontal line
+	out << makeLineofSize(getLineChars()->topLineChar, vierkant, prefix, extraSpaceSide).str();
+
 	//lets print the topnames
 	out << prefix << std::string(extraSpaceSide, ' ') << "    ";
 	for(size_t row=0; row<topNames.size(); row++)
 		out << (row>0? "   " : "") << topNames[row];
 	out << "  \n";
 
-	//lets create a nice reusable layer of ----
-	std::stringstream colSep;
-
-	colSep << prefix << std::string(extraSpaceSide, ' ') << "  |-";
-
-	for(size_t row=0; row<vierkant[0].size(); row++)
-		colSep << (row>0? "-|-" : "") << std::string(vierkant[0][row].size(), '-');
-	colSep << "-|\n";
-
+	// create a reusable middle line for rows 2...N-1
+	std::stringstream colSep = makeLineofSize(getLineChars()->midLineChar, vierkant, prefix, extraSpaceSide);
+	out << colSep.str();
 	//then the actual columns X rows
 	for(size_t col=0; col<vierkant.size(); col++)
 	{
 		//put the side overtitle here
-		out << colSep.str();
-		out << prefix << sideOvertitleRow[col] << sideNames[col] << "  | ";
+//		out << colSep.str();
+//		out << prefix << sideOvertitleRow[col] << sideNames[col] << "  | ";
+		out << prefix << sideOvertitleRow[col] << sideNames[col] << "    ";
 
 		for(size_t row=0; row<vierkant[col].size(); row++)
-			out << (row>0? " | " : "") << vierkant[col][row];
+			out << (row>0? "   " : "") << vierkant[col][row];
+//			out << (row>0? " | " : "") << vierkant[col][row];
 
-		out << " |\n";
+		out << "  \n";
+//		out << " |\n";
 	}
 
-	out << colSep.str();
+	out << makeLineofSize(getLineChars()->botLineChar, vierkant, prefix, extraSpaceSide).str();
+//	out << colSep.str();
 }
 
 std::map<std::string, std::string> jaspTable::getOvertitlesMap() const
@@ -778,7 +795,8 @@ std::string jaspTable::dataToString(std::string prefix) const
 	std::vector<std::string>				colNames = getDisplayableColTitles(true, _showSpecifiedColumnsOnly),
 											rowNames = getDisplayableRowTitles();
 
-	out << prefix << "status: " << _status << "\n";
+	if (_printDevInfo)
+		out << prefix << "status: " << _status << "\n";
 
 	if(_error || _errorMessage != "")
 	{
@@ -802,7 +820,7 @@ std::string jaspTable::dataToString(std::string prefix) const
 		for(Json::Value::UInt i=0; i<footnotes.size(); i++)
 		{
 			std::string sym = footnotes[i]["symbol"].asString() ;
-			out << prefix << "\t" << (sym == "" ? "" : "(" + sym  + ") " ) << "'" << footnotes[i]["text"].asString() << "'\n";
+			out << prefix << getIndent() << (sym == "" ? "" : "(" + sym  + ") " ) << "'" << footnotes[i]["text"].asString() << "'\n";
 		}
 	}
 
@@ -1098,21 +1116,21 @@ void footnotes::insert(std::string text, std::string symbol, std::vector<Json::V
 }
 
 void jaspTable::addFootnote(Rcpp::RObject message, Rcpp::RObject symbol, Rcpp::RObject col_names, Rcpp::RObject row_names)
-{		
+{
 	if (message.isNULL())
 		Rf_error("One would expect a footnote to at least contain a message..");
-		
+
 	std::string strMessage	= jaspNativeToUtf8(message);
 	std::string strSymbol	= symbol.isNULL() ? "" : jaspNativeToUtf8(symbol);
-	
+
 	std::vector<Json::Value> colNames;
 	if (!col_names.isNULL())
 		colNames = jaspJson::RcppVector_to_VectorJson(col_names, false);
-	
+
 	std::vector<Json::Value> rowNames;
 	if (!row_names.isNULL())
 		rowNames = jaspJson::RcppVector_to_VectorJson(row_names, false);
-	
+
 	_footnotes.insert(strMessage, strSymbol, colNames, rowNames);
 }
 
@@ -1352,7 +1370,7 @@ Json::Value jaspTable::convertToJSON() const
 	obj["transposeTable"]			= _transposeTable;
 	obj["transposeWithOvertitle"]	= _transposeWithOvertitle;
 	obj["showSpecifiedColumnsOnly"]	= _showSpecifiedColumnsOnly;
-	
+
 	obj["footnotes"]				= _footnotes.convertToJSON();
 	obj["colNames"]					= _colNames.convertToJSON();
 	obj["colTypes"]					= _colTypes.convertToJSON();
@@ -1461,3 +1479,16 @@ std::map<std::string, size_t> jaspTable::mapRowNamesToIndices() const
 
 	return out;
 }
+
+lineChars jaspTable::unicodeLineChars = lineChars
+{
+	.topLineChar = u8"\u2500",//u8"\u2501",
+	.midLineChar = u8"\u2500",
+	.botLineChar = u8"\u2500"//u8"\u2501"
+};
+lineChars jaspTable::nonUnicodeLineChars = lineChars
+{
+	.topLineChar = "-",
+	.midLineChar = "-",
+	.botLineChar = "-"
+};

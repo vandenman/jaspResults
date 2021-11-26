@@ -74,6 +74,13 @@ struct footnotes
 
 }
 
+struct lineChars
+{
+	const std::string topLineChar;
+	const std::string midLineChar;
+	const std::string botLineChar;
+};
+
 using footnotesNamespace::footnotes;
 
 class jaspTable : public jaspObject
@@ -183,6 +190,16 @@ protected:
 
 	void	addOrSetColumnInData(std::vector<Json::Value> column, std::string colName="");
 	int		pushbackToColumnInData(std::vector<Json::Value> column, std::string colName, int equalizedColumnsLength, int previouslyAddedUnnamed);
+
+
+	// printing related stuff
+	std::stringstream makeLineofSize(const std::string& lineChar, const std::vector<std::vector<std::string>>& vierkant, const std::string& prefix, const int extraSpaceSide) const;
+	static lineChars unicodeLineChars;
+	static lineChars nonUnicodeLineChars;
+	lineChars* getLineChars() const	{ 	return _useUnicode ? &unicodeLineChars : &nonUnicodeLineChars;	}
+
+	size_t distanceBetweenColumns = 1;
+
 
 	template<int RTYPE>	void setDataFromVector(Rcpp::Vector<RTYPE> newData)
 	{

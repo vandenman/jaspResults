@@ -40,7 +40,12 @@ public:
 						jaspObject(const jaspObject& that) = delete;
 	virtual				~jaspObject();
 
-			std::string objectTitleString(std::string prefix)	const { return prefix + jaspObjectTypeToString(_type) + " " + _title; }
+			std::string objectTitleString(std::string prefix)	const {
+				if (_printDevInfo)
+					return prefix + jaspObjectTypeToString(_type) + " " + _title;
+				else
+					return prefix + _title;
+			}
 	virtual	std::string dataToString(std::string)				const { return ""; }
 			std::string toString(std::string prefix = "")		const;
 
@@ -138,6 +143,14 @@ public:
 
 	virtual		jaspObject *	getOldObjectFromUniqueNestedNameVector(const std::vector<std::string> &uniqueName);
 
+	// printing related
+	static void	setPrintDevInfo		(bool developerMode);
+	static void	setUseUnicode		(bool useUnicode);
+	static void	setIndentWithTabs	(bool indentWithTabs);
+	static void	setIndentSize		(size_t developerMode);
+
+	std::string getIndent()	const	{return std::string(_indentWithTabs ? '\t' : ' ', _indentSize);	}
+
 
 protected:
 	jaspObjectType				_type;
@@ -168,6 +181,18 @@ protected:
 
 	static std::set<jaspObject*> *	allocatedObjects;
 	static bool						_developerMode;
+
+	// printing related stuff, there is probably a cleaner way to do this, perhaps a separate (static) class and ?
+	static bool						_printDevInfo,
+									_useUnicode,
+									_indentWithTabs;
+	static size_t					_indentSize;
+	static std::string				_indent;
+	static void						updateIndent() {
+		_indent = std::string(_indentWithTabs ? '\t' : ' ', _indentSize);
+		Rcpp::Rcout << "_indent is now: " << _indent << std::endl;
+	}
+
 
 private:
 	bool					_finalizedAlready = false;
