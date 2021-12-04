@@ -3,6 +3,7 @@
 #include "jaspJson.h"
 #include "jaspResults.h"
 #include <chrono>
+#include "jaspPrintOptions.h"
 
 #if defined(_WIN32) || !defined(BUILDING_JASP)
 #include "lib_json/json_value.cpp" //hacky way to get libjson in the code ^^
@@ -94,6 +95,13 @@ jaspObject::~jaspObject()
 
 		delete p;
 	}
+}
+
+std::string jaspObject::objectTitleString(const std::string & prefix) const {
+	if (printOpts->_printDevInfo)
+		return prefix + jaspObjectTypeToString(_type) + " " + _title;
+	else
+		return prefix + _title;
 }
 
 void jaspObject::destroyAllAllocatedObjects()
@@ -191,7 +199,8 @@ void jaspObject::childrenUpdatedCallback(bool ignoreSendTimer)
 
 std::string jaspObject::toString(std::string prefix) const
 {
-	std::string dataString = dataToString(prefix + getIndent());
+//	std::string dataString = dataToString(prefix + getIndent());
+	std::string dataString = dataToString(prefix);
 	return objectTitleString(prefix) + (dataString == "" ? "\n" : ":\n" + dataString);
 }
 
@@ -449,17 +458,7 @@ void jaspObject::setDeveloperMode(bool developerMode)
 	_developerMode = developerMode;
 }
 
-bool	jaspObject::_printDevInfo		= true;
-bool	jaspObject::_useUnicode			= true;
-
-void	jaspObject::setPrintDevInfo		(bool developerMode)		{ 	_printDevInfo		= developerMode;	}
-void	jaspObject::setUseUnicode		(bool useUnicode)			{ 	_useUnicode			= useUnicode;		}
-
-size_t		jaspObject::_indentSize			= 2;
-bool		jaspObject::_indentWithTabs		= false;
-std::string jaspObject::_indent				= "  ";
-void		jaspObject::setIndentSize		(size_t indentSize)			{ 	_indentSize			= indentSize;		updateIndent();	}
-void		jaspObject::setIndentWithTabs	(bool indentWithTabs)		{	_indentWithTabs		= indentWithTabs;	updateIndent();	}
+jaspPrintOptions * jaspObject::printOpts = &jaspPrintOptions::GetInstance();
 
 bool jaspObject::connectedToJaspResults()
 {
