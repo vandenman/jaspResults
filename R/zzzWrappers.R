@@ -8,7 +8,9 @@
 	}
 
 	env$jaspResults <- jaspResultsR$new(create_cpp_jaspResults("Analysis Test", NULL))
-	
+
+	assign(".jaspPrintOptions", .jaspPrintOptions, envir = as.environment("package:jaspResults"))
+
 	return(invisible(TRUE))
 }
 
@@ -33,7 +35,7 @@ startProgressbar <- function(expectedTicks, label="") {
 		stop("`expectedTicks` must be numeric and `label` a character", domain = NA)
 	if (nchar(label) > 80) # if you update this value, also update it in the progressbar in jaspwidgets.js
 		warning("The progressbar label is more than 80 characters, label will be truncated", domain = NA)
-		
+
 	if (jaspResultsCalledFromJasp())
 		jaspResultsModule$cpp_startProgressbar(expectedTicks, label)
 	else
@@ -46,7 +48,7 @@ decodeName <- function(name) {
   else                               return(name)
 }
 
-progressbarTick <- function() { 
+progressbarTick <- function() {
 	if (jaspResultsCalledFromJasp())
 		jaspResultsModule$cpp_progressbarTick()
 	else
@@ -56,24 +58,24 @@ progressbarTick <- function() {
 checkForJaspResultsInit <- function() {if (!exists("jaspResults", .GlobalEnv)) .onAttach()}
 
 is.JaspResultsObj <- function(x) {
-	inherits(x, "R6") && 
+	inherits(x, "R6") &&
   inherits(x, c("jaspResultsR", "jaspContainerR", "jaspObjR", "jaspOutputObjR", "jaspPlotR", "jaspTableR", "jaspHtmlR", "jaspStateR", "jaspColumnR"))
 }
 
 destroyAllAllocatedRObjects <- function() {
 
-	# some attempt to clear out R objects with invalid pointers	
+	# some attempt to clear out R objects with invalid pointers
 	s <- search()
 	envs2Search <- s[!(startsWith(s, "package:") | startsWith(s, "tools:") | s == "Autoloads")]
-	
+
 	for (envName in envs2Search) {
-		
+
 		nms2rm <- character()
 		env <- as.environment(envName)
-		
+
 		for (n in names(env)) {
 			if (is.JaspResultsObj(env[[n]])) {
-				
+
 				# check if externalpoint of object is invalid
 				if (isTRUE(try(silent = TRUE, identical(
 					env[[n]]$.pointer,
@@ -92,8 +94,8 @@ destroyAllAllocatedRObjects <- function() {
 jaspResultsCalledFromJasp <- function() {
   # a variety of tests to check if a createJasp*() function is called from JASP
   return(
-    exists("jaspResultsModule", mode = "S4") && 
-      inherits(jaspResultsModule, "Module") && 
+    exists("jaspResultsModule", mode = "S4") &&
+      inherits(jaspResultsModule, "Module") &&
       identical(slotNames(jaspResultsModule), ".xData")
   )
 }
@@ -148,7 +150,7 @@ jaspResultsR <- R6Class(
 		},
 
 		addCitation = function(x) {
-			if (!is.character(x)) 
+			if (!is.character(x))
 				stop("Citation must be a character (vector)", domain = NA)
 			for (i in seq_along(x))
 				private$jaspObject$addCitation(x[i])
@@ -222,12 +224,12 @@ jaspResultsR <- R6Class(
 }
 `[[.jaspResultsR`   <- function(x, field)
 	x$.__enclos_env__$private$getField(field)
-	
+
 print.jaspResultsR <- function(x, ...) 	# TODO: make this a pretty summary print (But please do this in std::string jaspObject::toString() and the overrides)
 	x$print()
 
 jaspObjR <- R6Class(
-	classname = "jaspObjR", 
+	classname = "jaspObjR",
 	cloneable = FALSE,
 	public    = list(
 		initialize = function()	stop("You should not create a new jaspObject!", domain = NA),
@@ -238,7 +240,7 @@ jaspObjR <- R6Class(
 					stop("please provide a character vector in `options`", domain = NA)
 				private$jaspObject$dependOnOptions(options)
 			}
-			
+
 			if (!is.null(optionsFromObject)) {
 				if (is.JaspResultsObj(optionsFromObject)) {
 					private$jaspObject$copyDependenciesFromJaspObject(private$getJaspObject(optionsFromObject))
@@ -250,7 +252,7 @@ jaspObjR <- R6Class(
 					stop("please provide a (list of) jasp object(s) in `optionsFromObject`", domain = NA)
 				}
 			}
-				
+
 			if (!is.null(optionContainsValue)) {
 				if (!is.list(optionContainsValue) || is.null(names(optionContainsValue)))
 					stop("please provide a named list in `optionContainsValue`", domain = NA)
@@ -290,7 +292,7 @@ jaspStateR <- R6Class(
 			}
 			if (!is.null(object))
 				stateObj$object <- object
-			
+
 			if (!is.null(dependencies))
 				stateObj$dependOnOptions(dependencies)
 
@@ -313,7 +315,7 @@ jaspOutputObjR <- R6Class(
 		setError    = function(x)	private$jaspObject$setError(x),
 		getError    = function()	private$jaspObject$getError(),
 		addCitation = function(x) {
-			if (!is.character(x)) 
+			if (!is.character(x))
 				stop("Citation must be a character (vector)", domain = NA)
 			for (i in seq_along(x))
 				private$jaspObject$addCitation(x[i])
@@ -348,18 +350,18 @@ jaspHtmlR <- R6Class(
 				checkForJaspResultsInit()
 				htmlObj <- create_cpp_jaspHtml(text)
 			}
-			
+
 			htmlObj$elementType <- elementType
 			htmlObj$class       <- class
 			htmlObj$maxWidth    <- .jaspHtmlPixelizer(maxWidth)
 			htmlObj$title       <- title
-			
+
             if (!is.null(dependencies))
 			    htmlObj$dependOnOptions(dependencies)
 
             if (!is.null(info))
 			    htmlObj$info <- info
-			
+
 			if (is.numeric(position))
 				htmlObj$position = position
 
@@ -453,13 +455,13 @@ jaspContainerR <- R6Class(
 }
 `[[.jaspContainerR`   <- function(x, field)
 	x$.__enclos_env__$private$getField(field)
-	
+
 jaspPlotR <- R6Class(
 	classname = "jaspPlotR",
 	inherit   = jaspOutputObjR,
 	cloneable = FALSE,
 	public    = list(
-		initialize = function(plot=NULL, title="", width=320, height=320, aspectRatio=0, error=NULL, 
+		initialize = function(plot=NULL, title="", width=320, height=320, aspectRatio=0, error=NULL,
 		                      dependencies=NULL, position=NULL , info=NULL, jaspObject = NULL) {
 			if (!is.null(jaspObject)) {
 			  private$jaspObject <- jaspObject
@@ -476,31 +478,31 @@ jaspPlotR <- R6Class(
 	  }
 
       jaspPlotObj <- private$jaspObject
-			
+
 			if (aspectRatio > 0 && !is.null(width) && width != 0)
 				height = aspectRatio * width
 			else if (aspectRatio > 0)
 				width = height / aspectRatio
-			
+
 			jaspPlotObj$width  <- width
 			jaspPlotObj$height <- height
 			jaspPlotObj$aspectRatio <- aspectRatio
-			
+
 			if (!is.null(error))
 				jaspPlotObj$setError(error)
-			
+
 			if (!is.null(plot))
 				jaspPlotObj$plotObject <- plot
-			
+
 			if(!is.null(dependencies))
 				jaspPlotObj$dependOnOptions(dependencies)
 
             if (!is.null(info))
 			    jaspPlotObj$info <- info
-			
+
 			if(is.numeric(position))
 				jaspPlotObj$position = position
-			
+
 			return()
 		}
 	),
@@ -545,41 +547,41 @@ jaspTableR <- R6Class(
 				checkForJaspResultsInit()
 				jaspObj <- create_cpp_jaspTable(title) # If we use R's constructor it will garbage collect our objects prematurely.. #new(jaspResultsModule$jaspTable, title)
 			}
-			
+
 			if (!is.null(data))
 				jaspObj$setData(data)
-			
+
 			if (!is.null(colNames))
 				jaspObj$setColNames(colNames)
-			
+
 			if (!is.null(colTitles))
 				jaspObj$setColTitles(colTitles)
-			
+
 			if (!is.null(overtitles))
 				jaspObj$setColOvertitles(overtitles)
-			
+
 			if (!is.null(colFormats))
 				jaspObj$setColFormats(colFormats)
-			
+
 			if (!is.null(rowNames))
 				jaspObj$setRowNames(rowNames)
-			
+
 			if (!is.null(rowTitles))
 				jaspObj$setRowTitles(rowTitles)
-			
+
 			if (!is.null(dependencies))
 				jaspObj$dependOnOptions(dependencies)
 
             if (!is.null(info))
 			    jaspObj$info <- info
-			
+
 			if (is.numeric(position))
 				jaspObj$position <- position
 
       if (!(is.null(expectedRows) & is.null(expectedColumns)))
         .jaspTableSetExpectedSize(jaspObj, rows=expectedRows, cols=expectedColumns);
 
-				
+
 			private$jaspObject <- jaspObj
 			return()
 		},
@@ -599,7 +601,7 @@ jaspTableR <- R6Class(
 		  # then we add this to ensure footnotes look consistent across analyses
       if (is.null(symbol)	&& is.null(colNames) && is.null(rowNames))
         symbol <- gettext("<em>Note.</em>", domain = "R-jaspBase")
-        
+
 			private$jaspObject$addFootnoteHelper(message, symbol, colNames, rowNames)
 		},
 
@@ -639,7 +641,7 @@ jaspTableR <- R6Class(
 		setError    = function(x)	private$jaspObject$setError(x),
 		getError    = function()	private$jaspObject$getError(),
 		addCitation = function(x) {
-			if (!is.character(x)) 
+			if (!is.character(x))
 				stop("Citation must be a character (vector)", domain = NA)
 			for (i in seq_along(x))
 				private$jaspObject$addCitation(x[i])

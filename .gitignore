@@ -5,3 +5,7 @@ src-*
 !.gitignore
 
 .Rproj.user
+
+/docs
+/renv
+renv.lock

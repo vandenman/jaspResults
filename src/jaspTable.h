@@ -74,13 +74,6 @@ struct footnotes
 
 }
 
-struct lineChars
-{
-	const std::string topLineChar;
-	const std::string midLineChar;
-	const std::string botLineChar;
-};
-
 using footnotesNamespace::footnotes;
 
 class jaspTable : public jaspObject
@@ -173,7 +166,7 @@ protected:
 			std::map<std::string, std::string>				getOvertitlesMap()																					const;
 			std::vector<std::vector<std::string>>			dataToRectangularVector(bool normalizeColLengths = false, bool normalizeRowLengths = false)			const;
 	static	std::vector<std::vector<std::string>>			transposeRectangularVector(const std::vector<std::vector<std::string>> & in);
-			std::map<std::string, std::map<size_t, size_t>> getOvertitleRanges(std::vector<std::string> names, std::map<std::string,std::string> overtitles)	const;
+			std::map<std::string, std::map<size_t, size_t>> getOvertitleRanges(const std::vector<std::string>& names, const std::map<std::string,std::string>& overtitles)	const;
 
 	int getDesiredColumnIndexFromNameForColumnAdding(std::string colName);
 	int getDesiredColumnIndexFromNameForRowAdding(std::string colName, int previouslyAddedUnnamed);
@@ -193,12 +186,12 @@ protected:
 
 
 	// printing related stuff
-	std::stringstream makeLineofSize(const std::string& lineChar, const std::vector<std::vector<std::string>>& vierkant, const std::string& prefix, const int extraSpaceSide) const;
-	static lineChars unicodeLineChars;
-	static lineChars nonUnicodeLineChars;
-	lineChars* getLineChars() const	{ 	return _useUnicode ? &unicodeLineChars : &nonUnicodeLineChars;	}
+	std::stringstream makeLineofSize(const std::string& lineChar, const std::vector<std::vector<std::string>>& vierkant, const std::string& prefix, const int extraSpaceSide, const std::string& spaceBetweenRowNamesAndTableLines) const;
 
 	size_t distanceBetweenColumns = 1;
+
+	std::string repeat		(const	std::string & str,		 size_t num)								const;
+	void		padRight	(		std::string & str, const size_t num, const char paddingChar = ' ')	const;
 
 
 	template<int RTYPE>	void setDataFromVector(Rcpp::Vector<RTYPE> newData)

@@ -5,6 +5,7 @@
 #include <queue>
 #include "enumutilities.h"
 
+
 #ifdef JASP_R_INTERFACE_LIBRARY
 #include "jsonredirect.h"
 extern void			jaspRCPP_logString(		const std::string  & code);
@@ -25,6 +26,7 @@ DECLARE_ENUM(jaspColumnType, unknown, scale, ordinal, nominal, nominalText); //c
 jaspObjectType jaspObjectTypeStringToObjectType(std::string type);
 
 class jaspContainer;
+class jaspPrintOptions;
 
 std::string					stringExtend(std::string & str, size_t len, char kar = ' ');
 std::string					stringRemove(std::string str,				char kar = ' ');
@@ -40,12 +42,7 @@ public:
 						jaspObject(const jaspObject& that) = delete;
 	virtual				~jaspObject();
 
-			std::string objectTitleString(std::string prefix)	const {
-				if (_printDevInfo)
-					return prefix + jaspObjectTypeToString(_type) + " " + _title;
-				else
-					return prefix + _title;
-			}
+			std::string objectTitleString(const std::string & prefix)	const;
 	virtual	std::string dataToString(std::string)				const { return ""; }
 			std::string toString(std::string prefix = "")		const;
 
@@ -72,7 +69,6 @@ public:
 	virtual	void		checkDependenciesChildren(Json::Value currentOptions) {}
 
 			void		addCitation(std::string fullCitation);
-
 			std::string	_title,
 						_info;
 			int			_position = JASPOBJECT_DEFAULT_POSITION;
@@ -143,15 +139,6 @@ public:
 
 	virtual		jaspObject *	getOldObjectFromUniqueNestedNameVector(const std::vector<std::string> &uniqueName);
 
-	// printing related
-	static void	setPrintDevInfo		(bool developerMode);
-	static void	setUseUnicode		(bool useUnicode);
-	static void	setIndentWithTabs	(bool indentWithTabs);
-	static void	setIndentSize		(size_t developerMode);
-
-	std::string getIndent()	const	{return std::string(_indentWithTabs ? '\t' : ' ', _indentSize);	}
-
-
 protected:
 	jaspObjectType				_type;
 	std::string					_errorMessage = "";
@@ -166,6 +153,8 @@ protected:
 	std::map<std::string, Json::Value>				_optionMustContain;
 	std::map<std::string, Json::Value>				_optionMustBe;
 
+	// makes things a little bit shorter. TODO: should this be a static pointer?
+	static jaspPrintOptions * printOpts;
 
 //Should add dependencies somehow here?
 
@@ -182,16 +171,6 @@ protected:
 	static std::set<jaspObject*> *	allocatedObjects;
 	static bool						_developerMode;
 
-	// printing related stuff, there is probably a cleaner way to do this, perhaps a separate (static) class and ?
-	static bool						_printDevInfo,
-									_useUnicode,
-									_indentWithTabs;
-	static size_t					_indentSize;
-	static std::string				_indent;
-	static void						updateIndent() {
-		_indent = std::string(_indentWithTabs ? '\t' : ' ', _indentSize);
-		Rcpp::Rcout << "_indent is now: " << _indent << std::endl;
-	}
 
 
 private:

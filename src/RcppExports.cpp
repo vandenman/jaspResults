@@ -10,10 +10,32 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// jaspPrintOptionsSetPrintDevInfo
+void jaspPrintOptionsSetPrintDevInfo(bool value);
+RcppExport SEXP _jaspResults_jaspPrintOptionsSetPrintDevInfo(SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< bool >::type value(valueSEXP);
+    jaspPrintOptionsSetPrintDevInfo(value);
+    return R_NilValue;
+END_RCPP
+}
+// jaspPrintOptionsGetPrintDevInfo
+bool jaspPrintOptionsGetPrintDevInfo();
+RcppExport SEXP _jaspResults_jaspPrintOptionsGetPrintDevInfo() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(jaspPrintOptionsGetPrintDevInfo());
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_jaspResults();
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_jaspResults_jaspPrintOptionsSetPrintDevInfo", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetPrintDevInfo, 1},
+    {"_jaspResults_jaspPrintOptionsGetPrintDevInfo", (DL_FUNC) &_jaspResults_jaspPrintOptionsGetPrintDevInfo, 0},
     {"_rcpp_module_boot_jaspResults", (DL_FUNC) &_rcpp_module_boot_jaspResults, 0},
     {NULL, NULL, 0}
 };

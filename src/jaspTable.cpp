@@ -1,4 +1,5 @@
 #include "jaspTable.h"
+#include "jaspPrintOptions.h"
 
 std::string jaspColRowCombination::toString()
 {
@@ -123,11 +124,11 @@ int jaspTable::pushbackToColumnInData(std::vector<Json::Value> column, std::stri
 	return previouslyAddedUnnamed;
 }
 
-std::stringstream jaspTable::makeLineofSize(const std::string& lineChar, const std::vector<std::vector<std::string>>& vierkant, const std::string& prefix, const int extraSpaceSide) const
+std::stringstream jaspTable::makeLineofSize(const std::string& lineChar, const std::vector<std::vector<std::string>>& vierkant, const std::string& prefix, const int extraSpaceSide, const std::string& spaceBetweenRowNamesAndTableLines) const
 {
 	std::stringstream line;
 
-	line << prefix << std::string(extraSpaceSide, ' ') << "   " << lineChar;
+	line << prefix << std::string(extraSpaceSide, ' ') << spaceBetweenRowNamesAndTableLines << lineChar;
 	for (size_t row=0; row<vierkant[0].size(); row++)
 	{
 		if (row > 0)
@@ -602,7 +603,7 @@ std::vector<std::vector<std::string>> jaspTable::transposeRectangularVector(cons
 	return uit;
 }
 
-std::map<std::string, std::map<size_t, size_t>> jaspTable::getOvertitleRanges(std::vector<std::string> names, std::map<std::string,std::string> overtitles) const
+std::map<std::string, std::map<size_t, size_t>> jaspTable::getOvertitleRanges(const std::vector<std::string>& names, const std::map<std::string,std::string>& overtitles) const
 {
 	std::map<std::string, std::map<size_t, size_t>> overtitleSpread;
 
@@ -610,7 +611,8 @@ std::map<std::string, std::map<size_t, size_t>> jaspTable::getOvertitleRanges(st
 	{
 
 		std::string trimmedName	= stringRemove(names[top]),
-					overTitle	= overtitles.count(trimmedName) > 0 ? overtitles[trimmedName] : "";
+																	 // not [] since that modifies
+					overTitle	= overtitles.count(trimmedName) > 0 ? overtitles.at(trimmedName) : "";
 
 		if(overtitleSpread.count(overTitle) == 0)
 			overtitleSpread[overTitle][top] = top;
@@ -639,139 +641,372 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 	if(vierkant.size() == 0)
 		return;
 
-	size_t	sideOvertitleSpace = 0;
+	/*
+	 *						Layout of a non-transposed table
+	 *
+	 *	|	<prefix>	|	<sideOverTitleSpace>	|	<sideRowSpace>	|					<sumColSpace>					|
+	 *	|				|							|					|													|
+	 *	|				|							|					-----------------------------------------------------		<- topLine
+	 *	|				|							|	 (overTitle)	|	<topOvertitleSpace>		95% CI					|
+	 *	|				|							|					|				-------------------------			|		<- midLine, but only above colTitles that have an overTitle
+	 *	|				|							|	  (colTitle)	|	Model		|	Lower	|	upper	|	p		|
+	 *	|				|							|	   (colName)	|	(m)			|	(lower)	|	(upper)	|	(pval)	|
+	 *	|				|							|	   (colType)	|	(string)	|	number	|	(number)|	(pvalue)|
+	 *	|				|							|	    (format)	|													|
+	 *	|				|							|					|----------------------------------------------------		<- midLine
+	 *	|				|	(sideOverTitles)		|		(rowNames)	|				|			|			|			|		<- this line is only shown if printOpts->_printDevInfo
+	 *	|				|		(overTitle 1)		|		   (row 1)	|	H0			|	0.90	|	1.23	|	<0.05	|
+	 *	|				|		(overTitle 2)		|		   (row 2)	|	H1			|	0.95	|	1.23	|	0.8		|
+	 *	|				|		(overTitle 3)		|		   (row 3)	|	H3			|	0.80	|	1.23	|	<0.001	|
+	 *	|				|							|					-----------------------------------------------------		<- botLine
+	 *
+	 *
+	 *	definitions:
+	 *
+	 *	<xxx>	: variable "xxx" indicates the amount of whitespace
+	 *	(xxx)	: printing of "xxx" is only done if printOpts->_printDevInfo
+	 *	---		: horizontal line
+	 *	|		: invisible column separator
+	 *
+	 * sumColSpace is the sum of the vector colSpace, where the elements of colSpace indicate the width of the individual columns.
+	 * topOvertitleSpace is a vector which indicates the width of the overTitles.
+	 *
+	 */
 
-	for(auto & keyval : sideOvertitles)
-		sideOvertitleSpace = std::max(sideOvertitleSpace, keyval.second.size());
-
-	if(sideOvertitleSpace > 0) sideOvertitleSpace += 1;
-
-	std::vector<std::string> sideOvertitleRow;
-	std::string prevSideTitle = "";
-	for(auto & sideName : sideNames)
+	std::array<std::string, 6> rowSpaceHeaders;
+	std::vector<std::vector<std::string>> colHeaders; // colTitle, colName, colType, format
+	if (printOpts->_printDevInfo)
 	{
-		std::string sideTrim = stringRemove(sideName);
-
-		if(sideOvertitles.count(sideTrim) > 0)
+		rowSpaceHeaders =
 		{
-				std::string sideTitle = sideOvertitles[sideTrim];
-				if(sideTitle != prevSideTitle)
-				{
-					sideOvertitleRow.push_back(sideTitle + " ");
-					prevSideTitle = sideTitle;
-				}
-				else
-					sideOvertitleRow.push_back(std::string(sideOvertitleSpace, ' '));
+			"overTitle:",
+			"colTitle:",
+			"colName:",
+			"type:",
+			"format:",
+			"rowName" // TODO: this could use "\u2193" (down arrow) but it needs a non-unicode alternative
+		};
+		colHeaders.push_back(topNames);
+		// TODO: also push back other things
+	}
+	else
+	{
+		rowSpaceHeaders = {"", "", "", "", "", ""};
+		colHeaders.push_back(topNames);
+	}
+
+	// determine <sideOverTitleSpace> and sideRowSpace
+	size_t	sideOvertitleSpace = 0,
+			sideRowSpace = 0;
+
+//	std::vector<std::string> sideOvertitleRow;
+//	sideOvertitleRow.reserve(sideNames.size());
+	if (printOpts->_printDevInfo)
+	{
+
+		// determine sideRowSpace
+		for(auto & header : rowSpaceHeaders)
+			sideRowSpace = std::max(sideRowSpace, header.size());
+
+		for (auto & sideName : sideNames)
+			sideRowSpace = std::max(sideRowSpace, sideName.size());
+
+		// determine sideOvertitleSpace
+		for(auto & keyval : sideOvertitles)
+			sideOvertitleSpace = std::max(sideOvertitleSpace, keyval.second.size());
+
+		sideOvertitleSpace = std::max(sideOvertitleSpace, sizeof("sideOverTitles") - 1);
+
+	}
+
+	std::vector<size_t> colSpace, topOvertitleSpace;
+	colSpace.reserve(topNames.size());
+	std::vector<std::string> topOvertitlesWithEmpties;
+	// TODO: neither of these if clauses accounts for the width of the data!
+	if (topOvertitles.empty())
+	{
+		// loop over the topnames and retrieve the corresponding overtitle
+		// if the overtitle is unequal to the previous overtitle, we know which columns to use for determining the size.
+		size_t topOverTitleSize = 0;	// total width of all colTitles of this overtitle
+		for (size_t j = 0; j < topNames.size(); j++)
+		{
+			// find the maximum size in this column of colTitle, colName, type, format
+			size_t headerMaxSize = 0;
+			for (const auto & header : colHeaders)
+				headerMaxSize = std::max(headerMaxSize, header[j].size());
+
+			colSpace.push_back(headerMaxSize);
+			topOverTitleSize += headerMaxSize;
 		}
-		else
-			sideOvertitleRow.push_back(std::string(sideOvertitleSpace, ' '));
+		topOvertitleSpace.push_back(topOverTitleSize);
+		topOvertitlesWithEmpties.push_back("");
+	}
+	else
+	{
+		size_t start = 0;
+		std::string trimmedName = stringRemove(topNames[0]);
+		std::string previousOvertitle = topOvertitles.count(trimmedName) > 0 ? topOvertitles.at(trimmedName) : "";
+		// we intentionally loop one past the end here.
+		for(size_t i=1; i<topNames.size() + 1; i++)
+		{
+			Rcpp::Rcout << "i: " << i << std::endl;
+			std::string overTitle;
+			if (i < topNames.size())
+			{
+				trimmedName	= stringRemove(topNames[i]),
+													 // not [] since that may modifies topOvertitles
+				overTitle	= topOvertitles.count(trimmedName) > 0 ? topOvertitles.at(trimmedName) : "";
+			}
+			else
+				overTitle = "";
+
+			if (overTitle != previousOvertitle || i == topNames.size())
+			{
+
+				size_t columnSize = 0;	// total width of all colTitles of this overtitle
+				for (size_t j = start; j < i; j++)
+				{
+					// find the maximum size in this column of colTitle, colName, type, format
+					size_t headerMaxSize = 0;
+					for (const auto & header : colHeaders)
+						headerMaxSize = std::max(headerMaxSize, header[j].size());
+
+					colSpace.push_back(headerMaxSize + 2);
+					columnSize += headerMaxSize + 2;
+				}
+
+				size_t topOverTitleSize = std::max(columnSize, previousOvertitle.size());
+
+				// now that we now the total width of the columns that belong to an overtitle,
+				// we may need to redistribute excess width to the colTitles
+				// there should be a better way to do this though
+				size_t idx = start;
+				while (columnSize < topOverTitleSize)
+				{
+					colSpace[idx]++;
+					columnSize++;
+					idx++;
+					if (idx >= i)
+						idx = start;
+				}
+
+				topOvertitleSpace.push_back(topOverTitleSize);
+				topOvertitlesWithEmpties.push_back(previousOvertitle);
+
+				start = i;
+				previousOvertitle = overTitle;
+			}
+		}
 	}
 
 
-	//If there are overtitles above the top we need to make sure they fit, so we expand the topnames if needed.
-	std::map<std::string, std::map<size_t, size_t>> overtitleSpread = getOvertitleRanges(topNames, topOvertitles);
+	const std::string colSep = "|"; // "|" for debugging, "" for pretty tables
 
-	for(auto & overtitleRange : overtitleSpread)
-		for(auto & range : overtitleRange.second)
-		{
-			std::string overtitle = overtitleRange.first + "  "; //extra "  " space to make it align better
-			size_t topNamesLength = 0;
+	size_t sumColSpace = std::accumulate(colSpace.begin(), colSpace.end(), 0);
 
-			do
-			{
-				topNamesLength	= 0;
+	Rcpp::Rcout << "colSpace" << std::endl;
+	for (size_t i = 0; i < colSpace.size(); i++)
+		Rcpp::Rcout << "colSpace[" << i << "]: " << colSpace[i] << std::endl;
 
-				for(size_t tops = range.first; tops <= range.second; tops++)
-				{
-					topNamesLength += topNames[tops].size();
+	for (size_t i = 0; i < topOvertitleSpace.size(); i++)
+		Rcpp::Rcout << "topOvertitleSpace[" << i << "]: " << topOvertitleSpace[i] << std::endl;
+	Rcpp::Rcout << "sumColSpace: " << sumColSpace << std::endl;
 
-					if(tops > range.first)
-						topNamesLength += 3; // because of the ' | ' added to the print later
-				}
+	// print topLine
+	out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace) << colSep << repeat(printOpts->topLineChar(), sumColSpace) << colSep << "\n";
 
-				if(topNamesLength < overtitle.size())
-				{
-					for(size_t tops = range.first; tops <= range.second; tops++)
-						topNames[tops] += ' ';
-					topNamesLength += 3;
-				}
-			}
-			while(topNamesLength < overtitle.size());
-		}
-
-	//we want to display rownames above the "columns of cells", which means they must fit!
-	//So either we make all cols of a row bigger to correspond to the rowname size or vice versa!
-	for(size_t row=0; row<topNames.size(); row++)
-		if(topNames[row].size() > vierkant[0][row].size())
-			for(size_t col=0; col<vierkant.size(); col++)
-				stringExtend(vierkant[col][row], topNames[row].size());
-		else if(topNames[row].size() < vierkant[0][row].size())
-			stringExtend(topNames[row], vierkant[0][row].size());
-
-	size_t extraSpaceSide = sideNames[0].size() + sideOvertitleSpace;
-
-	//lets print the topOvertitles
+	// print overTitles + midLine underneath
+	if (printOpts->_printDevInfo || !topOvertitles.empty())
 	{
-		out << prefix << std::string(extraSpaceSide, ' ') << "    ";
-		size_t overTitleEnd = 0, topNameEnd = 0;
 
-		for(size_t row=0; row<topNames.size(); row++)
+		out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace);
+
+		if (printOpts->_printDevInfo) 	out << "overTitle:";
+		out << colSep;
+
+		// print overTitles
+		for (size_t i = 0; i < topOvertitlesWithEmpties.size(); i++)
 		{
-			std::string topName = topNames[row];
-			std::string trimmed = stringRemove(topName);
-
-			if(topOvertitles.count(trimmed) > 0)
-			{
-				std::string overTitle = topOvertitles[trimmed];
-				if(overtitleSpread.count(overTitle) > 0 && overtitleSpread[overTitle].count(row) > 0)
-				{
-					out << overTitle;
-					overTitleEnd += overTitle.size();
-				}
-			}
-
-			topNameEnd += topName.size() + 3; //3 because of " | "
-
-			if(overTitleEnd < topNameEnd)
-			{
-				out << std::string(topNameEnd - overTitleEnd, ' ');
-				overTitleEnd = topNameEnd;
-			}
+			const size_t overTitleSize = topOvertitleSpace[i];
+			const std::string overTitle = topOvertitlesWithEmpties[i];
+			if (overTitle == "")
+				out << std::setw(overTitleSize) << colSep;
+			else
+				out << overTitle << colSep;
+//				out << centered(overTitle) << colSep;
 		}
-		out << "  \n";
+		out << "\n";
+
+		out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace) << colSep;
+
+		// print midLine underneath the overTitles
+		for (size_t i = 0; i < topOvertitlesWithEmpties.size(); i++)
+		{
+			const size_t overTitleSize = topOvertitleSpace[i];
+			const std::string overTitle = topOvertitlesWithEmpties[i];
+			if (overTitle == "")
+				out << std::setw(overTitleSize) << colSep;
+			else
+				out << repeat(printOpts->midLineChar(), overTitleSize) << colSep;
+		}
+		out << "\n";
+
 	}
 
-	// add the first horizontal line
-	out << makeLineofSize(getLineChars()->topLineChar, vierkant, prefix, extraSpaceSide).str();
-
-	//lets print the topnames
-	out << prefix << std::string(extraSpaceSide, ' ') << "    ";
-	for(size_t row=0; row<topNames.size(); row++)
-		out << (row>0? "   " : "") << topNames[row];
-	out << "  \n";
-
-	// create a reusable middle line for rows 2...N-1
-	std::stringstream colSep = makeLineofSize(getLineChars()->midLineChar, vierkant, prefix, extraSpaceSide);
-	out << colSep.str();
-	//then the actual columns X rows
-	for(size_t col=0; col<vierkant.size(); col++)
+	// print colTitles, colNames, types, and format
+	for (size_t i = 0; i < colHeaders.size(); i++)
 	{
-		//put the side overtitle here
-//		out << colSep.str();
-//		out << prefix << sideOvertitleRow[col] << sideNames[col] << "  | ";
-		out << prefix << sideOvertitleRow[col] << sideNames[col] << "    ";
+		out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace);
 
-		for(size_t row=0; row<vierkant[col].size(); row++)
-			out << (row>0? "   " : "") << vierkant[col][row];
-//			out << (row>0? " | " : "") << vierkant[col][row];
-
-		out << "  \n";
-//		out << " |\n";
+		if (printOpts->_printDevInfo)
+		{
+			const auto temp = rowSpaceHeaders[i+1];
+//			out << std::right(temp); // <-- why doesn't this work?
+			out << temp;
+		}
+		out << colSep;
+		for (size_t j = 0; j < colSpace.size(); j++)
+			out << std::setw(colSpace[j]) << colHeaders[i][j] << colSep;
+//			out << std::setw(colSpace[j]) << centered(colHeaders[i][j]) << colSep;
+		out << "\n";
 	}
 
-	out << makeLineofSize(getLineChars()->botLineChar, vierkant, prefix, extraSpaceSide).str();
+	out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace) << colSep << repeat(printOpts->midLineChar(), sumColSpace) << colSep << "\n";
+
+
+	// now we print the actual contents of the table
+
+
+
+//	//we want to display rownames above the "columns of cells", which means they must fit!
+//	//So either we make all cols of a row bigger to correspond to the rowname size or vice versa!
+//	for(size_t row=0; row<topNames.size(); row++)
+//		if(topNames[row].size() > vierkant[0][row].size())
+//			for(size_t col=0; col<vierkant.size(); col++)
+//				stringExtend(vierkant[col][row], topNames[row].size());
+//		else if(topNames[row].size() < vierkant[0][row].size())
+//			stringExtend(topNames[row], vierkant[0][row].size());
+
+//	size_t extraSpaceSide = sideOvertitleSpace;
+//	if (printOpts->_printDevInfo)
+//		extraSpaceSide += sideNames[0].size();
+
+//	//lets print the topOvertitles
+//	const std::string spaceBetweenRowNamesAndTableLines = printOpts->_printDevInfo ? "   "  : "";
+//	const std::string spaceBetweenRowNamesAndTableData  = printOpts->_printDevInfo ? "    " : " ";
+//	const bool hasTopOverTitles = topOvertitles.size() > 0;
+
+//	// the first horizontal line
+//	out << makeLineofSize(printOpts->topLineChar(), vierkant, prefix, extraSpaceSide, spaceBetweenRowNamesAndTableLines).str();
+
+//	/*
+//	 *		TODO:
+//	 *			1. create string vectors for all objects to be printed
+//	 *			2. get the overtitles
+//	 *			3. resize all vectors + overtitles to the maximum size among them.
+//	 *			4. print everything.
+//	 *
+//	*/
+
+//	if (hasTopOverTitles)
+//	{
+
+//		// TODO: create the line underneath the overtitles here simultaneously with the overtitles!
+//		std::stringstream lineUnderneathOvertitle;
+
+////		if (printOpts->_printDevInfo)
+////			out << prefix << headerInfo[0] << std::string(std::max(0, extraSpaceSide - headerInfo[0].size()), ' ') << "    ";
+////		else
+//		out						<< prefix << std::string(extraSpaceSide, ' ') << "    ";
+//		lineUnderneathOvertitle	<< prefix << std::string(extraSpaceSide, ' ');
+//		size_t overTitleEnd = 0, topNameEnd = 0;
+
+//		for(size_t row=0; row<topNames.size(); row++)
+//		{
+//			std::string topName = topNames[row];
+//			std::string trimmed = stringRemove(topName);
+
+//			if(topOvertitles.count(trimmed) > 0)
+//			{
+//				std::string overTitle = topOvertitles[trimmed];
+//				if(overtitleSpread.count(overTitle) > 0 && overtitleSpread[overTitle].count(row) > 0)
+//				{
+//					out << overTitle;
+//					overTitleEnd += overTitle.size();
+//				}
+//				lineUnderneathOvertitle << repeat(printOpts->topLineChar(), topName.size());
+//			}
+//			else
+//			{
+//				// the topName span the entire row including an extra space
+//				lineUnderneathOvertitle << std::string(topName.size(), ' ');
+//			}
+
+//			topNameEnd += topName.size() + 3; //3 because of " | "
+
+//			if(overTitleEnd < topNameEnd)
+//			{
+//				out << std::string(topNameEnd - overTitleEnd, ' ');
+//				overTitleEnd = topNameEnd;
+//			}
+//		}
+//		out << "  \n";
+//		out << lineUnderneathOvertitle.str();
+//		out << "  \n";
+//		// add a horizontal line, but only underneath the overtitles
+//	}
+
+//	//lets print the topnames
+//	out << prefix << std::string(extraSpaceSide, ' ') << spaceBetweenRowNamesAndTableData;//"    ";
+//	for(size_t row=0; row<topNames.size(); row++)
+//		out << (row>0? "   " : "") << topNames[row];
+//	out << "  \n";
+
+//	// create a reusable middle line for between overtitle and titles & title and contents
+//	std::stringstream colSep = makeLineofSize(printOpts->midLineChar(), vierkant, prefix, extraSpaceSide, spaceBetweenRowNamesAndTableLines);
 //	out << colSep.str();
+//	//then the actual columns X rows
+//	for(size_t col=0; col<vierkant.size(); col++)
+//	{
+//		//put the side overtitle here
+////		out << colSep.str();
+////		out << prefix << sideOvertitleRow[col] << sideNames[col] << "  | ";
+//		if (printOpts->_printDevInfo)
+//			out << prefix << sideOvertitleRow[col] << sideNames[col];
+//		else
+//			out << prefix << std::string(extraSpaceSide, ' ');
+
+//		// TODO: determine where these magic spaces come from!
+//		out << spaceBetweenRowNamesAndTableData;
+
+//		for(size_t row=0; row<vierkant[col].size(); row++)
+//			out << (row>0? "   " : "") << vierkant[col][row];
+////			out << (row>0? " | " : "") << vierkant[col][row];
+
+//		out << "  \n";
+////		out << " |\n";
+//	}
+
+//	out << makeLineofSize(printOpts->botLineChar(), vierkant, prefix, extraSpaceSide, spaceBetweenRowNamesAndTableLines).str();
+////	out << colSep.str();
+
 }
+
+std::string jaspTable::repeat(const std::string & str, size_t num) const
+{
+	std::string ret;
+	ret.reserve(str.size() * num);
+	while (num--)
+		ret += str;
+	return ret;
+}
+
+void jaspTable::padRight(std::string & str, const size_t num, const char paddingChar) const
+{
+	if(num > str.size())
+		str.insert(str.size(), num - str.size(), paddingChar);
+}
+
 
 std::map<std::string, std::string> jaspTable::getOvertitlesMap() const
 {
@@ -779,9 +1014,9 @@ std::map<std::string, std::string> jaspTable::getOvertitlesMap() const
 
 	for(size_t col=0; col<_data.size(); col++)
 	{
-		std::string colName = getColName(col);
+		std::string colName	 = getColName(col);
 		if(_colOvertitles.containsField(colName))
-			map[stringRemove(colName)] = _colOvertitles[colName];
+			map[stringRemove(_colTitles[colName])] = _colOvertitles[colName];
 	}
 
 	return map;
@@ -795,7 +1030,7 @@ std::string jaspTable::dataToString(std::string prefix) const
 	std::vector<std::string>				colNames = getDisplayableColTitles(true, _showSpecifiedColumnsOnly),
 											rowNames = getDisplayableRowTitles();
 
-	if (_printDevInfo)
+	if (printOpts->_printDevInfo)
 		out << prefix << "status: " << _status << "\n";
 
 	if(_error || _errorMessage != "")
@@ -820,7 +1055,7 @@ std::string jaspTable::dataToString(std::string prefix) const
 		for(Json::Value::UInt i=0; i<footnotes.size(); i++)
 		{
 			std::string sym = footnotes[i]["symbol"].asString() ;
-			out << prefix << getIndent() << (sym == "" ? "" : "(" + sym  + ") " ) << "'" << footnotes[i]["text"].asString() << "'\n";
+			out << prefix << printOpts->getIndent() << (sym == "" ? "" : "(" + sym  + ") " ) << "'" << footnotes[i]["text"].asString() << "'\n";
 		}
 	}
 
@@ -1480,15 +1715,3 @@ std::map<std::string, size_t> jaspTable::mapRowNamesToIndices() const
 	return out;
 }
 
-lineChars jaspTable::unicodeLineChars = lineChars
-{
-	.topLineChar = u8"\u2500",//u8"\u2501",
-	.midLineChar = u8"\u2500",
-	.botLineChar = u8"\u2500"//u8"\u2501"
-};
-lineChars jaspTable::nonUnicodeLineChars = lineChars
-{
-	.topLineChar = "-",
-	.midLineChar = "-",
-	.botLineChar = "-"
-};
