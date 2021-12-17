@@ -403,6 +403,10 @@ private:
 	std::vector<jaspColRowCombination>		_colRowCombinations;
 	size_t									_expectedColumnCount	= 0,
 											_expectedRowCount		= 0;
+
+
+	std::array<std::string, 6>						getRowSpaceHeaders()										const;
+	std::vector<std::vector<std::string>>			getColHeaders(const std::vector<std::string> & topNames)	const;
 };
 
 class jaspTable_Interface : public jaspObject_Interface

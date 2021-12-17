@@ -9,3 +9,7 @@ jaspPrintOptionsGetPrintDevInfo <- function() {
     .Call(`_jaspResults_jaspPrintOptionsGetPrintDevInfo`)
 }
 
+jaspPrintOptionsVisibleTableColSep <- function(value) {
+    invisible(.Call(`_jaspResults_jaspPrintOptionsVisibleTableColSep`, value))
+}
+

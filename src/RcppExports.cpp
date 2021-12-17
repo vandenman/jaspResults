@@ -30,12 +30,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// jaspPrintOptionsVisibleTableColSep
+void jaspPrintOptionsVisibleTableColSep(bool value);
+RcppExport SEXP _jaspResults_jaspPrintOptionsVisibleTableColSep(SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< bool >::type value(valueSEXP);
+    jaspPrintOptionsVisibleTableColSep(value);
+    return R_NilValue;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_jaspResults();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_jaspResults_jaspPrintOptionsSetPrintDevInfo", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetPrintDevInfo, 1},
     {"_jaspResults_jaspPrintOptionsGetPrintDevInfo", (DL_FUNC) &_jaspResults_jaspPrintOptionsGetPrintDevInfo, 0},
+    {"_jaspResults_jaspPrintOptionsVisibleTableColSep", (DL_FUNC) &_jaspResults_jaspPrintOptionsVisibleTableColSep, 1},
     {"_rcpp_module_boot_jaspResults", (DL_FUNC) &_rcpp_module_boot_jaspResults, 0},
     {NULL, NULL, 0}
 };

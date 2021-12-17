@@ -15,3 +15,4 @@ Suggests: jaspGraphs
 LinkingTo: Rcpp, BH
 RcppModules: jaspResults
 NeedsCompilation: yes
+SystemRequirements: C++11

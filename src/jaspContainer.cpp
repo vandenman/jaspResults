@@ -1,5 +1,5 @@
 #include "jaspContainer.h"
-#include "jaspPrintOptions.h"
+//#include "jaspPrintOptions.h"
 
 void jaspContainer::insert(std::string field, Rcpp::RObject value)
 {
@@ -97,7 +97,7 @@ std::string jaspContainer::dataToString(std::string prefix) const
 	std::stringstream out;
 
 	for(auto key : getSortedDataFields())
-		out << prefix << "\"" << key << "\":\n" << _data.at(key)->toString(prefix + printOpts->getIndent()) << "\n";
+		out << prefix << "\"" << key << "\":\n" << _data.at(key)->toString(prefix /*+ printOpts->getIndent()*/) << "\n";
 
 	return out.str();
 }

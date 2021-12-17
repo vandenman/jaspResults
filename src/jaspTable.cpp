@@ -1,5 +1,6 @@
 #include "jaspTable.h"
 #include "jaspPrintOptions.h"
+#include "centertext.h"
 
 std::string jaspColRowCombination::toString()
 {
@@ -636,6 +637,48 @@ std::map<std::string, std::map<size_t, size_t>> jaspTable::getOvertitleRanges(co
 	return overtitleSpread;
 }
 
+std::array<std::string, 6> jaspTable::getRowSpaceHeaders() const
+{
+	// TODO: 'rowName' could use "\u2193" (down arrow) but it needs a non-unicode alternative
+	if (printOpts->_printDevInfo && !_transposeTable)
+		return {"overTitle: ", "colTitle: ", "colName: ", "type: ", "format: ", "rowName "};
+	else
+		return {"", "", "", "", "", ""};
+}
+
+std::vector<std::vector<std::string> > jaspTable::getColHeaders(const std::vector<std::string> & topNames) const
+{
+	std::vector<std::vector<std::string>> colHeaders;
+	colHeaders.push_back(topNames);
+	if (printOpts->_printDevInfo)
+	{
+		colHeaders.reserve(4);
+		const size_t totalColumns = std::max(_colNames.rowCount(), _expectedColumnCount);
+
+		std::vector<std::string> colNames, colTypes, colFormats;
+		colNames.reserve(totalColumns); colTypes.reserve(totalColumns), colFormats.reserve(totalColumns);
+
+		for (size_t col = 0; col < totalColumns; col++)
+		{
+			std::string		colName		= getColName(col),
+							colType		= _colTypes		.containsField(colName)	? _colTypes		[colName]	: (_colTypes[col]	!= "" ? _colTypes[col]		: ""),
+							colFormat	= _colFormats	.containsField(colName)	? _colFormats	[colName]	: (_colFormats[col] != "" ? _colFormats[col]	: "");
+
+			colNames.push_back(colName);
+			colTypes.push_back(colType);
+			colFormats.push_back(colFormat);
+
+		}
+
+		colHeaders.push_back(colNames);
+		colHeaders.push_back(colTypes);
+		colHeaders.push_back(colFormats);
+
+	}
+
+	return colHeaders;
+}
+
 void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::string prefix, std::vector<std::vector<std::string>> vierkant, std::vector<std::string> sideNames, std::vector<std::string> topNames, std::map<std::string,std::string> sideOvertitles, std::map<std::string,std::string> topOvertitles) const
 {
 	if(vierkant.size() == 0)
@@ -644,21 +687,38 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 	/*
 	 *						Layout of a non-transposed table
 	 *
-	 *	|	<prefix>	|	<sideOverTitleSpace>	|	<sideRowSpace>	|					<sumColSpace>					|
-	 *	|				|							|					|													|
-	 *	|				|							|					-----------------------------------------------------		<- topLine
-	 *	|				|							|	 (overTitle)	|	<topOvertitleSpace>		95% CI					|
-	 *	|				|							|					|				-------------------------			|		<- midLine, but only above colTitles that have an overTitle
-	 *	|				|							|	  (colTitle)	|	Model		|	Lower	|	upper	|	p		|
-	 *	|				|							|	   (colName)	|	(m)			|	(lower)	|	(upper)	|	(pval)	|
-	 *	|				|							|	   (colType)	|	(string)	|	number	|	(number)|	(pvalue)|
-	 *	|				|							|	    (format)	|													|
-	 *	|				|							|					|----------------------------------------------------		<- midLine
-	 *	|				|	(sideOverTitles)		|		(rowNames)	|				|			|			|			|		<- this line is only shown if printOpts->_printDevInfo
-	 *	|				|		(overTitle 1)		|		   (row 1)	|	H0			|	0.90	|	1.23	|	<0.05	|
-	 *	|				|		(overTitle 2)		|		   (row 2)	|	H1			|	0.95	|	1.23	|	0.8		|
-	 *	|				|		(overTitle 3)		|		   (row 3)	|	H3			|	0.80	|	1.23	|	<0.001	|
-	 *	|				|							|					-----------------------------------------------------		<- botLine
+	 *	|	<prefix>	|	<sideOverTitleSpace>	|	<sideRowSpace>	|					<sumColSpace>						|
+	 *	|				|							|					|														|
+	 *	|				|							|					---------------------------------------------------------		<- topLine
+	 *	|				|							|	 (overTitle)	|	<topOvertitleSpace>		95% CI						|
+	 *	|				|							|					|				-----------------------------			|		<- midLine, but only above colTitles that have an overTitle
+	 *	|				|							|	  (colTitle)	|	Model		|	Lower	|	upper		|	p		|
+	 *	|				|							|	   (colName)	|	(m)			|	(lower)	|	(upper)		|	(pval)	|
+	 *	|				|							|	   (colType)	|	(string)	|	number	|	(number)	|	(pvalue)|
+	 *	|				|							|	    (format)	|				|			|	sf:4;dp:3	|			|
+	 *	|				|							|					|--------------------------------------------------------		<- midLine
+	 *	|				|	(sideOverTitles)		|		 (rowName)	|				|			|				|			|		<- this line is only shown if printOpts->_printDevInfo
+	 *	|				|		(overTitle 1)		|		   (row 1)	|	H0			|	0.90	|	1.23		|	<0.05	|
+	 *	|				|		(overTitle 2)		|		   (row 2)	|	H1			|	0.95	|	1.23		|	0.8		|
+	 *	|				|		(overTitle 3)		|		   (row 3)	|	H3			|	0.80	|	1.23		|	<0.001	|
+	 *	|				|							|					---------------------------------------------------------		<- botLine
+	 *
+	 *
+	 *						TODO: Layout of a transposed table
+	 *
+	 *	|	<prefix>	|	<sideOverTitleSpace>	|	<sideRowSpace>	|				|				|				|					<sumColSpace>		|
+	 *	|				|							|					|				|				|				|										|
+	 *	|				|							|					|				|				|				-----------------------------------------		<- topLine
+	 *	|				|							|	(sideOverTitle)	|				|				|				|				<topOvertitleSpace>		|
+	 *	|				|							|					|				|				|				|				-------------------------		<- midLine, but only above colTitles that have an overTitle
+	 *	|				|							|					|				|				|	(rowName)	|	row 1		|	row 2	|	row 3	|
+	 *	|				|							|					|				|				|				|----------------------------------------		<- midLine
+	 *	|				|	(sideOverTitles)		|		(colTitle)	|	(colName)	|	(colType)	|	(format)	|				|			|			|		<- this line is only shown if printOpts->_printDevInfo
+	 *	|				|							|		   (row 1)	|		  (m)	|	 (string)	|				|	H0			|	H1		|		H2	|
+	 *	|				|		95% CI				|		   (row 2)	|	  (lower)	|	 (number)	|				|	0.9			|	0.95	|	0.80	|
+	 *	|				|		95% CI				|		   (row 3)	|	  (upper)	|	 (number)	|				|	1.23		|	1.23	|	1.23	|
+	 *	|				|							|			   (p)	|	   (pval)	|	 (pvalue)	|				|	<0.05		|	0.8		|	< 0.001	|
+	 *	|				|							|					|				|				|				-----------------------------------------		<- botLine
 	 *
 	 *
 	 *	definitions:
@@ -673,34 +733,15 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 	 *
 	 */
 
-	std::array<std::string, 6> rowSpaceHeaders;
-	std::vector<std::vector<std::string>> colHeaders; // colTitle, colName, colType, format
-	if (printOpts->_printDevInfo)
-	{
-		rowSpaceHeaders =
-		{
-			"overTitle:",
-			"colTitle:",
-			"colName:",
-			"type:",
-			"format:",
-			"rowName" // TODO: this could use "\u2193" (down arrow) but it needs a non-unicode alternative
-		};
-		colHeaders.push_back(topNames);
-		// TODO: also push back other things
-	}
-	else
-	{
-		rowSpaceHeaders = {"", "", "", "", "", ""};
-		colHeaders.push_back(topNames);
-	}
+	const std::string colSep = printOpts->getColSep();
+	const std::array<std::string, 6> rowSpaceHeaders = getRowSpaceHeaders();
+	const std::vector<std::vector<std::string>> colHeaders = getColHeaders(topNames); // colTitle, colName, colType, format
+
 
 	// determine <sideOverTitleSpace> and sideRowSpace
 	size_t	sideOvertitleSpace = 0,
 			sideRowSpace = 0;
 
-//	std::vector<std::string> sideOvertitleRow;
-//	sideOvertitleRow.reserve(sideNames.size());
 	if (printOpts->_printDevInfo)
 	{
 
@@ -711,6 +752,9 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 		for (auto & sideName : sideNames)
 			sideRowSpace = std::max(sideRowSpace, sideName.size());
 
+		// add one
+		sideRowSpace += 1;
+
 		// determine sideOvertitleSpace
 		for(auto & keyval : sideOvertitles)
 			sideOvertitleSpace = std::max(sideOvertitleSpace, keyval.second.size());
@@ -719,8 +763,18 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 
 	}
 
-	std::vector<size_t> colSpace, topOvertitleSpace;
+	// TODO: determine here the maximum widht of the data and use those as start values for colSpace
+	std::vector<size_t> colSpace;
 	colSpace.reserve(topNames.size());
+
+	for (size_t row = 0; row < topNames.size(); row++)
+	{
+		colSpace.push_back(topNames[row].size() + 2);
+		for (size_t col = 0; col < vierkant.size(); col++)
+			colSpace[row] = std::max(colSpace[row], vierkant[0][row].size() + 2);
+	}
+
+	std::vector<size_t> topOvertitleSpace;
 	std::vector<std::string> topOvertitlesWithEmpties;
 	// TODO: neither of these if clauses accounts for the width of the data!
 	if (topOvertitles.empty())
@@ -735,7 +789,7 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 			for (const auto & header : colHeaders)
 				headerMaxSize = std::max(headerMaxSize, header[j].size());
 
-			colSpace.push_back(headerMaxSize);
+			colSpace[j] = std::max(colSpace[j], headerMaxSize + 2);
 			topOverTitleSize += headerMaxSize;
 		}
 		topOvertitleSpace.push_back(topOverTitleSize);
@@ -749,7 +803,6 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 		// we intentionally loop one past the end here.
 		for(size_t i=1; i<topNames.size() + 1; i++)
 		{
-			Rcpp::Rcout << "i: " << i << std::endl;
 			std::string overTitle;
 			if (i < topNames.size())
 			{
@@ -771,11 +824,16 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 					for (const auto & header : colHeaders)
 						headerMaxSize = std::max(headerMaxSize, header[j].size());
 
-					colSpace.push_back(headerMaxSize + 2);
-					columnSize += headerMaxSize + 2;
+					// add 2 so we always have an empty space left and right of a column
+					colSpace[j] = std::max(colSpace[j], headerMaxSize + 2);
+					columnSize += colSpace[j];
 				}
 
-				size_t topOverTitleSize = std::max(columnSize, previousOvertitle.size());
+				size_t topOverTitleSize = std::max(columnSize, previousOvertitle.size() + 2);
+
+//				Rcpp::Rcout << "previousOvertitle " << previousOvertitle << std::endl;
+//				Rcpp::Rcout << "topOverTitleSize "  << topOverTitleSize << std::endl;
+//				Rcpp::Rcout << "columnSize "        << columnSize << std::endl;
 
 				// now that we now the total width of the columns that belong to an overtitle,
 				// we may need to redistribute excess width to the colTitles
@@ -790,6 +848,9 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 						idx = start;
 				}
 
+				// add the size of colSep to the overTitle
+				topOverTitleSize += colSep.size() * (i - start - 1);
+
 				topOvertitleSpace.push_back(topOverTitleSize);
 				topOvertitlesWithEmpties.push_back(previousOvertitle);
 
@@ -799,29 +860,33 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 		}
 	}
 
-
-	const std::string colSep = "|"; // "|" for debugging, "" for pretty tables
-
 	size_t sumColSpace = std::accumulate(colSpace.begin(), colSpace.end(), 0);
+	if (!colSep.empty()) // only true when debugging
+	{
+		// add the width of colsep times the number of columns
+		sumColSpace += colSep.size() * (colSpace.size() - 1);
 
-	Rcpp::Rcout << "colSpace" << std::endl;
-	for (size_t i = 0; i < colSpace.size(); i++)
-		Rcpp::Rcout << "colSpace[" << i << "]: " << colSpace[i] << std::endl;
+	}
 
-	for (size_t i = 0; i < topOvertitleSpace.size(); i++)
-		Rcpp::Rcout << "topOvertitleSpace[" << i << "]: " << topOvertitleSpace[i] << std::endl;
-	Rcpp::Rcout << "sumColSpace: " << sumColSpace << std::endl;
+//	for (size_t i = 0; i < colSpace.size(); i++)
+//		Rcpp::Rcout << "colSpace[" << i << "]: " << colSpace[i] << std::endl;
+//	Rcpp::Rcout << "sumColSpace: " << sumColSpace << std::endl;
+
+//	for (size_t i = 0; i < topOvertitleSpace.size(); i++)
+//		Rcpp::Rcout << "topOvertitleSpace[" << i << "]: " << topOvertitleSpace[i] << std::endl;
+//	Rcpp::Rcout << "sumTopOvertitleSpace: " << std::accumulate(topOvertitleSpace.begin(), topOvertitleSpace.end(), 0) << std::endl;
+
 
 	// print topLine
-	out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace) << colSep << repeat(printOpts->topLineChar(), sumColSpace) << colSep << "\n";
+	out << colSep << std::setw(prefix.size()) << "" << colSep << std::setw(sideOvertitleSpace) << "" << colSep << std::setw(sideRowSpace) << "" << colSep << repeat(printOpts->topLineChar(), sumColSpace) << colSep << "\n";
 
 	// print overTitles + midLine underneath
-	if (printOpts->_printDevInfo || !topOvertitles.empty())
+	if ((printOpts->_printDevInfo && !_transposeTable) || !topOvertitles.empty())
 	{
 
-		out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace);
+		out << colSep << std::setw(prefix.size()) << "" << colSep << std::setw(sideOvertitleSpace) << "" << colSep << std::setw(sideRowSpace);
 
-		if (printOpts->_printDevInfo) 	out << "overTitle:";
+		if (printOpts->_printDevInfo) 	out << "overTitle: ";
 		out << colSep;
 
 		// print overTitles
@@ -829,15 +894,15 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 		{
 			const size_t overTitleSize = topOvertitleSpace[i];
 			const std::string overTitle = topOvertitlesWithEmpties[i];
+			out << std::setw(overTitleSize);
 			if (overTitle == "")
-				out << std::setw(overTitleSize) << colSep;
+				out << "" << colSep;
 			else
-				out << overTitle << colSep;
-//				out << centered(overTitle) << colSep;
+				out << centered(overTitle) << colSep;
 		}
 		out << "\n";
 
-		out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace) << colSep;
+		out << colSep << std::setw(prefix.size()) << "" << colSep << std::setw(sideOvertitleSpace) << "" << colSep << std::setw(sideRowSpace) << "" << colSep;
 
 		// print midLine underneath the overTitles
 		for (size_t i = 0; i < topOvertitlesWithEmpties.size(); i++)
@@ -845,7 +910,7 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 			const size_t overTitleSize = topOvertitleSpace[i];
 			const std::string overTitle = topOvertitlesWithEmpties[i];
 			if (overTitle == "")
-				out << std::setw(overTitleSize) << colSep;
+				out << std::setw(overTitleSize) << "" << colSep;
 			else
 				out << repeat(printOpts->midLineChar(), overTitleSize) << colSep;
 		}
@@ -853,29 +918,49 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 
 	}
 
-	// print colTitles, colNames, types, and format
+	// print colTitles, colNames, types, and formats
 	for (size_t i = 0; i < colHeaders.size(); i++)
 	{
-		out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace);
+		out << colSep << std::setw(prefix.size()) << "" << colSep << std::setw(sideOvertitleSpace) << "" << colSep << std::setw(sideRowSpace);
 
 		if (printOpts->_printDevInfo)
-		{
-			const auto temp = rowSpaceHeaders[i+1];
-//			out << std::right(temp); // <-- why doesn't this work?
-			out << temp;
-		}
+			out << std::right << rowSpaceHeaders[i+1];
+
 		out << colSep;
 		for (size_t j = 0; j < colSpace.size(); j++)
-			out << std::setw(colSpace[j]) << colHeaders[i][j] << colSep;
-//			out << std::setw(colSpace[j]) << centered(colHeaders[i][j]) << colSep;
+			out << std::setw(colSpace[j]) << centered(colHeaders[i][j]) << colSep;
+
 		out << "\n";
 	}
 
-	out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace) << colSep << std::setw(sideRowSpace) << colSep << repeat(printOpts->midLineChar(), sumColSpace) << colSep << "\n";
+	// line between column info and data
+	out << colSep << std::setw(prefix.size()) << "" << colSep << std::setw(sideOvertitleSpace) << "" << colSep << std::setw(sideRowSpace) << "" << colSep << repeat(printOpts->midLineChar(), sumColSpace) << colSep << "\n";
 
+	if (printOpts->_printDevInfo)
+		out << colSep << std::setw(prefix.size()) << "" << colSep << std::setw(sideOvertitleSpace) << centered("rowOverTitles") << colSep << std::setw(sideRowSpace) << rowSpaceHeaders[5] << colSep << std::setw(sumColSpace) << "" << colSep << "\n";
 
 	// now we print the actual contents of the table
+	for(size_t col=0; col<vierkant.size(); col++)
+	{
+		out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace);
+		if (printOpts->_printDevInfo)
+		{
 
+			out << sideOvertitles[sideNames[col]] << colSep << std::setw(sideRowSpace) << sideNames[col] << colSep;
+		}
+		else
+		{
+			out << "" << colSep << std::setw(sideRowSpace) << "" << colSep;
+		}
+
+		for(size_t row = 0; row < vierkant[col].size(); row++)
+			out << std::setw(colSpace[row]) << vierkant[col][row] << colSep;
+
+		out << "\n";
+	}
+
+	// bottom line
+	out << colSep << std::setw(prefix.size()) << "" << colSep << std::setw(sideOvertitleSpace) << "" << colSep << std::setw(sideRowSpace) << "" << colSep << repeat(printOpts->botLineChar(), sumColSpace) << colSep << "\n";
 
 
 //	//we want to display rownames above the "columns of cells", which means they must fit!
@@ -1027,7 +1112,7 @@ std::string jaspTable::dataToString(std::string prefix) const
 	std::stringstream out;
 
 	std::vector<std::vector<std::string>>	vierkant = dataToRectangularVector(!_transposeTable, _transposeTable);
-	std::vector<std::string>				colNames = getDisplayableColTitles(true, _showSpecifiedColumnsOnly),
+	std::vector<std::string>				colNames = getDisplayableColTitles(false, _showSpecifiedColumnsOnly),
 											rowNames = getDisplayableRowTitles();
 
 	if (printOpts->_printDevInfo)
