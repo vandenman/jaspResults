@@ -354,7 +354,7 @@ Json::Value jaspResults::metaEntry() const
 
 	std::vector<std::string> orderedDataFields = getSortedDataFieldsWithOld(_oldResults);
 
-	for(std::string field: orderedDataFields)
+	for(const std::string & field : orderedDataFields)
 	{
 		jaspObject *	obj			= getJaspObjectNewOrOld(field, _oldResults);
 		bool			objIsOld	= jaspObjectComesFromOldResults(field, _oldResults);
@@ -374,7 +374,7 @@ Json::Value jaspResults::dataEntry(std::string &) const
 	dataJson["name"]	= getUniqueNestedName();
 	dataJson[".meta"]	= metaEntry();
 
-	for(std::string field: getSortedDataFieldsWithOld(_oldResults))
+	for(const std::string & field: getSortedDataFieldsWithOld(_oldResults))
 	{
 		jaspObject *	obj			= getJaspObjectNewOrOld(field, _oldResults);
 		bool			objIsOld	= jaspObjectComesFromOldResults(field, _oldResults);

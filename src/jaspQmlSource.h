@@ -17,7 +17,12 @@ public:
 	void		convertFromJSON_SetFields(Json::Value in)		override;
 	Json::Value convertToJSON()							const	override;
 
+	void		complete()	{ _complete = true; }
+
 	std::string		_sourceID;
+
+protected:
+	bool			_complete = false; ///<- This is used to keep the logfiles/resultjson small until the source is actually needed. Which is at complete only anyway
 };
 
 

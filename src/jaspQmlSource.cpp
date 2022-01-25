@@ -7,7 +7,7 @@ jaspQmlSource::jaspQmlSource(const std::string & sourceID) : jaspJson(), _source
 
 Json::Value jaspQmlSource::dataEntry(std::string & errorMessage) const
 {
-	Json::Value dataJson(jaspJson::dataEntry(errorMessage));
+	Json::Value dataJson(_complete ? jaspJson::dataEntry(errorMessage) : jaspObject::dataEntry(errorMessage));
 
 	dataJson["sourceID"] = _sourceID;
 

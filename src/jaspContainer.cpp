@@ -365,6 +365,10 @@ void jaspContainer::completeChildren()
 			static_cast<jaspPlot*>(obj)->complete();
 			break;
 
+		case jaspObjectType::qmlSource:
+			static_cast<jaspQmlSource*>(obj)->complete();
+			break;
+
 		default:
 			break;
 		}
