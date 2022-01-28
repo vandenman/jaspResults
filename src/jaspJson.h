@@ -9,7 +9,7 @@ public:
 	jaspJson(Json::Value json = Json::nullValue)	: jaspObject(jaspObjectType::json, ""), _json(json) {}
 	jaspJson(Rcpp::RObject Robj)					: jaspObject(jaspObjectType::json, ""), _json(RObject_to_JsonValue(Robj)) {}
 
-	void		setValue(Rcpp::RObject Robj)	{ _json = RObject_to_JsonValue(Robj);	}
+	void		setValue(Rcpp::RObject Robj)	{ _json = RObject_to_JsonValue(Robj); _changed = true;	}
 	std::string	getValue()						{ return _json.toStyledString();		}
 
 	static Json::Value RObject_to_JsonValue(Rcpp::RObject		obj);
@@ -111,8 +111,11 @@ public:
 	Json::Value convertToJSON()								const	override;
 	void		convertFromJSON_SetFields(Json::Value in)			override;
 
+	bool		changed()									const			 { return _changed; }
+
 protected:
 	Json::Value _json;
+	bool		_changed = false;
 };
 
 template<> inline Json::Value jaspJson::RVectorEntry_to_JsonValue<INTSXP>(Rcpp::Vector<INTSXP> obj, int row)					{ return obj[row] == NA_INTEGER	? "" : Json::Value((int)(obj[row]));			}

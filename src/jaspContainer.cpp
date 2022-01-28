@@ -261,7 +261,7 @@ Json::Value jaspContainer::metaEntry(jaspObject * oldResult) const
 		jaspObject *	obj			= getJaspObjectNewOrOld(field, oldContainer);
 		bool			objIsOld	= jaspObjectComesFromOldResults(field, oldContainer);
 
-		if(obj->shouldBePartOfResultsJson())
+		if(obj->shouldBePartOfResultsJson(true))
 			submeta.append(obj->metaEntry(objIsOld || !oldContainer ? nullptr : oldContainer->getJaspObjectFromData(field)));
 	}
 

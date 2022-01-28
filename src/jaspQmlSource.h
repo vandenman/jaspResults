@@ -8,16 +8,18 @@ class jaspQmlSource : public jaspJson
 public:
 					jaspQmlSource(const std::string & sourceID = "");
 
-	void			setSourceID(const std::string & sourceID)			{ _sourceID = sourceID; }
-	std::string		sourceID()									const	{ return _sourceID; }
+	void			setSourceID(const std::string & sourceID)						 { _sourceID = sourceID; }
+	std::string		sourceID()										const			 { return _sourceID; }
 
-	Json::Value	metaEntry()								const	override { return constructMetaEntry("qmlSource"); }
-	Json::Value	dataEntry(std::string & errorMessage)	const	override;
+	Json::Value		metaEntry()										const	override { return constructMetaEntry("qmlSource"); }
+	Json::Value		dataEntry(std::string & errorMessage)			const	override;
 
-	void		convertFromJSON_SetFields(Json::Value in)		override;
-	Json::Value convertToJSON()							const	override;
+	void			convertFromJSON_SetFields(Json::Value in)				override;
+	Json::Value		convertToJSON()									const	override;
 
-	void		complete()	{ _complete = true; }
+	bool			shouldBePartOfResultsJson(bool meta = false)	const	override;
+
+	void			complete()	{ _complete = true; }
 
 	std::string		_sourceID;
 

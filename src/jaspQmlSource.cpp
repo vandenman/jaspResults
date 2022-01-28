@@ -28,3 +28,9 @@ Json::Value jaspQmlSource::convertToJSON() const
 
 	return obj;
 }
+
+bool jaspQmlSource::shouldBePartOfResultsJson(bool meta) const
+{
+	// If the source has not changed, send the meta part, but not the result
+	return jaspJson::shouldBePartOfResultsJson(meta) && (meta || changed());
+}

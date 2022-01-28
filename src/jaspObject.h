@@ -72,10 +72,10 @@ public:
 						_info;
 			int			_position = JASPOBJECT_DEFAULT_POSITION;
 
-			jaspObjectType	getType()						{ return _type; }
-			bool			shouldBePartOfResultsJson()		{ return _type != jaspObjectType::state && _type != jaspObjectType::json; }
+			jaspObjectType	getType()															const { return _type; }
+	virtual bool			shouldBePartOfResultsJson(bool meta = false)						const { return _type != jaspObjectType::state && _type != jaspObjectType::json; }
 
-			Json::Value		constructMetaEntry(std::string type, std::string meta = "") const;
+			Json::Value		constructMetaEntry(std::string type, std::string meta = "")			const;
 
 	//These functions convert the object to a json that can be understood by the resultsviewer
 	virtual	Json::Value		metaEntry()															const { return Json::Value(Json::nullValue); }
