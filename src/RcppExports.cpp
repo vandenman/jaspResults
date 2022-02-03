@@ -40,6 +40,16 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// jaspPrintOptionsSetIndentSize
+void jaspPrintOptionsSetIndentSize(int value);
+RcppExport SEXP _jaspResults_jaspPrintOptionsSetIndentSize(SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type value(valueSEXP);
+    jaspPrintOptionsSetIndentSize(value);
+    return R_NilValue;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_jaspResults();
 
@@ -47,6 +57,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_jaspResults_jaspPrintOptionsSetPrintDevInfo", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetPrintDevInfo, 1},
     {"_jaspResults_jaspPrintOptionsGetPrintDevInfo", (DL_FUNC) &_jaspResults_jaspPrintOptionsGetPrintDevInfo, 0},
     {"_jaspResults_jaspPrintOptionsVisibleTableColSep", (DL_FUNC) &_jaspResults_jaspPrintOptionsVisibleTableColSep, 1},
+    {"_jaspResults_jaspPrintOptionsSetIndentSize", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetIndentSize, 1},
     {"_rcpp_module_boot_jaspResults", (DL_FUNC) &_rcpp_module_boot_jaspResults, 0},
     {NULL, NULL, 0}
 };

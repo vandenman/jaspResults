@@ -199,9 +199,8 @@ void jaspObject::childrenUpdatedCallback(bool ignoreSendTimer)
 
 std::string jaspObject::toString(std::string prefix) const
 {
-//	std::string dataString = dataToString(prefix + getIndent());
 	std::string dataString = dataToString(prefix);
-	return objectTitleString(prefix) + (dataString == "" ? "\n" : ":\n" + dataString);
+	return objectTitleString(prefix) + "\n" + dataString;
 }
 
 Rcpp::DataFrame jaspObject::convertFactorsToCharacters(Rcpp::DataFrame df)

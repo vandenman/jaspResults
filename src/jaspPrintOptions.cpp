@@ -7,6 +7,8 @@ void jaspPrintOptionsSetPrintDevInfo	(bool value)	{			jaspPrintOptions::GetInsta
 bool jaspPrintOptionsGetPrintDevInfo	()				{ return	jaspPrintOptions::GetInstance()._printDevInfo;			}
 // [[Rcpp::export]]
 void jaspPrintOptionsVisibleTableColSep	(bool value)	{			jaspPrintOptions::GetInstance()._visibleColSep = value;	}
+// [[Rcpp::export]]
+void jaspPrintOptionsSetIndentSize		(int value)		{			jaspPrintOptions::GetInstance().setIndentSize(value);	}
 
 //#define JASPPRINTOPTIONS_PROPERTY_GENERATOR(PROP_TYPE_CPP, PROP_TYPE_R, PROP_NAME, PROP_CAPITALIZED_NAME) \
 //	void        jaspPrintOptions ## Set ## PROP_CAPITALIZED_NAME (PROP_TYPE_R value) { jaspPrintOptions::GetInstance().PROP_NAME = value; } \

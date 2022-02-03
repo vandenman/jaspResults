@@ -1,6 +1,6 @@
 #include "jaspPlot.h"
 #include "jaspResults.h"
-
+#include "jaspPrintOptions.h"
 
 jaspPlot::~jaspPlot()
 {
@@ -15,6 +15,8 @@ std::string jaspPlot::dataToString(std::string prefix) const
 {
 	std::stringstream out;
 
+	if (printOpts->_printDevInfo)
+	{
 	out <<
 		prefix << "aspectRatio: "	<< _aspectRatio << "\n" <<
 		prefix << "dims:        "	<< _width << "X" << _height << "\n" <<
@@ -22,6 +24,21 @@ std::string jaspPlot::dataToString(std::string prefix) const
 		prefix << "filePath:    "	<< _filePathPng << "\n" <<
 		prefix << "status:      "	<< _status << "\n" ;//<<
 		//prefix << "has plot:    "	<< (_plotObjSerialized.size() > 0 ? "yes" : "no") << "\n";
+	}
+	else
+	{
+		out <<
+			prefix << "    +--+--+---+--+-*+" << "\n" <<
+			prefix << "  5 +              *+" << "\n" <<
+			prefix << "    |             **|" << "\n" <<
+			prefix << "    |  *****      * |" << "\n" <<
+			prefix << "  0 + **   ***   ** +" << "\n" <<
+			prefix << "    | *      *****  |" << "\n" <<
+			prefix << "    |**             |" << "\n" <<
+			prefix << " -5 +*              +" << "\n" <<
+			prefix << "    +*-+--+---+--+--+" << "\n" <<
+			prefix << "      -4 -2   0  2   " << "\n";
+	}
 
 	return out.str();
 }

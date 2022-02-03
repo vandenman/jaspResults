@@ -13,3 +13,7 @@ jaspPrintOptionsVisibleTableColSep <- function(value) {
     invisible(.Call(`_jaspResults_jaspPrintOptionsVisibleTableColSep`, value))
 }
 
+jaspPrintOptionsSetIndentSize <- function(value) {
+    invisible(.Call(`_jaspResults_jaspPrintOptionsSetIndentSize`, value))
+}
+
