@@ -9,3 +9,5 @@ src-*
 /docs
 /renv
 renv.lock
+
+*.pro.user
