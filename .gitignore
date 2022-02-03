@@ -11,3 +11,4 @@ src-*
 renv.lock
 
 *.pro.user
+*.pro
