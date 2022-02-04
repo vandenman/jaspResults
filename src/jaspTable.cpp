@@ -478,11 +478,12 @@ Rcpp::List jaspTable::toRObject() const
 		switch(type)
 		{
 
+		// this could be a templated function?
 		case jaspTableColumnType::integer:
 		{
 			Rcpp::IntegerVector values(_data[col].size());
 			for (size_t row = 0; row < _data[col].size(); row++)
-				values[col] = _data[col][row].asInt();
+				values[row] = _data[col][row].asInt();
 
 			df[getColName(col)] = values;
 			break;
@@ -491,7 +492,7 @@ Rcpp::List jaspTable::toRObject() const
 		{
 			Rcpp::NumericVector values(_data[col].size());
 			for (size_t row = 0; row < _data[col].size(); row++)
-				values[col] = _data[col][row].asInt();
+				values[row] = _data[col][row].asDouble();
 
 			df[getColName(col)] = values;
 			break;
@@ -500,7 +501,7 @@ Rcpp::List jaspTable::toRObject() const
 		{
 			Rcpp::LogicalVector values(_data[col].size());
 			for (size_t row = 0; row < _data[col].size(); row++)
-				values[col] = _data[col][row].asBool();
+				values[row] = _data[col][row].asBool();
 
 			df[getColName(col)] = values;
 
@@ -513,11 +514,12 @@ Rcpp::List jaspTable::toRObject() const
 		{
 			Rcpp::StringVector values(_data[col].size());
 			for (size_t row = 0; row < _data[col].size(); row++)
-				values[col] = _data[col][row].asString();
+				values[row] = _data[col][row].asString();
 
 			df[getColName(col)] = values;
 			break;
 		}
+		// this case is probably unnecessary
 		case jaspTableColumnType::null:
 		{
 			df[getColName(col)] = R_NilValue;
@@ -527,13 +529,15 @@ Rcpp::List jaspTable::toRObject() const
 		}
 	}
 
-	Rcpp::List meta = Rcpp::List::create(
+	Rcpp::List meta = Rcpp::List::create();
 //		Rcpp::Named("fields")    =
-		Rcpp::Named("footnotes") = _footnotes.convertToJSON().asString()
-	);
+//		Rcpp::Named("footnotes") = _footnotes.convertToJSON().asString()
+//	);
 
 	df.attr("meta")  = meta;
-	df.attr("class") = std::vector<std::string>({"jaspTableWrapper", "jaspWrapper", "tbl"});
+	// TODO: what does the class tbl add here?
+	df.attr("class") = std::vector<std::string>({"jaspTableWrapper", "jaspWrapper", "tbl", "data.frame"});
+	df.attr("row.names") = Rcpp::seq(1, _data[0].size());
 
 	return df;
 
