@@ -942,7 +942,7 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 	// now we print the actual contents of the table
 	for(size_t col=0; col<vierkant.size(); col++)
 	{
-		out << colSep << std::setw(prefix.size()) << colSep << std::setw(sideOvertitleSpace);
+		out << colSep << std::setw(prefix.size()) << "" << colSep << std::setw(sideOvertitleSpace);
 		if (printOpts->_printDevInfo)
 		{
 			out << sideOvertitles[sideNames[col]] << colSep << std::setw(sideRowSpace) << sideNames[col] << colSep;
@@ -1023,7 +1023,7 @@ std::string jaspTable::dataToString(std::string prefix) const
 
 	if(footnotes.size() > 0)
 	{
-		out << "\n" << prefix << "footnotes:   \n";
+		out << prefix << "footnotes:   \n";
 		for(Json::Value::UInt i=0; i<footnotes.size(); i++)
 		{
 			std::string sym = footnotes[i]["symbol"].asString() ;
