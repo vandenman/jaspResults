@@ -4,3 +4,7 @@ src-*
 .*
 !.gitignore
 
+inst/include/jaspColumnEncoder
+src/Makevars
+
+.Rproj.user
