@@ -258,11 +258,17 @@ void jaspPlot::convertFromJSON_SetFields(Json::Value in)
 	JASP_OBJECT_TIMEREND(converting from JSON)*/
 }
 
-Rcpp::List jaspPlot::toRObject() const
+Rcpp::List jaspPlot::toRObject() /*const*/
 {
-	Rcpp::List lst = Rcpp::List::create(Rcpp::Named(_title) = getPlotObject());
+	Rcpp::List lst = Rcpp::List::create(Rcpp::Named(_title.empty() ? "plot" : _title) = getPlotObject());
 	lst.attr("title") = _title;
 	lst.attr("class") = std::vector<std::string>({"jaspPlotWrapper", "jaspWrapper"});
+
+	// the reason this function is not const
+	Rcpp::Environment jaspObjectEnvironment = Rcpp::new_env();
+	jaspObjectEnvironment.assign("jaspObject", Rcpp::as<Rcpp::RObject>(Rcpp::wrap(jaspPlot_Interface(this))));
+	lst.attr("jaspObjectEnvironment") = jaspObjectEnvironment;
+
 	return lst;
 }
 

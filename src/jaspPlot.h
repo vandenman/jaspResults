@@ -38,7 +38,7 @@ public:
 	void		complete()	{ if(_status == "running" || _status == "waiting") _status = "complete"; }
 	void		letRun()	{ _status = "running"; }
 
-	Rcpp::List toRObject()								const	override;;
+	Rcpp::List toRObject()								/*const*/	override;;
 //	Rcpp::List toRObject()								const	override { return Rcpp::List::create(Rcpp::Named(_title) = "I'm a plot!");};
 
 private:

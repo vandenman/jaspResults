@@ -105,7 +105,7 @@ public:
 			void			finalized();
 	virtual void			finalizedHandler() {}
 
-	virtual Rcpp::List		toRObject()				const {	return R_NilValue;	};
+	virtual Rcpp::List		toRObject()				/*const*/ {	return R_NilValue;	};
 
 	template <typename RCPP_CLASS> static std::vector<std::string> extractElementOrColumnNames(RCPP_CLASS rObj)
 	{

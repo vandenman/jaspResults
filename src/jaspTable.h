@@ -156,7 +156,7 @@ public:
 	void		setExpectedRows(size_t rows)					{ _expectedRowCount = rows;								}
 	void		setExpectedColumns(size_t columns)				{ _expectedColumnCount = columns;						}
 
-	Rcpp::List toRObject()								const	override;;
+	Rcpp::List toRObject()								/*const*/	override;;
 
 protected:
 	std::vector<std::string>	getDisplayableColTitles(bool normalizeLengths = true, bool onlySpecifiedColumns = true)		const;

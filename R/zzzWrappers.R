@@ -9,7 +9,10 @@
 
 	env$jaspResults <- jaspResultsR$new(create_cpp_jaspResults("Analysis Test", NULL))
 
-	assign(".jaspPrintOptions", .jaspPrintOptions, envir = as.environment("package:jaspResults"))
+	# this won't work inside jasp!
+	jaspResultsEnvir <- as.environment("package:jaspResults")
+	if (!exists(".jaspPrintOptions", envir = jaspResultsEnvir)) # necessary because checkForJaspResultsInit call .onAttach...
+	  assign(".jaspPrintOptions", .jaspPrintOptions, envir = jaspResultsEnvir)
 
 	return(invisible(TRUE))
 }
@@ -773,3 +776,15 @@ jaspColumnR <- R6Class(
     setNominalText  = function(nominalData) private$jaspObject$setNominalText(nominalData)
   )
 )
+
+print.jaspWrapper <- function(x, ...) {
+  attr(x, "jaspObjectEnvironment")[["jaspObject"]]$print()
+}
+
+toRobject <- function(jaspObject) {
+  if (!inherits(jaspObject, "jaspObjR"))
+    stop("input for toRobject should be a jaspObject!", domain = NA)
+
+  return(jaspObject$.__enclos_env__$private$jaspObject$toRObject())
+
+}

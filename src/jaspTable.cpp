@@ -466,7 +466,7 @@ void jaspTable::calculateMaxColRow(size_t & maxCol, size_t & maxRow) const
 	maxCol = std::max(maxCol, _expectedColumnCount);
 }
 
-Rcpp::List jaspTable::toRObject() const
+Rcpp::List jaspTable::toRObject() /*const*/
 {
 	Rcpp::DataFrame df;
 
@@ -538,6 +538,11 @@ Rcpp::List jaspTable::toRObject() const
 	// TODO: what does the class tbl add here?
 	df.attr("class") = std::vector<std::string>({"jaspTableWrapper", "jaspWrapper", "tbl", "data.frame"});
 	df.attr("row.names") = Rcpp::seq(1, _data[0].size());
+
+	// the reason this function is not const
+	Rcpp::Environment jaspObjectEnvironment = Rcpp::new_env();
+	jaspObjectEnvironment.assign("jaspObject", Rcpp::as<Rcpp::RObject>(Rcpp::wrap(jaspTable_Interface(this))));
+	df.attr("jaspObjectEnvironment") = jaspObjectEnvironment;
 
 	return df;
 

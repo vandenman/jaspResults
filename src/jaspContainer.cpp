@@ -411,7 +411,7 @@ bool jaspContainer::canShowErrorMessage() const
 	return false;
 }
 
-Rcpp::List jaspContainer::toRObject() const
+Rcpp::List jaspContainer::toRObject() /*const*/
 {
 
 	std::vector<std::string> keys = getSortedDataFields();
@@ -435,6 +435,11 @@ Rcpp::List jaspContainer::toRObject() const
 //	lst.attr("names") = names;
 	lst.attr("class") = std::vector<std::string>({"jaspContainerWrapper", "jaspWrapper"});
 	lst.attr("title") = _title;
+
+	// the reason this function is not const
+	Rcpp::Environment jaspObjectEnvironment = Rcpp::new_env();
+	jaspObjectEnvironment.assign("jaspObject", Rcpp::as<Rcpp::RObject>(Rcpp::wrap(jaspContainer_Interface(this))));
+	lst.attr("jaspObjectEnvironment") = jaspObjectEnvironment;
 
 	return lst;
 }

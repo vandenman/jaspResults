@@ -25,7 +25,7 @@ public:
     std::string getText();
     std::string getHtml();
 
-	Rcpp::List toRObject()								const	override { return Rcpp::List::create(Rcpp::Named(_title) = "I'm jaspHtml!");};
+	Rcpp::List toRObject()								/*const*/	override { return Rcpp::List::create(Rcpp::Named(_title) = "I'm jaspHtml!");};
 };
 
 
