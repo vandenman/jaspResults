@@ -6,5 +6,6 @@ src-*
 
 inst/include/jaspColumnEncoder
 src/Makevars
+src/Makevars.win
 
 .Rproj.user
