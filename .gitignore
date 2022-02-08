@@ -10,3 +10,4 @@ src/Makevars.win
 
 .Rproj.user
 !.github
+!.Rbuildignore
