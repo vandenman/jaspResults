@@ -2,39 +2,33 @@
 
 if test -f "/etc/redhat-release" && ! grep -Fq Fedora "/etc/redhat-release"; then
 	echo "on RHEL"
-	# IS_RHEL=1
 fi
 
 if test -f "/etc/os-release" && grep -Fq Ubuntu "/etc/os-release"; then
 	echo "on Ubuntu"
-	# IS_UBUNTU=1
 fi
 
 if [ "$UNAME" = "Darwin" ]; then
 	echo "on macOS"
-	# IS_MACOS=1
 fi
 
 if [ "$UNAME" = "SunOS" ]; then
 	echo "on SunOS"
 fi
 
-PKG_CPPFLAGS=""
+DOWNLOAD_SUCCESS=1
 
 if [ "${INCLUDE_DIR}" ]; then
 
 	echo "Found INCLUDE_DIR: $INCLUDE_DIR"
-	PKG_CPPFLAGS="-I$INCLUDE_DIR"
+	DOWNLOAD_SUCCESS=0
 
 else
 
 	mkdir -p 'inst/include'
 
 	echo "seeing if git is available"
-	git --version 2>&1 >/dev/null
-	HAS_GIT=1 #$?
-
-	if [ $HAS_GIT -eq "0" ]; then
+	if git --version 2>&1 >/dev/null; then
 
 		if [ -d 'inst/include/jaspColumnEncoder' ] && [ -d 'inst/include/jaspColumnEncoder/.git' ]; then
 
@@ -42,59 +36,54 @@ else
 			WORK_TREE="$(pwd)/inst/include/jaspColumnEncoder"
 			git --git-dir="${WORK_TREE}/.git" --work-tree="${WORK_TREE}" fetch origin
 			git --git-dir="${WORK_TREE}/.git" --work-tree="${WORK_TREE}" pull
+			DOWNLOAD_SUCCESS=0
 
 		else
 
 			echo 'Cloning c++ dependency jaspColumnEncoder'
+			rm -rf 'inst/include/jaspColumnEncoder'
 			git clone --depth 1 https://github.com/jasp-stats/jaspColumnEncoder.git inst/include/jaspColumnEncoder
-
-		fi
-
-		if [ ! $? ]; then
-
-			PKG_CPPFLAGS="-I$(pwd)/inst/include/jaspColumnEncoder"
+			DOWNLOAD_SUCCESS=0
 
 		fi
 
 	fi
 
-	if [ -z "${PKG_CPPFLAGS}" ]; then
+	if [ "${DOWNLOAD_SUCCESS}" -ne "0" ]; then
 
 		echo "seeing if curl is available"
 		if curl --version 2>&1 >/dev/null; then
 
 			echo 'Downloading jaspColumnEncoder with curl'
+
+			rm -rf 'inst/include/jaspColumnEncoder'
 			mkdir -p 'inst/include/jaspColumnEncoder'
 
 			curl --silent --location https://api.github.com/repos/jasp-stats/jaspColumnEncoder/tarball | tar xz --strip=1 --directory inst/include/jaspColumnEncoder
+			DOWNLOAD_SUCCESS=$?
 
-			if curl --silent --location https://api.github.com/repos/jasp-stats/jaspColumnEncoder/tarball | tar xz --strip=1 --directory inst/include/jaspColumnEncoder; then
-
-				PKG_CPPFLAGS="-I$(pwd)/inst/include/jaspColumnEncoder"
-
-			fi
 		fi
 	fi
 
-	if [ -z "${PKG_CPPFLAGS}" ]; then
+	if [ "${DOWNLOAD_SUCCESS}" -ne "0" ]; then
 
 		echo "seeing if wget is available"
 		if wget --version 2>&1 >/dev/null; then
 
 			echo 'Downloading jaspColumnEncoder with wget'
+
+			rm -rf 'inst/include/jaspColumnEncoder'
 			mkdir -p 'inst/include/jaspColumnEncoder'
 
-			if wget --quiet --output-document=- https://api.github.com/repos/jasp-stats/jaspColumnEncoder/tarball | tar xz --strip=1 --directory inst/include/jaspColumnEncoder; then
+			wget --quiet --output-document=- https://api.github.com/repos/jasp-stats/jaspColumnEncoder/tarball | tar xz --strip=1 --directory inst/include/jaspColumnEncoder
+			DOWNLOAD_SUCCESS=$?
 
-				PKG_CPPFLAGS="-I$(pwd)/inst/include/jaspColumnEncoder"
-
-			fi
 		fi
 	fi
 
 fi
 
-if [ -z "${PKG_CPPFLAGS}" ]; then
+if [ "${DOWNLOAD_SUCCESS}" -ne "0" ]; then
 	printf "Installing jaspResults failed because the required C++ dependency jaspColumnEncoder is missing.\n\
 Normally this is downloaded automatically if either git, curl, or wget is available, but apparently this failed.\n\
 Either download \"https://github.com/jasp-stats/jaspColumnEncoder\" manually and specify the path through configure.args=\"<path to jaspColumnEncoder>\",\
@@ -102,15 +91,4 @@ download git, or download curl.\n"
 	exit 1
 fi
 
-echo "Using PKG_CPPFLAGS = $PKG_CPPFLAGS"
-
-sed -e "s|@cppflags@|$PKG_CPPFLAGS|" src/Makevars.in > src/Makevars
-
 exit 0
-
-if [ -z "${PKG_CPPFLAGS}" ]; then
-	printf "Installing jaspResults failed because the required C++ dependency jaspColumnEncoder is missing.\n\
-Normally this is downloaded automatically if either git, curl, or wget is available, but apparently this failed.\n\
-Either download \"https://github.com/jasp-stats/jaspColumnEncoder\" manually and specify the path through configure.args=\"<path to jaspColumnEncoder>\",\
-download git, or download curl.\n"
-fi
