@@ -82,7 +82,6 @@ else
 
 		fi
 	fi
-
 fi
 
 if [ "${DOWNLOAD_SUCCESS}" -ne "0" ]; then
