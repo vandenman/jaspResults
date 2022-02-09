@@ -5,4 +5,5 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^/inst/include/jaspColumnEncoder/.git$
+^inst/include/jaspColumnEncoder/.git$
+^.github$
