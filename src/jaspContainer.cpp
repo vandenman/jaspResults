@@ -126,17 +126,23 @@ std::string jaspContainer::toSummaryString(std::string prefix) const
 {
 	/*
 	 *	The example below (which you may want to copy-paste somewhere where it's not shown in italics)
-	 *	shows that the prefix can be rather complex. Hence, it's only altered by jaspContainer
+	 *	shows that the prefix can be rather complex. Hence, the prefix is only altered by jaspContainer
 	 *
-	 *		jaspResults				prefix
-	 *		├─$table1				""
-	 *		├─$container1			""
-	 *		│ ├─$table2				"│ "
-	 *		│ ├─$container2			"│ "
-	 *		│ │ ├─$table3			"│ │ "
-	 *		│ │ └─$table4			"│ │ "
-	 *		│ └─$plot1				"│ "
-	 *		└─$plot2				""
+	 *												prefix
+	 *		results Analysis Test					""
+	 *		└─container level 1						""
+	 *		  ├─container level 2					"  "
+	 *		  │ ├─table I'm a table (3, 4)			"  │ "
+	 *		  │ ├─table I'm a table (3, 4)			"  │ "
+	 *		  │ ├─plot I'm a plot					"  │ "
+	 *		  │ └─container level 3					"  │ "
+	 *		  │   ├─table I'm a table (3, 4)		"  │   "
+	 *		  │   ├─table I'm a table (3, 4)		"  │   "
+	 *		  │   └─plot I'm a plot					"  │   "
+	 *		  ├─table I'm a table (3, 4)			"  │ "
+	 *		  ├─table I'm a table (3, 4)			"  │ "
+	 *		  └─plot I'm a plot						"  │ "
+	 *
 	 */
 
 	std::stringstream out;
