@@ -138,11 +138,139 @@ public:
 
 	virtual		jaspObject *	getOldObjectFromUniqueNestedNameVector(const std::vector<std::string> &uniqueName);
 
+	std::vector<Json::Value> RList_to_VectorJson(Rcpp::List obj);
+
+	std::vector<Json::Value> RcppVector_to_VectorJson(Rcpp::RObject obj, bool throwError=false)
+	{
+		if(Rcpp::is<Rcpp::NumericVector>(obj))			return RcppVector_to_VectorJson<REALSXP>((Rcpp::NumericVector)		obj);
+		else if(Rcpp::is<Rcpp::LogicalVector>(obj))		return RcppVector_to_VectorJson<LGLSXP>((Rcpp::LogicalVector)		obj);
+		else if(Rcpp::is<Rcpp::IntegerVector>(obj))		return RcppVector_to_VectorJson<INTSXP>((Rcpp::IntegerVector)		obj);
+		else if(Rcpp::is<Rcpp::StringVector>(obj))		return RcppVector_to_VectorJson<STRSXP>((Rcpp::StringVector)		obj);
+		else if(Rcpp::is<Rcpp::CharacterVector>(obj))	return RcppVector_to_VectorJson<STRSXP>((Rcpp::CharacterVector)		obj);
+		else if(Rcpp::is<Rcpp::List>(obj))				return RList_to_VectorJson((Rcpp::List)								obj);
+		else if(throwError) Rf_error("JASPjson::RcppVector_to_VectorJson received an SEXP that is not a Vector of some kind.");
+
+		return std::vector<Json::Value>({""});
+	}
+
+
+	template<int RTYPE>	 std::vector<Json::Value> RcppVector_to_VectorJson(Rcpp::Vector<RTYPE> obj)
+	{
+		std::vector<Json::Value> vec;
+
+		for(int row=0; row<obj.size(); row++)
+			vec.push_back(RVectorEntry_to_JsonValue(obj, row));
+
+		return vec;
+	}
+
+	template<int RTYPE>  inline Json::Value RMatrixColumnEntry_to_JsonValue(Rcpp::MatrixColumn<RTYPE> obj, int row)	{ return ""; }
+
+	template<int RTYPE>  inline Json::Value RVectorEntry_to_JsonValue(Rcpp::Vector<RTYPE> obj, int row)				{ return ""; }
+
+	template<int RTYPE>	 std::vector<std::vector<Json::Value>> RcppMatrix_to_Vector2Json(Rcpp::Matrix<RTYPE>	obj)
+	{
+		std::vector<std::vector<Json::Value>> vecvec;
+
+		for(int col=0; col<obj.ncol(); col++)
+		{
+			std::vector<Json::Value> vec;
+
+			for(int row=0; row<obj.column(col).size(); row++)
+				vec.push_back(RMatrixColumnEntry_to_JsonValue(obj.column(col), row));
+
+			vecvec.push_back(vec);
+		}
+
+		return vecvec;
+	}
+
+	Json::Value RObject_to_JsonValue(Rcpp::RObject		obj);
+	Json::Value RObject_to_JsonValue(Rcpp::List 		obj);
+
+
+	template<int RTYPE>	 Json::Value RObject_to_JsonValue(Rcpp::Matrix<RTYPE>	obj)
+	{
+		Json::Value val(Json::arrayValue);
+
+		for(int col=0; col<obj.ncol(); col++)
+		{
+			Json::Value valCol(Json::arrayValue);
+
+			for(int row=0; row<obj.column(col).size(); row++)
+				valCol.append(RMatrixColumnEntry_to_JsonValue(obj.column(col), row));
+
+			val.append(valCol);
+		}
+
+		return val;
+	}
+
+	template<int RTYPE> Json::Value RObject_to_JsonValue(Rcpp::Vector<RTYPE>	obj)
+	{
+		Json::Value val("");
+
+		if(obj.size() == 1)
+			val = RVectorEntry_to_JsonValue(obj, 0);
+		else if(obj.size() > 1)
+		{
+			val = Json::Value(Json::arrayValue);
+
+			for(int row=0; row<obj.size(); row++)
+				val.append(RVectorEntry_to_JsonValue(obj, row));
+		}
+
+		return val;
+	}
+
+	template<> inline Json::Value RVectorEntry_to_JsonValue<INTSXP>(Rcpp::Vector<INTSXP> obj, int row)
+	{
+		return obj[row] == NA_INTEGER	? "" : Json::Value((int)(obj[row]));
+	}
+
+	template<> inline Json::Value RVectorEntry_to_JsonValue<LGLSXP>(Rcpp::Vector<LGLSXP> obj, int row)
+	{
+		return obj[row] == NA_LOGICAL	? "" : Json::Value((bool)(obj[row]));
+	}
+
+	template<> inline Json::Value RVectorEntry_to_JsonValue<STRSXP>(Rcpp::Vector<STRSXP> obj, int row)
+	{
+		return obj[row] == NA_STRING	? "" : Json::Value(_escapeHtml ? stringUtils::escapeHtmlStuff(jaspNativeToUtf8(obj[row])) : jaspNativeToUtf8(obj[row]));
+	}
+
+#define TO_INFINITY_AND_BEYOND																					\
+{																												\
+	double val = static_cast<double>(obj[row]);																	\
+	return	R_IsNA(val) ? "" :																					\
+				R_IsNaN(val) ? "NaN" :																			\
+					val == std::numeric_limits<double>::infinity() ? "\u221E" :									\
+						val == -1 * std::numeric_limits<double>::infinity() ? "-\u221E"  :						\
+							Json::Value((double)(obj[row]));													\
+}
+
+
+
+	template<> inline Json::Value RVectorEntry_to_JsonValue<REALSXP>(Rcpp::Vector<REALSXP> obj, int row)				TO_INFINITY_AND_BEYOND
+
+	template<> inline Json::Value RMatrixColumnEntry_to_JsonValue<INTSXP>(Rcpp::MatrixColumn<INTSXP> obj, int row)		{ return obj[row] == NA_INTEGER	? "" : Json::Value((int)(obj[row]));			}
+
+	template<> inline Json::Value RMatrixColumnEntry_to_JsonValue<LGLSXP>(Rcpp::MatrixColumn<LGLSXP> obj, int row)		{ return obj[row] == NA_LOGICAL	? "" : Json::Value((bool)(obj[row]));			}
+
+	template<> inline Json::Value RMatrixColumnEntry_to_JsonValue<STRSXP>(Rcpp::MatrixColumn<STRSXP> obj, int row)		{ return obj[row] == NA_STRING	? "" : Json::Value(_escapeHtml ? stringUtils::escapeHtmlStuff(jaspNativeToUtf8(obj[row])) : jaspNativeToUtf8(obj[row]));	}
+
+	template<> inline Json::Value RMatrixColumnEntry_to_JsonValue<REALSXP>(Rcpp::MatrixColumn<REALSXP> obj, int row)	TO_INFINITY_AND_BEYOND
+
+
+	static Json::Value SetJson_to_ArrayJson(std::set<Json::Value> set);
+	static std::set<Json::Value> ArrayJson_to_SetJson(Json::Value arr);
+	static Json::Value VectorJson_to_ArrayJson(std::vector<Json::Value> vec);
+
 
 protected:
 	jaspObjectType				_type;
 	std::string					_errorMessage = "";
-	bool						_error = false;
+	bool						_error = false,
+								_escapeHtml = true; // Used to escape Html characters when converting R object to Json. This is true per default, because the results of these objects are usually send to a Web Browser.
 
 	std::vector<std::string>	_messages;
 	std::set<std::string>		_citations;

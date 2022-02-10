@@ -3,6 +3,7 @@
 jaspQmlSource::jaspQmlSource(const std::string & sourceID) : jaspJson(), _sourceID(sourceID)
 {
 	_type = jaspObjectType::qmlSource;
+	_escapeHtml = false;
 }
 
 Json::Value jaspQmlSource::dataEntry(std::string & errorMessage) const

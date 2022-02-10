@@ -257,7 +257,7 @@ void jaspTable::addRowsFromList(Rcpp::List newData, Rcpp::CharacterVector newRow
 		if(Rcpp::is<Rcpp::List>(rij))
 			 localColNames = extractElementOrColumnNames<Rcpp::List>(Rcpp::as<Rcpp::List>(rij));
 
-		auto jsonRij = jaspJson::RcppVector_to_VectorJson(rij);
+		auto jsonRij = RcppVector_to_VectorJson(rij);
 
 		for(size_t col=0; col<jsonRij.size(); col++)
 			previouslyAddedUnnamedCols	= pushbackToColumnInData(std::vector<Json::Value>({jsonRij[col]}), localColNames.size() > col ? localColNames[col] : "", equalizedColumnsLength, previouslyAddedUnnamedCols);
@@ -287,7 +287,7 @@ void jaspTable::addColumnsFromList(Rcpp::List newData)
 	extractRowNames(newData, true);
 
 	for(int col=0; col<newData.size(); col++)
-		addOrSetColumnInData(jaspJson::RcppVector_to_VectorJson((Rcpp::RObject)newData[col], false), localColNames.size() > col ? localColNames[col] : "");
+		addOrSetColumnInData(RcppVector_to_VectorJson((Rcpp::RObject)newData[col], false), localColNames.size() > col ? localColNames[col] : "");
 }
 
 ///Logically we must assume that each entry in the list is a single element vector
@@ -302,7 +302,7 @@ void jaspTable::setColumnFromList(Rcpp::List column, int colIndex)
 
 	for(int row=0; row<column.size(); row++)
 	{
-		std::vector<Json::Value> jsonVec = jaspJson::RcppVector_to_VectorJson((Rcpp::RObject)column[row], false);
+		std::vector<Json::Value> jsonVec = RcppVector_to_VectorJson((Rcpp::RObject)column[row], false);
 		_data[colIndex].push_back(jsonVec.size() > 0 ? jsonVec[0u] : Json::nullValue);
 	}
 }
@@ -917,12 +917,12 @@ void jaspTable::rectangularDataWithNamesToHtml(std::stringstream & out, std::vec
 
 Json::Value footnotesNamespace::tableFields::rowsToJSON() const
 {
-	return _rows.size() == 0 ? Json::nullValue : jaspJson::SetJson_to_ArrayJson(_rows);
+	return _rows.size() == 0 ? Json::nullValue : jaspObject::SetJson_to_ArrayJson(_rows);
 }
 
 Json::Value footnotesNamespace::tableFields::colsToJSON() const
 {
-	return _cols.size() == 0 ? Json::nullValue : jaspJson::SetJson_to_ArrayJson(_cols);
+	return _cols.size() == 0 ? Json::nullValue : jaspObject::SetJson_to_ArrayJson(_cols);
 }
 
 Json::Value footnotes::convertToJSON() const
@@ -1068,8 +1068,8 @@ void footnotes::convertToJSONOrdered(std::map<std::string, size_t> rowNames, std
 	for(Json::Value & note : notesToOrderMerged)
 		note.removeMember("symbolText");
 
-	fullList	= jaspJson::VectorJson_to_ArrayJson(notesToOrder);
-	mergedList	= jaspJson::VectorJson_to_ArrayJson(notesToOrderMerged);
+	fullList	= jaspObject::VectorJson_to_ArrayJson(notesToOrder);
+	mergedList	= jaspObject::VectorJson_to_ArrayJson(notesToOrderMerged);
 }
 
 void footnotes::convertFromJSON_SetFields(Json::Value footnotes)
@@ -1079,8 +1079,8 @@ void footnotes::convertFromJSON_SetFields(Json::Value footnotes)
 		{
 			const std::string		text	= footnote["text"].asString(),
 									symbol	= footnote["symbol"].asString();
-			std::set<Json::Value>	rows	= jaspJson::ArrayJson_to_SetJson(footnote["rows"]),
-									cols	= jaspJson::ArrayJson_to_SetJson(footnote["cols"]);
+			std::set<Json::Value>	rows	= jaspObject::ArrayJson_to_SetJson(footnote["rows"]),
+									cols	= jaspObject::ArrayJson_to_SetJson(footnote["cols"]);
 
 			_data[text][symbol].insert(tableFields(rows, cols));
 		}
@@ -1107,11 +1107,11 @@ void jaspTable::addFootnote(Rcpp::RObject message, Rcpp::RObject symbol, Rcpp::R
 	
 	std::vector<Json::Value> colNames;
 	if (!col_names.isNULL())
-		colNames = jaspJson::RcppVector_to_VectorJson(col_names, false);
+		colNames = RcppVector_to_VectorJson(col_names, false);
 	
 	std::vector<Json::Value> rowNames;
 	if (!row_names.isNULL())
-		rowNames = jaspJson::RcppVector_to_VectorJson(row_names, false);
+		rowNames = RcppVector_to_VectorJson(row_names, false);
 	
 	_footnotes.insert(strMessage, strSymbol, colNames, rowNames);
 }

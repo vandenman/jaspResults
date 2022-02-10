@@ -357,7 +357,7 @@ void jaspObject::dependOnOptions(Rcpp::CharacterVector listOptions)
 
 void jaspObject::setOptionMustBeDependency(std::string optionName, Rcpp::RObject mustBeThis)
 {
-	_optionMustBe[optionName]	= jaspJson::RObject_to_JsonValue(mustBeThis);
+	_optionMustBe[optionName]	= RObject_to_JsonValue(mustBeThis);
 }
 
 void jaspObject::setOptionMustContainDependency(std::string optionName, Rcpp::RObject mustContainThis)
@@ -365,7 +365,7 @@ void jaspObject::setOptionMustContainDependency(std::string optionName, Rcpp::RO
 	if (!Rcpp::is<Rcpp::CharacterVector>(mustContainThis))
 		Rf_error("setOptionMustContainDependency expected a character string but got something else!");
 
-	_optionMustContain[optionName] = jaspJson::RObject_to_JsonValue(mustContainThis);
+	_optionMustContain[optionName] = RObject_to_JsonValue(mustContainThis);
 }
 
 void jaspObject::copyDependenciesFromJaspObject(jaspObject * other)
@@ -492,3 +492,90 @@ std::map<std::string, std::set<std::string>> jaspObject::nestedMustContains() co
 
 	return out;
 }
+
+std::vector<Json::Value> jaspObject::RList_to_VectorJson(Rcpp::List obj)
+{
+	std::vector<Json::Value> vec;
+
+	for(int row=0; row<obj.size(); row++)
+		vec.push_back(RObject_to_JsonValue((Rcpp::RObject)obj[row]));
+
+	return vec;
+}
+
+Json::Value jaspObject::RObject_to_JsonValue(Rcpp::RObject obj)
+{
+	if(obj.isNULL())								return Json::nullValue;
+	else if(Rcpp::is<Rcpp::List>(obj))				return RObject_to_JsonValue((Rcpp::List)					obj);
+	else if(Rcpp::is<Rcpp::DataFrame>(obj))			return RObject_to_JsonValue((Rcpp::List)					obj);
+	else if(Rcpp::is<Rcpp::NumericMatrix>(obj))		return RObject_to_JsonValue<REALSXP>((Rcpp::NumericMatrix)	obj);
+	else if(Rcpp::is<Rcpp::NumericVector>(obj))		return RObject_to_JsonValue<REALSXP>((Rcpp::NumericVector)	obj);
+	else if(Rcpp::is<Rcpp::IntegerVector>(obj))		return RObject_to_JsonValue<INTSXP>((Rcpp::IntegerVector)	obj);
+	else if(Rcpp::is<Rcpp::LogicalVector>(obj))		return RObject_to_JsonValue<LGLSXP>((Rcpp::LogicalVector)	obj);
+	else if(Rcpp::is<Rcpp::CharacterVector>(obj))	return RObject_to_JsonValue<STRSXP>((Rcpp::CharacterVector)	obj);
+	else if(Rcpp::is<Rcpp::StringVector>(obj))		return RObject_to_JsonValue<STRSXP>((Rcpp::StringVector)	obj);
+	else if(obj.isS4())								return "an S4, which is too complicated for jaspResults now.";
+	else											return "something that is not understood by jaspResults right now..";
+}
+
+Json::Value jaspObject::RObject_to_JsonValue(Rcpp::List obj)
+{
+	bool atLeastOneNamed = false;
+
+	Rcpp::RObject namesListRObject = obj.names();
+	Rcpp::CharacterVector namesList;
+
+	if(!namesListRObject.isNULL())
+	{
+		namesList = namesListRObject;
+
+		for(int row=0; row<obj.size(); row++)
+			if(namesList[row] != "")
+				atLeastOneNamed = true;
+	}
+
+	Json::Value val = atLeastOneNamed ? Json::objectValue : Json::arrayValue;
+
+	if(atLeastOneNamed)
+		for(int row=obj.size() - 1; row>=0; row--) //We go backwards because in R the first entry of a name in a list is used. So to emulate this we go backwars and we override an earlier occurence. (aka you have two elements with the name "a" in a list and in R list$a returns the first occurence. This is now also the element visible in the json.)
+		{
+			std::string name(namesList[row]);
+
+			if(name == "")
+				name = "element_" + std::to_string(row);
+
+			val[name] = RObject_to_JsonValue((Rcpp::RObject)obj[row]);
+		}
+	else
+		for(int row=0; row<obj.size(); row++)
+			val.append(RObject_to_JsonValue((Rcpp::RObject)obj[row]));
+
+
+	return val;
+}
+
+Json::Value jaspObject::SetJson_to_ArrayJson(std::set<Json::Value> set)
+{
+	Json::Value array(Json::arrayValue);
+	for(auto val: set)
+		array.append(val);
+	return array;
+}
+
+std::set<Json::Value> jaspObject::ArrayJson_to_SetJson(Json::Value arr)
+{
+	std::set<Json::Value> set;
+	for(auto & val: arr)
+		set.insert(val);
+	return set;
+}
+
+Json::Value jaspObject::VectorJson_to_ArrayJson(std::vector<Json::Value> vec)
+{
+	Json::Value array(Json::arrayValue);
+	for(auto val: vec)
+		array.append(val);
+	return array;
+}
+
+

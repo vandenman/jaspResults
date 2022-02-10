@@ -190,7 +190,7 @@ protected:
 		extractRowNames(newData, true);
 
 		_data.clear();
-		auto cols = jaspJson::RcppVector_to_VectorJson<RTYPE>(newData);
+		auto cols = RcppVector_to_VectorJson<RTYPE>(newData);
 
 		for(int col=0; col<cols.size(); col++)
 			addOrSetColumnInData(std::vector<Json::Value>({cols[col]}), localColNames.size() > col ? localColNames[col] : "");
@@ -203,7 +203,7 @@ protected:
 
 		_data.clear();
 		for(size_t col=0; col<newData.size(); col++)
-			addOrSetColumnInData(jaspJson::RcppVector_to_VectorJson((Rcpp::RObject)newData[col]), localColNames.size() > col ? localColNames[col] : "");
+			addOrSetColumnInData(RcppVector_to_VectorJson((Rcpp::RObject)newData[col]), localColNames.size() > col ? localColNames[col] : "");
 	}
 
 	template<int RTYPE> void setDataFromMatrix(Rcpp::Matrix<RTYPE> newData)
@@ -211,7 +211,7 @@ protected:
 		std::vector<std::string> localColNames = extractElementOrColumnNames(newData);
 		extractRowNames(newData, true);
 
-		std::vector<std::vector<Json::Value>> jsonMat = jaspJson::RcppMatrix_to_Vector2Json<RTYPE>(newData);
+		std::vector<std::vector<Json::Value>> jsonMat = RcppMatrix_to_Vector2Json<RTYPE>(newData);
 
 		_data.clear();
 		for(size_t col=0; col<jsonMat.size(); col++)
@@ -224,7 +224,7 @@ protected:
 	{
 		setRowNamesWhereApplicable(extractElementOrColumnNames(newData));
 
-		_data.push_back(jaspJson::RcppVector_to_VectorJson<RTYPE>(newData));
+		_data.push_back(RcppVector_to_VectorJson<RTYPE>(newData));
 	}
 
 	template<int RTYPE>	void setColumnFromVector(Rcpp::Vector<RTYPE> newData, size_t col)
@@ -233,7 +233,7 @@ protected:
 
 		if(_data.size() <= col)
 			_data.resize(col+1);
-		_data[col] = jaspJson::RcppVector_to_VectorJson<RTYPE>(newData);
+		_data[col] = RcppVector_to_VectorJson<RTYPE>(newData);
 	}
 
 	void setColumnFromList(Rcpp::List column, int colIndex);
@@ -243,7 +243,7 @@ protected:
 		std::vector<std::string> localColNames = extractElementOrColumnNames(newData);
 		extractRowNames(newData, true);
 
-		std::vector<std::vector<Json::Value>> jsonMat = jaspJson::RcppMatrix_to_Vector2Json<RTYPE>(newData);
+		std::vector<std::vector<Json::Value>> jsonMat = RcppMatrix_to_Vector2Json<RTYPE>(newData);
 
 		for(size_t col=0; col<jsonMat.size(); col++)
 			addOrSetColumnInData(jsonMat[col], localColNames.size() > col ? localColNames[col] : "");
@@ -253,7 +253,7 @@ protected:
 	{
 		std::vector<std::string> localColNames = extractElementOrColumnNames(newData);
 
-		auto row = jaspJson::RcppVector_to_VectorJson<RTYPE>(newData);
+		auto row = RcppVector_to_VectorJson<RTYPE>(newData);
 
 		int equalizedColumnsLength = equalizeColumnsLengths();
 		int previouslyAddedUnnamedCols = 0;
@@ -285,7 +285,7 @@ protected:
 		for(size_t col=0; col<newData.size(); col++)
 		{
 			Rcpp::RObject kolom			= (Rcpp::RObject)newData[col];
-			auto jsonKolom				= jaspJson::RcppVector_to_VectorJson(kolom);
+			auto jsonKolom				= RcppVector_to_VectorJson(kolom);
 			previouslyAddedUnnamedCols	= pushbackToColumnInData(jsonKolom, localColNames.size() > col ? localColNames[col] : "", equalizedColumnsLength, previouslyAddedUnnamedCols);
 		}
 
@@ -302,7 +302,7 @@ protected:
 		for(int row=0; row<newRowNames.size(); row++)
 			_rowNames[row + equalizedColumnsLength] = newRowNames[row];
 
-		auto jsonMatrix = jaspJson::RcppMatrix_to_Vector2Json<RTYPE>(newData);
+		auto jsonMatrix = RcppMatrix_to_Vector2Json<RTYPE>(newData);
 
 		for(int col=0; col<jsonMatrix.size(); col++)
 			previouslyAddedUnnamedCols = pushbackToColumnInData(std::vector<Json::Value>({jsonMatrix[col]}), localColNames.size() > col ? localColNames[col] : "", equalizedColumnsLength, previouslyAddedUnnamedCols);
