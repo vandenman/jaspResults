@@ -49,10 +49,23 @@ either way, we need to account for the colType, because strings should be aligne
   - [ ] how do we changes stuff like <em>Note.</em> to \033[3mNote.\033[23m?
   - [ ] does this work on windows?
 
-- [ ] unit tests with snapshots?
+- [ ] what to do with html?
 
 ## to fix myself
 
 - [x] container indent does not work
 - [x] indent size should be variable
-- [ ] we probably want to be able to call `format()` on a jaspObject to obtain `obj$toString()`
+
+## to discuss with Simon
+- [ ] do we want `format()` on a jaspObject to return the raw `obj$toString()`?
+- [ ] which table options should we deprecate (if any).
+  - [ ] look at correlations for rowOverTitles
+
+- [x] unit tests with snapshots?
+  - [ ] add option to hide footnote in print function
+  - [ ] sounds good but how to do tolerance?
+
+- [x] summary method
+  - [x] one line sentence what the object contains
+
+- [x] drop tibble, only return data.frame

@@ -203,6 +203,11 @@ std::string jaspObject::toString(std::string prefix) const
 	return objectTitleString(prefix) + "\n" + dataString;
 }
 
+std::string jaspObject::toSummaryString(std::string) const
+{
+	return objectTitleString("") + "\n";
+}
+
 Rcpp::DataFrame jaspObject::convertFactorsToCharacters(Rcpp::DataFrame df)
 {
 

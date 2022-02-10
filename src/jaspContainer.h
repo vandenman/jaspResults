@@ -25,6 +25,7 @@ public:
 
 	std::string dataToString(std::string prefix = "")						const	override;
 	std::string toHtml()															override;
+	std::string toSummaryString(std::string prefix="")						const	override;
 
 	void			insert(std::string field, Rcpp::RObject value);
 	Rcpp::RObject	at(std::string field);

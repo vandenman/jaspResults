@@ -160,9 +160,11 @@ jaspResultsR <- R6Class(
 		},
 		print           		= function()		private$jaspObject$print(),
 		printHtml       		= function()		private$jaspObject$printHtml(),
+		summary         		= function()		private$jaspObject$summary(),
+		toRObject       		= function()		private$jaspObject$toRObject(),
 		setError        		= function(x)		private$jaspObject$setError(x),
 		getError        		= function()		private$jaspObject$getError(),
-		length          		= function()    	private$jaspObject$length,
+		length          		= function()		private$jaspObject$length,
 		#The following functions for column encoding will fail hard when you run them inside JASP, only for R in other words
 		setCurrentColumnNames	= function(names)	private$jaspObject$setCurrentColumnNames(names),
 		encodeColumnName		= function(input)	private$jaspObject$encodeColumnName(input),
@@ -237,6 +239,8 @@ jaspObjR <- R6Class(
 	public    = list(
 		initialize = function()	stop("You should not create a new jaspObject!", domain = NA),
 		print      = function()	private$jaspObject$print(),
+		summary    = function()	private$jaspObject$summary(),
+		toRObject  = function()	private$jaspObject$toRObject(),
 		dependOn   = function(options=NULL, optionsFromObject=NULL, optionContainsValue=NULL) {
 			if (!is.null(options)) {
 				if (!is.character(options))
@@ -781,32 +785,45 @@ print.jaspWrapper <- function(x, ...) {
   attr(x, "jaspObjectEnvironment")[["jaspObject"]]$print()
 }
 
-toRobject <- function(jaspObject) {
-  if (!(inherits(jaspObject, "jaspObjR") || inherits(jaspObject, "jaspResultsR")))
-    stop("input for toRobject should be a jaspObject!")
+summary.jaspWrapper <- function(object, ...) {
+  attr(object, "jaspObjectEnvironment")[["jaspObject"]]$summary()
+}
 
-  return(jaspObject$.__enclos_env__$private$jaspObject$toRObject())
+summary.jaspObjR <- function(object, ...) {
+  object$summary()
+}
 
+summary.jaspResultsR <- function(object, ...) {
+  object$summary()
+}
+
+toRObject <- function(jaspObject) {
+  return(jaspObject$toRObject())
 }
 
 jaspToRawRobject <- function(jaspObjectR) {
   UseMethod("jaspToRawRobject", jaspObjectR)
 }
+
 jaspToRawRobject.jaspContainerWrapper <- function(jaspObjectR) {
   for (i in seq_along(jaspObjectR))
     jaspObjectR[[i]] <- jaspToRawRobject(jaspObjectR[[i]])
   dropJaspAttributes(jaspToRawRobject.jaspWrapper(jaspObjectR))
 }
+
 jaspToRawRobject.jaspResultsWrapper <- function(jaspObjectR) {
   jaspToRawRobject.jaspContainerWrapper(jaspObjectR)
 }
+
 jaspToRawRobject.jaspPlotWrapper <- function(jaspObjectR) {
   return(dropJaspAttributes(jaspObjectR[[1L]]))
 }
+
 jaspToRawRobject.jaspWrapper <- function(jaspObjectR) {
   class(jaspObjectR) <- class(jaspObjectR)[c(-1L, -2L)]
   dropJaspAttributes(jaspObjectR)
 }
+
 dropJaspAttributes <- function(obj) {
   attr(obj, "meta") <- NULL
   attr(obj, "title") <- NULL

@@ -46,6 +46,7 @@ public:
 			std::string objectTitleString(const std::string & prefix)	const;
 	virtual	std::string dataToString(std::string)				const { return ""; }
 			std::string toString(std::string prefix = "")		const;
+	virtual std::string toSummaryString(std::string prefix = "")const;
 
 	virtual std::string toHtml() { return ""; }
 			std::string htmlTitle() { return "<h2>" + _title + "</h2>"; }
@@ -57,7 +58,8 @@ public:
 	virtual void		setError(Rcpp::String message)			{ _errorMessage = jaspNativeToUtf8(message); _error = true; }
 	virtual bool		canShowErrorMessage()			const	{ return false; }
 
-			void		print()									{ try { jaspPrint(toString()); } catch(std::exception e) { jaspPrint(std::string("toString failed because of: ") + e.what()); } }
+			void		print()									{ try { jaspPrint(toString()); }		catch(std::exception &e) { jaspPrint(std::string("toString failed because of: ")		+ e.what()); } }
+			void		summary()								{ try { jaspPrint(toSummaryString()); }	catch(std::exception &e) { jaspPrint(std::string("toSummaryString failed because of: ")	+ e.what()); } }
 			void		addMessage(std::string msg)				{ _messages.push_back(msg); }
 	virtual void		childrenUpdatedCallbackHandler(bool)	{} ///Can be called by jaspResults to send changes and stuff like that.
 
@@ -211,6 +213,7 @@ public:
 	}
 
 	void		print()								{ myJaspObject->print(); }
+	void		summary()							{ myJaspObject->summary(); }
 	void		addMessage(Rcpp::String msg)		{ myJaspObject->addMessage(jaspNativeToUtf8(msg)); }
 	std::string	toHtml()							{ return myJaspObject->toHtml(); }
 	std::string	type()								{ return myJaspObject->type(); }

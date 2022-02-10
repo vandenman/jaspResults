@@ -136,6 +136,7 @@ public:
 	Json::Value	metaEntry()								const	override { return constructMetaEntry("table"); }
 	Json::Value	dataEntry(std::string & errorMessage)	const	override;
 	std::string	toHtml()										override;
+	std::string toSummaryString(std::string prefix = "")const	override;
 
 	std::string defaultColName(size_t col)	const	{ return "col"+ std::to_string(col); }
 	std::string defaultRowName(size_t row)	const	{ return "row"+ std::to_string(row); }

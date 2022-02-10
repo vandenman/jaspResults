@@ -30,6 +30,7 @@ RCPP_MODULE(jaspResults)
 	Rcpp::class_<jaspObject_Interface>("jaspObject")
 
 		.method("print",							&jaspObject_Interface::print,											"Prints the contents of the jaspObject")
+		.method("summary",							&jaspObject_Interface::summary,											"Summarize the contents of the jaspObject")
 		.method("toHtml",							&jaspObject_Interface::toHtml,											"gives a string with the contents of the jaspObject nicely formatted as html")
 		.method("printHtml",						&jaspObject_Interface::printHtml,										"Prints the contents of the jaspObject nicely formatted as html")
 

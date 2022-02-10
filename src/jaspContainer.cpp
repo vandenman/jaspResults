@@ -122,6 +122,47 @@ std::string jaspContainer::toHtml()
 	return out.str();
 }
 
+std::string jaspContainer::toSummaryString(std::string prefix) const
+{
+	/*
+	 *	The example below (which you may want to copy-paste somewhere where it's not shown in italics)
+	 *	shows that the prefix can be rather complex. Hence, it's only altered by jaspContainer
+	 *
+	 *		jaspResults				prefix
+	 *		├─$table1				""
+	 *		├─$container1			""
+	 *		│ ├─$table2				"│ "
+	 *		│ ├─$container2			"│ "
+	 *		│ │ ├─$table3			"│ │ "
+	 *		│ │ └─$table4			"│ │ "
+	 *		│ └─$plot1				"│ "
+	 *		└─$plot2				""
+	 */
+
+	std::stringstream out;
+	std::vector<std::string> keys = getSortedDataFields();
+
+	out << objectTitleString("") << "\n";
+	std::string newPrefix = prefix + printOpts->getSummaryContinueIndent();
+	for (const auto & key : keys)
+	{
+		if (key == keys[keys.size()-1])
+		{
+			newPrefix = prefix + "  ";
+		}
+
+		jaspObject* child = _data.at(key);
+		out
+			<< prefix
+			<<	(key == keys[keys.size()-1] ? printOpts->getSummaryLastIndent() : printOpts->getSummaryMiddleIndent())
+			<< child->toSummaryString(newPrefix);
+//			<< "\n";
+
+	}
+
+	return out.str();
+}
+
 std::vector<std::pair<double, std::string>> jaspContainer::getSortedDataFieldsSortVector() const
 {
 	std::vector<std::pair<double, std::string>> sortvec;

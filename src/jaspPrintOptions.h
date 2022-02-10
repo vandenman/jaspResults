@@ -20,6 +20,11 @@ public:
 	std::string		botLineChar			()							const	{ return _useUnicode ? unicodeLineChars.botLineChar : nonUnicodeLineChars.botLineChar; };
 	std::string		getColSep			()							const	{ return _visibleColSep ? "|" : ""; };
 
+	// TODO: should this follow the custom indent settings?
+	std::string		getSummaryMiddleIndent()						const	{ return _useUnicode ? "\u251C\u2500"	: "  ";		}
+	std::string		getSummaryLastIndent()							const	{ return _useUnicode ? "\u2514\u2500"	: "  ";		}
+	std::string     getSummaryContinueIndent()						const	{ return _useUnicode ? "\u2502 "		: "  ";		} // for custom indent, we could add: + (_indentWithTabs ? _indent : std::string(_indentSize - 1, ' ')); }
+
 	bool			_printDevInfo		= true,
 					_useUnicode			= true,
 					_visibleColSep		= false;

@@ -536,7 +536,7 @@ Rcpp::List jaspTable::toRObject() /*const*/
 
 	df.attr("meta")  = meta;
 	// TODO: what does the class tbl add here?
-	df.attr("class") = std::vector<std::string>({"jaspTableWrapper", "jaspWrapper", "tbl", "data.frame"});
+	df.attr("class") = std::vector<std::string>({"jaspTableWrapper", "jaspWrapper", "data.frame"});
 	df.attr("row.names") = Rcpp::seq(1, _data[0].size());
 
 	// the reason this function is not const
@@ -799,8 +799,8 @@ void jaspTable::rectangularDataWithNamesToString(std::stringstream & out, std::s
 	 *	|				|							|					|				|				|				|----------------------------------------		<- midLine
 	 *	|				|	(sideOverTitles)		|		(colTitle)	|	(colName)	|	(colType)	|	(format)	|				|			|			|		<- this line is only shown if printOpts->_printDevInfo
 	 *	|				|							|		   (row 1)	|		  (m)	|	 (string)	|				|	H0			|	H1		|		H2	|
-	 *	|				|		95% CI				|		   (row 2)	|	  (lower)	|	 (number)	|				|	0.9			|	0.95	|	0.80	|
-	 *	|				|		95% CI				|		   (row 3)	|	  (upper)	|	 (number)	|				|	1.23		|	1.23	|	1.23	|
+	 *	|				|		95% CI				|		   (row 2)	|	  (lower)	|	 (number)	|	sf:4;dp:3	|	0.9			|	0.95	|	0.80	|
+	 *	|				|		95% CI				|		   (row 3)	|	  (upper)	|	 (number)	|	sf:4;dp:3	|	1.23		|	1.23	|	1.23	|
 	 *	|				|							|			   (p)	|	   (pval)	|	 (pvalue)	|				|	<0.05		|	0.8		|	< 0.001	|
 	 *	|				|							|					|				|				|				-----------------------------------------		<- botLine
 	 *
@@ -1160,6 +1160,11 @@ std::string jaspTable::toHtml()
 	out << "</div>\n";
 
 	return out.str();
+}
+
+std::string jaspTable::toSummaryString(std::string) const
+{
+	return this->objectTitleString("") + " (" + std::to_string(_data.empty() ? 0 : _data[0].size()) + ", " + std::to_string(_data.size()) + ")\n";
 }
 
 void jaspTable::rectangularDataWithNamesToHtml(std::stringstream & out, std::vector<std::vector<std::string>> vierkant, std::vector<std::string> sideNames, std::vector<std::string> topNames, std::map<std::string,std::string> sideOvertitles, std::map<std::string,std::string> topOvertitles)
