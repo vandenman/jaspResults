@@ -782,9 +782,34 @@ print.jaspWrapper <- function(x, ...) {
 }
 
 toRobject <- function(jaspObject) {
-  if (!inherits(jaspObject, "jaspObjR"))
-    stop("input for toRobject should be a jaspObject!", domain = NA)
+  if (!(inherits(jaspObject, "jaspObjR") || inherits(jaspObject, "jaspResultsR")))
+    stop("input for toRobject should be a jaspObject!")
 
   return(jaspObject$.__enclos_env__$private$jaspObject$toRObject())
 
+}
+
+jaspToRawRobject <- function(jaspObjectR) {
+  UseMethod("jaspToRawRobject", jaspObjectR)
+}
+jaspToRawRobject.jaspContainerWrapper <- function(jaspObjectR) {
+  for (i in seq_along(jaspObjectR))
+    jaspObjectR[[i]] <- jaspToRawRobject(jaspObjectR[[i]])
+  dropJaspAttributes(jaspToRawRobject.jaspWrapper(jaspObjectR))
+}
+jaspToRawRobject.jaspResultsWrapper <- function(jaspObjectR) {
+  jaspToRawRobject.jaspContainerWrapper(jaspObjectR)
+}
+jaspToRawRobject.jaspPlotWrapper <- function(jaspObjectR) {
+  return(dropJaspAttributes(jaspObjectR[[1L]]))
+}
+jaspToRawRobject.jaspWrapper <- function(jaspObjectR) {
+  class(jaspObjectR) <- class(jaspObjectR)[c(-1L, -2L)]
+  dropJaspAttributes(jaspObjectR)
+}
+dropJaspAttributes <- function(obj) {
+  attr(obj, "meta") <- NULL
+  attr(obj, "title") <- NULL
+  attr(obj, "jaspObjectEnvironment") <- NULL
+  obj
 }
