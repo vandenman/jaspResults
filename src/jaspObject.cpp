@@ -10,6 +10,42 @@
 #include "lib_json/json_writer.cpp"
 #endif
 
+#define TO_INFINITY_AND_BEYOND																					\
+{																												\
+	double val = static_cast<double>(obj[row]);																	\
+	return	R_IsNA(val) ? "" :																					\
+				R_IsNaN(val) ? "NaN" :																			\
+					val == std::numeric_limits<double>::infinity() ? "\u221E" :									\
+						val == -1 * std::numeric_limits<double>::infinity() ? "-\u221E"  :						\
+							Json::Value((double)(obj[row]));													\
+}
+
+template<> inline Json::Value jaspObject::RVectorEntry_to_JsonValue<INTSXP>(Rcpp::Vector<INTSXP> obj, int row)
+{
+	return obj[row] == NA_INTEGER	? "" : Json::Value((int)(obj[row]));
+}
+
+template<> inline Json::Value jaspObject::RVectorEntry_to_JsonValue<LGLSXP>(Rcpp::Vector<LGLSXP> obj, int row)
+{
+	return obj[row] == NA_LOGICAL	? "" : Json::Value((bool)(obj[row]));
+}
+
+template<> inline Json::Value jaspObject::RVectorEntry_to_JsonValue<STRSXP>(Rcpp::Vector<STRSXP> obj, int row)
+{
+	return obj[row] == NA_STRING	? "" : Json::Value(_escapeHtml ? stringUtils::escapeHtmlStuff(jaspNativeToUtf8(obj[row])) : jaspNativeToUtf8(obj[row]));
+}
+
+template<> inline Json::Value jaspObject::RVectorEntry_to_JsonValue<REALSXP>(Rcpp::Vector<REALSXP> obj, int row)				TO_INFINITY_AND_BEYOND
+
+template<> inline Json::Value jaspObject::RMatrixColumnEntry_to_JsonValue<INTSXP>(Rcpp::MatrixColumn<INTSXP> obj, int row)		{ return obj[row] == NA_INTEGER	? "" : Json::Value((int)(obj[row]));			}
+
+template<> inline Json::Value jaspObject::RMatrixColumnEntry_to_JsonValue<LGLSXP>(Rcpp::MatrixColumn<LGLSXP> obj, int row)		{ return obj[row] == NA_LOGICAL	? "" : Json::Value((bool)(obj[row]));			}
+
+template<> inline Json::Value jaspObject::RMatrixColumnEntry_to_JsonValue<STRSXP>(Rcpp::MatrixColumn<STRSXP> obj, int row)		{ return obj[row] == NA_STRING	? "" : Json::Value(_escapeHtml ? stringUtils::escapeHtmlStuff(jaspNativeToUtf8(obj[row])) : jaspNativeToUtf8(obj[row]));	}
+
+template<> inline Json::Value jaspObject::RMatrixColumnEntry_to_JsonValue<REALSXP>(Rcpp::MatrixColumn<REALSXP> obj, int row)	TO_INFINITY_AND_BEYOND
+
+
 jaspObjectType jaspObjectTypeStringToObjectType(std::string type)
 {
 	try			{ return jaspObjectTypeFromString(type); }
