@@ -9,11 +9,35 @@ jaspPrintOptionsGetPrintDevInfo <- function() {
     .Call(`_jaspResults_jaspPrintOptionsGetPrintDevInfo`)
 }
 
-jaspPrintOptionsVisibleTableColSep <- function(value) {
-    invisible(.Call(`_jaspResults_jaspPrintOptionsVisibleTableColSep`, value))
+jaspPrintOptionsSetVisibleTableColSep <- function(value) {
+    invisible(.Call(`_jaspResults_jaspPrintOptionsSetVisibleTableColSep`, value))
+}
+
+jaspPrintOptionsGetVisibleTableColSep <- function() {
+    .Call(`_jaspResults_jaspPrintOptionsGetVisibleTableColSep`)
 }
 
 jaspPrintOptionsSetIndentSize <- function(value) {
     invisible(.Call(`_jaspResults_jaspPrintOptionsSetIndentSize`, value))
+}
+
+jaspPrintOptionsGetIndentSize <- function() {
+    .Call(`_jaspResults_jaspPrintOptionsGetIndentSize`)
+}
+
+jaspPrintOptionsSetIndentWithTabs <- function(value) {
+    invisible(.Call(`_jaspResults_jaspPrintOptionsSetIndentWithTabs`, value))
+}
+
+jaspPrintOptionsGetIndentWithTabs <- function() {
+    .Call(`_jaspResults_jaspPrintOptionsGetIndentWithTabs`)
+}
+
+jaspPrintOptionsSetUseUnicode <- function(value) {
+    invisible(.Call(`_jaspResults_jaspPrintOptionsSetUseUnicode`, value))
+}
+
+jaspPrintOptionsGetUseUnicode <- function() {
+    .Call(`_jaspResults_jaspPrintOptionsGetUseUnicode`)
 }
 

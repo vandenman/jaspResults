@@ -13,7 +13,9 @@ public:
 
 	std::string		getIndent			()							const	{ return _indent;	}
 	void			setIndentWithTabs	(const bool indentWithTabs)			{ if (indentWithTabs == _indentWithTabs)	return; _indentWithTabs = indentWithTabs;	updateIndent(); }
+	bool			getIndentWithTabs	()							const	{ return _indentWithTabs; }
 	void			setIndentSize		(const size_t indentSize)			{ if (indentSize == _indentSize)			return; _indentSize = indentSize;			updateIndent(); }
+	size_t			getIndentSize		()							const	{ return _indentSize; }
 
 	std::string		topLineChar			()							const	{ return _useUnicode ? unicodeLineChars.topLineChar : nonUnicodeLineChars.topLineChar; };
 	std::string		midLineChar			()							const	{ return _useUnicode ? unicodeLineChars.midLineChar : nonUnicodeLineChars.midLineChar; };

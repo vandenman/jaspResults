@@ -30,14 +30,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// jaspPrintOptionsVisibleTableColSep
-void jaspPrintOptionsVisibleTableColSep(bool value);
-RcppExport SEXP _jaspResults_jaspPrintOptionsVisibleTableColSep(SEXP valueSEXP) {
+// jaspPrintOptionsSetVisibleTableColSep
+void jaspPrintOptionsSetVisibleTableColSep(bool value);
+RcppExport SEXP _jaspResults_jaspPrintOptionsSetVisibleTableColSep(SEXP valueSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< bool >::type value(valueSEXP);
-    jaspPrintOptionsVisibleTableColSep(value);
+    jaspPrintOptionsSetVisibleTableColSep(value);
     return R_NilValue;
+END_RCPP
+}
+// jaspPrintOptionsGetVisibleTableColSep
+bool jaspPrintOptionsGetVisibleTableColSep();
+RcppExport SEXP _jaspResults_jaspPrintOptionsGetVisibleTableColSep() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(jaspPrintOptionsGetVisibleTableColSep());
+    return rcpp_result_gen;
 END_RCPP
 }
 // jaspPrintOptionsSetIndentSize
@@ -50,14 +60,70 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// jaspPrintOptionsGetIndentSize
+std::size_t jaspPrintOptionsGetIndentSize();
+RcppExport SEXP _jaspResults_jaspPrintOptionsGetIndentSize() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(jaspPrintOptionsGetIndentSize());
+    return rcpp_result_gen;
+END_RCPP
+}
+// jaspPrintOptionsSetIndentWithTabs
+void jaspPrintOptionsSetIndentWithTabs(bool value);
+RcppExport SEXP _jaspResults_jaspPrintOptionsSetIndentWithTabs(SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< bool >::type value(valueSEXP);
+    jaspPrintOptionsSetIndentWithTabs(value);
+    return R_NilValue;
+END_RCPP
+}
+// jaspPrintOptionsGetIndentWithTabs
+bool jaspPrintOptionsGetIndentWithTabs();
+RcppExport SEXP _jaspResults_jaspPrintOptionsGetIndentWithTabs() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(jaspPrintOptionsGetIndentWithTabs());
+    return rcpp_result_gen;
+END_RCPP
+}
+// jaspPrintOptionsSetUseUnicode
+void jaspPrintOptionsSetUseUnicode(bool value);
+RcppExport SEXP _jaspResults_jaspPrintOptionsSetUseUnicode(SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< bool >::type value(valueSEXP);
+    jaspPrintOptionsSetUseUnicode(value);
+    return R_NilValue;
+END_RCPP
+}
+// jaspPrintOptionsGetUseUnicode
+bool jaspPrintOptionsGetUseUnicode();
+RcppExport SEXP _jaspResults_jaspPrintOptionsGetUseUnicode() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(jaspPrintOptionsGetUseUnicode());
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_jaspResults();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_jaspResults_jaspPrintOptionsSetPrintDevInfo", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetPrintDevInfo, 1},
     {"_jaspResults_jaspPrintOptionsGetPrintDevInfo", (DL_FUNC) &_jaspResults_jaspPrintOptionsGetPrintDevInfo, 0},
-    {"_jaspResults_jaspPrintOptionsVisibleTableColSep", (DL_FUNC) &_jaspResults_jaspPrintOptionsVisibleTableColSep, 1},
+    {"_jaspResults_jaspPrintOptionsSetVisibleTableColSep", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetVisibleTableColSep, 1},
+    {"_jaspResults_jaspPrintOptionsGetVisibleTableColSep", (DL_FUNC) &_jaspResults_jaspPrintOptionsGetVisibleTableColSep, 0},
     {"_jaspResults_jaspPrintOptionsSetIndentSize", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetIndentSize, 1},
+    {"_jaspResults_jaspPrintOptionsGetIndentSize", (DL_FUNC) &_jaspResults_jaspPrintOptionsGetIndentSize, 0},
+    {"_jaspResults_jaspPrintOptionsSetIndentWithTabs", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetIndentWithTabs, 1},
+    {"_jaspResults_jaspPrintOptionsGetIndentWithTabs", (DL_FUNC) &_jaspResults_jaspPrintOptionsGetIndentWithTabs, 0},
+    {"_jaspResults_jaspPrintOptionsSetUseUnicode", (DL_FUNC) &_jaspResults_jaspPrintOptionsSetUseUnicode, 1},
+    {"_jaspResults_jaspPrintOptionsGetUseUnicode", (DL_FUNC) &_jaspResults_jaspPrintOptionsGetUseUnicode, 0},
     {"_rcpp_module_boot_jaspResults", (DL_FUNC) &_rcpp_module_boot_jaspResults, 0},
     {NULL, NULL, 0}
 };

@@ -1,14 +1,45 @@
 #include "jaspPrintOptions.h"
+#include <cstddef>
 #include <Rcpp.h>
 
+
+/*
+ *		Two alternatives:
+ *
+ *		1. Share the environment/ list  .jaspPrintOptions directly between R and C++
+ *			pros: relatively easy, no duplicate options in R/ C++
+ *			cons: lose type safety (e.g., we'd have to do stuff like static_cast<bool>(lst[["Key"]]);
+ *
+ *		2. Make another Rcpp Modules class
+ *
+ */
+
 // [[Rcpp::export]]
-void jaspPrintOptionsSetPrintDevInfo	(bool value)	{			jaspPrintOptions::GetInstance()._printDevInfo = value;	}
+void jaspPrintOptionsSetPrintDevInfo	(bool value)		{			jaspPrintOptions::GetInstance()._printDevInfo = value;		}
 // [[Rcpp::export]]
-bool jaspPrintOptionsGetPrintDevInfo	()				{ return	jaspPrintOptions::GetInstance()._printDevInfo;			}
+bool jaspPrintOptionsGetPrintDevInfo	()					{ return	jaspPrintOptions::GetInstance()._printDevInfo;				}
+
 // [[Rcpp::export]]
-void jaspPrintOptionsVisibleTableColSep	(bool value)	{			jaspPrintOptions::GetInstance()._visibleColSep = value;	}
+void jaspPrintOptionsSetVisibleTableColSep	(bool value)	{	jaspPrintOptions::GetInstance()._visibleColSep = value;				}
 // [[Rcpp::export]]
-void jaspPrintOptionsSetIndentSize		(int value)		{			jaspPrintOptions::GetInstance().setIndentSize(value);	}
+bool jaspPrintOptionsGetVisibleTableColSep	()				{	return jaspPrintOptions::GetInstance()._visibleColSep;				}
+
+// [[Rcpp::export]]
+void jaspPrintOptionsSetIndentSize		(int value)			{	jaspPrintOptions::GetInstance().setIndentSize(value);				}
+// [[Rcpp::export]]
+std::size_t jaspPrintOptionsGetIndentSize	()				{	return jaspPrintOptions::GetInstance().getIndentSize();				}
+
+// [[Rcpp::export]]
+void jaspPrintOptionsSetIndentWithTabs	(bool value)		{	return jaspPrintOptions::GetInstance().setIndentWithTabs(value);	}
+// [[Rcpp::export]]
+bool jaspPrintOptionsGetIndentWithTabs	()					{	return jaspPrintOptions::GetInstance().getIndentWithTabs();			}
+
+// [[Rcpp::export]]
+void jaspPrintOptionsSetUseUnicode	(bool value)			{	jaspPrintOptions::GetInstance()._useUnicode = value;				}
+// [[Rcpp::export]]
+bool jaspPrintOptionsGetUseUnicode	()						{	return jaspPrintOptions::GetInstance()._useUnicode;					}
+
+
 
 //#define JASPPRINTOPTIONS_PROPERTY_GENERATOR(PROP_TYPE_CPP, PROP_TYPE_R, PROP_NAME, PROP_CAPITALIZED_NAME) \
 //	void        jaspPrintOptions ## Set ## PROP_CAPITALIZED_NAME (PROP_TYPE_R value) { jaspPrintOptions::GetInstance().PROP_NAME = value; } \

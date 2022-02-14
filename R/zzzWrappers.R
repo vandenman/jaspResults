@@ -10,9 +10,7 @@
 	env$jaspResults <- jaspResultsR$new(create_cpp_jaspResults("Analysis Test", NULL))
 
 	# this won't work inside jasp!
-	jaspResultsEnvir <- as.environment("package:jaspResults")
-	if (!exists(".jaspPrintOptions", envir = jaspResultsEnvir)) # necessary because checkForJaspResultsInit call .onAttach...
-	  assign(".jaspPrintOptions", .jaspPrintOptions, envir = jaspResultsEnvir)
+	initJaspPrintOptions()
 
 	return(invisible(TRUE))
 }

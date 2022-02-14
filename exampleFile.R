@@ -35,9 +35,9 @@ dummyContainer <- function() {
 
 tb <- dummyTable()
 
-jaspPrintOptionsSetPrintDevInfo(FALSE)
+jaspPrintOptions(printDevInfo = FALSE)
 tb
-jaspPrintOptionsSetPrintDevInfo(TRUE)
+jaspPrintOptions(printDevInfo = TRUE)
 tb
 
 tb$transpose <- TRUE
