@@ -364,8 +364,8 @@ void jaspObject::setOptionMustBeDependency(std::string optionName, Rcpp::RObject
 
 void jaspObject::setOptionMustContainDependency(std::string optionName, Rcpp::RObject mustContainThis)
 {
-	if (!Rcpp::is<Rcpp::CharacterVector>(mustContainThis))
-		Rf_error("setOptionMustContainDependency expected a character string but got something else!");
+	if (mustContainThis.isNULL())
+		Rf_error("setOptionMustContainDependency expected not null!");
 
 	_optionMustContain[optionName] = RObject_to_JsonValue(mustContainThis);
 }

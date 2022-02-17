@@ -255,10 +255,11 @@ jaspObjR <- R6Class(
 				if (!is.list(optionContainsValue) || is.null(names(optionContainsValue)))
 					stop("please provide a named list in `optionContainsValue`", domain = NA)
 				for (i in seq_along(optionContainsValue)) {
-					name <- names(optionContainsValue)[i]
+					name  <- names(optionContainsValue)[i]
 					value <- optionContainsValue[[i]]
-					if (!is.character(value))
-						stop(sprintf("Expected a character vector but got object of class %s", paste(class(value), collapse = ", ")))
+					
+					if (is.null(value))
+						stop("Expected not-null but got null")
 					private$jaspObject$setOptionMustContainDependency(name, value)
 				}
 			}
