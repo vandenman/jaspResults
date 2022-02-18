@@ -19,7 +19,7 @@ std::string jaspNativeToUtf8(const Rcpp::RObject & in);
 
 #define JASPOBJECT_DEFAULT_POSITION 9999
 
-DECLARE_ENUM(jaspObjectType, unknown, container, table, plot, json, list, results, html, state, column, qmlSource);
+DECLARE_ENUM(jaspObjectType, unknown, container, table, plot, list, results, html, state, column, qmlSource);
 DECLARE_ENUM(jaspColumnType, unknown, scale, ordinal, nominal, nominalText); //can be merged with columnType from CentralDatasetModel branch later on?
 
 jaspObjectType jaspObjectTypeStringToObjectType(std::string type);
@@ -73,7 +73,7 @@ public:
 			int			_position = JASPOBJECT_DEFAULT_POSITION;
 
 			jaspObjectType	getType()															const { return _type; }
-	virtual bool			shouldBePartOfResultsJson(bool meta = false)						const { return _type != jaspObjectType::state && _type != jaspObjectType::json; }
+	virtual bool			shouldBePartOfResultsJson(bool meta = false)						const { return _type != jaspObjectType::state; }
 
 			Json::Value		constructMetaEntry(std::string type, std::string meta = "")			const;
 

@@ -579,7 +579,6 @@ jaspObject * jaspObject::convertFromJSON(Json::Value in)
 	case jaspObjectType::container:	newObject = new jaspContainer();	break;
 	case jaspObjectType::table:		newObject = new jaspTable();		break;
 	case jaspObjectType::plot:		newObject = new jaspPlot();			break;
-	case jaspObjectType::json:		newObject = new jaspJson();			break;
 	//case jaspObjectType::list:	newObject = new jaspList();			break;
 	case jaspObjectType::html:		newObject = new jaspHtml();			break;
 	case jaspObjectType::state:		newObject = new jaspState();		break;

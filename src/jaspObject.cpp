@@ -1,6 +1,5 @@
 #define ENUM_DECLARATION_CPP
 #include "jaspObject.h"
-#include "jaspJson.h"
 #include "jaspResults.h"
 #include <chrono>
 

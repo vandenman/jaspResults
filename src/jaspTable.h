@@ -1,7 +1,6 @@
 #pragma once
 #include "jaspObject.h"
 #include "jaspList.h"
-#include "jaspJson.h"
 #include <functional>
 
 struct jaspColRowCombination

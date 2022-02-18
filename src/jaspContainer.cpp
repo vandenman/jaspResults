@@ -22,7 +22,7 @@ void jaspContainer::insert(std::string field, Rcpp::RObject value)
 	else if(Rcpp::is<jaspPlot_Interface>(value))		obj = Rcpp::as<jaspPlot_Interface>(value).returnMyJaspObject();
 	else if(Rcpp::is<jaspHtml_Interface>(value))		obj = Rcpp::as<jaspHtml_Interface>(value).returnMyJaspObject();
 	else if(Rcpp::is<Rcpp::List>(value))				obj = (jaspObject*)(jaspContainerFromRcppList(Rcpp::as<Rcpp::List>(value)));
-	else												obj = new jaspJson(value);
+	else												throw std::runtime_error("Unhandled Rcpp Object type");
 
 #ifdef JASP_RESULTS_DEBUG_TRACES
 	std::cout << "something {"<<obj->objectTitleString()<<"} added to jaspContainer "<<objectTitleString()<<" on field "<<field<<std::endl<<std::flush;
@@ -86,7 +86,6 @@ Rcpp::RObject jaspContainer::wrapJaspObject(jaspObject * ref)
 	case jaspObjectType::state:		return Rcpp::wrap(jaspState_Interface(ref));
 	case jaspObjectType::html:		return Rcpp::wrap(jaspHtml_Interface(ref));
 	case jaspObjectType::plot:		return Rcpp::wrap(jaspPlot_Interface(ref));
-	case jaspObjectType::json:		return Rcpp::wrap(((jaspJson*)ref)->jsonToPrefixedStrings());
 	default:						return R_NilValue;
 	}
 }
