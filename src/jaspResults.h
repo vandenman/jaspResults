@@ -26,14 +26,16 @@ public:
 
 	//static functions to allow the values to be set before the constructor is called from R. Would be nicer to just run the constructor in C++ maybe?
 	static void			setSendFunc(sendFuncDef sendFunc);
+	static void			setSendFuncXPtr(Rcpp::XPtr<sendFuncDef> sendFunc);
 	static void			setPollMessagesFunc(pollMessagesFuncDef pollFunc);
+	static void			setPollMessagesFuncXPtr(Rcpp::XPtr<pollMessagesFuncDef> pollFunc);
 	static void			setResponseData(int analysisID, int revision);
 	static void			setSaveLocation(const std::string & root, const std::string & relativePath);
 	static void			setWriteSealLocation(const std::string & root, const std::string & relativePath);
 	static void			setBaseCitation(std::string baseCitation);
 	static void			setInsideJASP();
 	static bool			isInsideJASP() { return _insideJASP; }
-	static const char *	writeSealFilename() { return "jaspResultsFinishedWriting.txt"; }
+	static Rcpp::String	writeSealFilename() { return "jaspResultsFinishedWriting.txt"; }
 
 	void			send(std::string otherMsg = "");
 	void			checkForAnalysisChanged();

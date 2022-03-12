@@ -25,7 +25,17 @@ RCPP_MODULE(jaspResults)
 	Rcpp::function("cpp_startProgressbar",	jaspResults::staticStartProgressbar);
 	Rcpp::function("cpp_progressbarTick",	jaspResults::staticProgressbarTick);
 
-	Rcpp::function("destroyAllAllocatedObjects", jaspObject::destroyAllAllocatedObjects);
+	Rcpp::function("destroyAllAllocatedObjects",	jaspObject::destroyAllAllocatedObjects);
+	Rcpp::function("setSendFunc",					jaspResults::setSendFuncXPtr);
+	Rcpp::function("setPollMessagesFunc",			jaspResults::setPollMessagesFuncXPtr);
+	Rcpp::function("setBaseCitation",				jaspResults::setBaseCitation);
+	Rcpp::function("setInsideJasp",					jaspResults::setInsideJASP);
+	Rcpp::function("writeSealFilename",				jaspResults::writeSealFilename);
+	Rcpp::function("setResponseData",				jaspResults::setResponseData);
+	Rcpp::function("setDeveloperMode",				jaspResults::setDeveloperMode);
+	Rcpp::function("setSaveLocation",				jaspResults::setSaveLocation);
+	Rcpp::function("setWriteSealLocation",			jaspResults::setWriteSealLocation);
+
 	Rcpp::class_<jaspObject_Interface>("jaspObject")
 
 		.method("print",							&jaspObject_Interface::print,											"Prints the contents of the jaspObject")

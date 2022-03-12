@@ -1,4 +1,6 @@
 .onAttach <- function(libname, pkgname) {
+
+	# TODO: this needs to be redone entirely
 	env <- globalenv()
 
 	if (exists("jaspResults", env)) {
@@ -7,7 +9,7 @@
 		rm(list=ls(envir=.plotStateStorage), envir=.plotStateStorage)
 	}
 
-	env$jaspResults <- jaspResultsR$new(create_cpp_jaspResults("Analysis Test", NULL))
+#	env$jaspResults <- jaspResultsR$new(create_cpp_jaspResults("Analysis Test", NULL))
 	
 	return(invisible(TRUE))
 }

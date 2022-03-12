@@ -24,9 +24,19 @@ void jaspResults::setSendFunc(sendFuncDef sendFunc)
 	_ipccSendFunc = sendFunc;
 }
 
+void jaspResults::setSendFuncXPtr(Rcpp::XPtr<sendFuncDef> sendFunc)
+{
+	setSendFunc(*sendFunc);
+}
+
 void jaspResults::setPollMessagesFunc(pollMessagesFuncDef pollFunc)
 {
 	_ipccPollFunc = pollFunc;
+}
+
+void jaspResults::setPollMessagesFuncXPtr(Rcpp::XPtr<pollMessagesFuncDef> pollFunc)
+{
+	setPollMessagesFunc(*pollFunc);
 }
 
 void jaspResults::setBaseCitation(std::string baseCitation)
