@@ -4,13 +4,11 @@
 #include <sstream>
 #include <queue>
 #include "enumutilities.h"
+#include <json/json.h>
 
 #ifdef JASP_R_INTERFACE_LIBRARY
-#include "jsonredirect.h"
 extern void			jaspRCPP_logString(		const std::string  & code);
 extern std::string	jaspRCPP_nativeToUtf8(	const Rcpp::String & in);
-#else
-#include "lib_json/json.h"
 #endif
 
 void		jaspPrint(			std::string msg);

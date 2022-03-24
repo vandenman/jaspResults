@@ -1,4 +1,4 @@
 [submodule "src/jaspColumnEncoder"]
 	path = src/jaspColumnEncoder
 	url = https://github.com/jasp-stats/jaspColumnEncoder
-	branch = master
+	branch = qt-6.2-cmake-cpp-17

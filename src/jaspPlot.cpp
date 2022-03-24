@@ -119,6 +119,14 @@ void jaspPlot::renderPlot()
 			{
 				_editOptions = Json::objectValue;
 				Json::Reader().parse(editOptionsStr, _editOptions);
+
+                // JSONCPP_STRING          err;
+                // Json::CharReaderBuilder jsonReaderBuilder;
+                // std::unique_ptr<Json::CharReader> const jsonReader(jsonReaderBuilder.newCharReader());
+
+				// jsonReader->parse(editOptionsStr.c_str(), editOptionsStr.c_str() + editOptionsStr.length(), &_editOptions, &err);
+
+
 			}
 		}
 
