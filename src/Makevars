@@ -1,4 +1,4 @@
-CXX_STD 		= CXX11
+CXX_STD		= CXX11
 PKG_CPPFLAGS	= -I./jaspColumnEncoder/
-CXX11STD		= -std=c++11
+CXX11STD	= -std=c++11
 

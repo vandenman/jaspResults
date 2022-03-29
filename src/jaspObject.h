@@ -4,7 +4,12 @@
 #include <sstream>
 #include <queue>
 #include "enumutilities.h"
+
+#ifdef BUILDING_JASP
 #include <json/json.h>
+#else
+#include "json/json.h"
+#endif
 
 #ifdef JASP_R_INTERFACE_LIBRARY
 extern void			jaspRCPP_logString(		const std::string  & code);

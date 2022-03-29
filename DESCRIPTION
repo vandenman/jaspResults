@@ -12,6 +12,6 @@ Description: This package helps you build your analysis for JASP (http://jasp-st
 License: GPL (>= 2)
 Imports: methods, Rcpp (>= 0.12.14), R6
 Suggests: jaspGraphs
-LinkingTo: Rcpp, BH
+LinkingTo: Rcpp
 RcppModules: jaspResults
 NeedsCompilation: yes
